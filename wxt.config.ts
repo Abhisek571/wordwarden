@@ -38,8 +38,16 @@ const packageNoticeAssets = Object.freeze([
   }),
 ]);
 
+const gitIgnoredPatterns = readFileSync(new URL('./.gitignore', import.meta.url), 'utf8')
+  .split(/\r?\n/u)
+  .map((line) => line.trim())
+  .filter((line) => line.length > 0 && !line.startsWith('#'))
+  .map((line) => (line.endsWith('/') ? `${line}**` : line));
+
 export default defineConfig({
   srcDir: '.',
+  // The Firefox sources zip is built from the working folder, so leave out everything git ignores too.
+  zip: { excludeSources: gitIgnoredPatterns },
   manifest: ({ browser }) => ({
     name: 'Wordwarden – English Spelling & Grammar Check',
     short_name: 'Wordwarden',

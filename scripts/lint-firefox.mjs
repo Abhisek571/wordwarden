@@ -36,7 +36,8 @@ function isReviewedWarning(warning) {
     return true;
   }
   if (code !== 'UNSAFE_VAR_ASSIGNMENT') return false;
-  return /^chunks\/jsx-runtime-[\w-]+\.js$/.test(file) ||
+  // React DOM's own innerHTML handling; the bundler names its chunk after the first page that imports it.
+  return /^chunks\/(jsx-runtime|app)-[\w-]+\.js$/.test(file) ||
     /^assets\/completion\.worker-[\w-]+\.js$/.test(file);
 }
 

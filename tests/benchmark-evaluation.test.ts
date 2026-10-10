@@ -1,6 +1,6 @@
 // Real-world accuracy benchmarks. Datasets live outside the repository; see docs/BENCHMARKS.md.
 import { existsSync } from 'node:fs';
-import { readFile } from 'node:fs/promises';
+import { readFile, writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import type { WritingIssue } from '#/core/types';
@@ -10,6 +10,8 @@ import { createProductionEngine } from './helpers/production-engine';
 const benchmarkDirectory = process.env.WORDWARDEN_BENCHMARK_DIR ?? 'E:/CODING/Wordwarden/benchmarks';
 const birkbeckDirectory = resolve(benchmarkDirectory, 'birkbeck');
 const jflegDirectory = resolve(benchmarkDirectory, 'jfleg');
+const lexnormDirectory = resolve(benchmarkDirectory, 'lexnorm');
+const aaltoSample = resolve(benchmarkDirectory, 'aalto', 'sample.tsv');
 const FAILURE_EXAMPLES = 20;
 
 type Split = 'tune' | 'holdout';
@@ -277,6 +279,119 @@ async function evaluateHolbrook(): Promise<void> {
   };
 }
 
+type ContextItem = Readonly<{ text: string; errors: readonly Readonly<{ start: number; end: number; target: string }>[]; split: Split }>;
+
+function letterDistance(left: string, right: string): number {
+  let previous = Array.from({ length: right.length + 1 }, (_, index) => index);
+  for (let row = 1; row <= left.length; row += 1) {
+    const current = [row];
+    for (let column = 1; column <= right.length; column += 1) {
+      current[column] = Math.min(
+        (current[column - 1] ?? 0) + 1,
+        (previous[column] ?? 0) + 1,
+        (previous[column - 1] ?? 0) + (left[row - 1] === right[column - 1] ? 0 : 1),
+      );
+    }
+    previous = current;
+  }
+  return previous[right.length] ?? right.length;
+}
+
+/** Misspellings marked inside whole sentences: caught, and the right word first or in the top three. */
+async function evaluateInContext(name: string, items: readonly ContextItem[], engine: HarperEngine): Promise<void> {
+  const counts: Record<Split, Counts> = { tune: emptyCounts(), holdout: emptyCounts() };
+  const misses: string[] = [];
+  for (const item of items) {
+    const issues = await engine.lint(item.text);
+    const bucket = counts[item.split];
+    for (const error of item.errors) {
+      bucket.total += 1;
+      const issue = issues.find((candidate) => candidate.range.start < error.end && error.start < candidate.range.end);
+      const suggestions = (issue?.replacements ?? []).map((value) => value.toLocaleLowerCase('en'));
+      if (issue !== undefined) bucket.detected += 1;
+      if (suggestions[0] === error.target) bucket.topOne += 1;
+      if (suggestions.slice(0, 3).includes(error.target)) bucket.topThree += 1;
+      else if (misses.length < FAILURE_EXAMPLES && item.split === 'holdout') {
+        misses.push(`${item.text.slice(error.start, error.end)} → want ${error.target}; got ${suggestions.slice(0, 3).join(', ') || '∅'}`);
+      }
+    }
+  }
+  report[name] = { tune: rates(counts.tune), holdout: rates(counts.holdout), holdoutMisses: misses };
+}
+
+/**
+ * LexNorm2015 tweets (MultiLexNorm copy): one "raw<TAB>normalised" token per line, a blank line between
+ * tweets. Only real misspellings are scored: one word for one word, close in spelling. Slang written out
+ * in full ("lol" → "laughing out loud") is left out, because Wordwarden should not change it.
+ */
+async function evaluateLexnorm(): Promise<void> {
+  const files = Object.freeze([['train', 'tune'], ['dev', 'tune'], ['test', 'holdout']] as const);
+  if (!existsSync(resolve(lexnormDirectory, 'test.norm'))) {
+    report.twitter = { skipped: `missing ${lexnormDirectory}` };
+    return;
+  }
+  const items: ContextItem[] = [];
+  for (const [file, split] of files) {
+    const path = resolve(lexnormDirectory, `${file}.norm`);
+    if (!existsSync(path)) continue;
+    for (const tweet of (await readFile(path, 'utf8')).split(/\r?\n\s*\r?\n/u)) {
+      let text = '';
+      const errors: { start: number; end: number; target: string }[] = [];
+      for (const line of tweet.split(/\r?\n/u)) {
+        const [raw = '', normalised = ''] = line.split('\t');
+        if (raw.length === 0) continue;
+        if (text.length > 0) text += ' ';
+        const start = text.length;
+        text += raw;
+        const word = /^[a-z']{3,}$/u;
+        // The dataset rewrites one slang spelling into a slur; that is never a fix to score.
+        const slurRewrite = raw.startsWith('nigg');
+        if (raw !== normalised && !slurRewrite && word.test(raw) && word.test(normalised) &&
+          letterDistance(raw, normalised) <= 2) {
+          errors.push({ start, end: text.length, target: normalised });
+        }
+      }
+      if (errors.length > 0) items.push(Object.freeze({ text, errors: Object.freeze(errors), split }));
+    }
+  }
+  await evaluateInContext('twitter', items, american);
+}
+
+/**
+ * Aalto 136M Keystrokes: a fixed sample of typed sentences ("target<TAB>typed" per line), made by
+ * scripts/aalto-sample.mjs. A word is a typing mistake when the typed word differs from the target word
+ * at the same position. Sentences where words were run together or split are left out.
+ */
+async function evaluateAalto(): Promise<void> {
+  if (!existsSync(aaltoSample)) {
+    report.aalto = { skipped: `missing ${aaltoSample}` };
+    return;
+  }
+  const bare = (word: string): string => word.replace(/^[^\p{L}\p{N}']+|[^\p{L}\p{N}']+$/gu, '').toLocaleLowerCase('en');
+  const items: ContextItem[] = [];
+  for (const line of await readLines(aaltoSample)) {
+    const [target = '', typed = ''] = line.split('\t');
+    const targetWords = target.trim().split(/\s+/u);
+    const typedWords = typed.trim().split(/\s+/u);
+    if (targetWords.length !== typedWords.length) continue;
+    let text = '';
+    const errors: { start: number; end: number; target: string }[] = [];
+    typedWords.forEach((word, index) => {
+      if (text.length > 0) text += ' ';
+      const start = text.length;
+      text += word;
+      const wanted = bare(targetWords[index] ?? '');
+      const got = bare(word);
+      if (wanted.length > 0 && got.length > 0 && wanted !== got && /^[\p{L}']+$/u.test(wanted)) {
+        const offset = word.toLocaleLowerCase('en').indexOf(got);
+        errors.push({ start: start + Math.max(0, offset), end: start + Math.max(0, offset) + got.length, target: wanted });
+      }
+    });
+    if (errors.length > 0) items.push(Object.freeze({ text, errors: Object.freeze(errors), split: splitFor(line) }));
+  }
+  await evaluateInContext('aalto', items, american);
+}
+
 async function evaluateSpeed(): Promise<void> {
   const path = resolve(jflegDirectory, 'dev.ref0');
   if (!existsSync(path)) return;
@@ -309,12 +424,17 @@ describe('real-world benchmarks', () => {
   it('reports spelling, grammar, false-alarm, and speed results', async () => {
     await evaluateWordList('birkbeck', 'missp.dat', british);
     await evaluateWordList('wikipedia', 'wikipedia.dat', american);
-    await evaluateWordList('aspell', 'aspell.dat', american);
+    await evaluateAalto();
+    await evaluateLexnorm();
     await evaluateHolbrook();
     await evaluateJfleg('dev', 'tune');
     await evaluateJfleg('test', 'holdout');
     await evaluateSpeed();
     console.log(`WORDWARDEN_BENCHMARK_REPORT=${JSON.stringify(report, null, 2)}`);
+    // The accuracy chart is drawn from this file (scripts/accuracy-chart.mjs).
+    const reportPath = process.env.WORDWARDEN_BENCHMARK_REPORT;
+    if (reportPath !== undefined) await writeFile(reportPath, `${JSON.stringify(report, null, 2)}
+`);
     expect(Object.keys(report).length).toBeGreaterThan(0);
   });
 });

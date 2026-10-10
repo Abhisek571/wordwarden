@@ -1,0 +1,75 @@
+name: Accuracy
+
+# Runs the real-world benchmarks and redraws docs/accuracy.svg. The datasets are downloaded from
+# their original sites on each run and are never committed (see docs/BENCHMARKS.md for licences).
+# Runs for bigger releases only (v1.1.0, v2.0.0; not bug-fix tags like v1.0.1), or by hand.
+on:
+  push:
+    tags: ['v*.*.0']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  accuracy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      # The chart is saved to main, so the README shows it, even when a tag started the run.
+      - uses: actions/checkout@v5
+        with:
+          ref: main
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Download datasets
+        run: |
+          dir="$RUNNER_TEMP/benchmarks"
+          mkdir -p "$dir/birkbeck" "$dir/jfleg" "$dir/lexnorm" "$dir/aalto"
+          for file in missp.dat wikipedia.dat holbrook-tagged.dat; do
+            curl -fsSL "https://www.dcs.bbk.ac.uk/~ROGER/$file" -o "$dir/birkbeck/$file"
+          done
+          for split in dev test; do
+            for part in src ref0 ref1 ref2 ref3; do
+              curl -fsSL "https://raw.githubusercontent.com/keisks/jfleg/master/$split/$split.$part" -o "$dir/jfleg/$split.$part"
+            done
+          done
+          for file in train dev test; do
+            curl -fsSL "https://huggingface.co/datasets/larrylawl/multilexnorm/resolve/main/data/en/$file.norm" -o "$dir/lexnorm/$file.norm"
+          done
+      # The Aalto keystrokes zip is 1.57 GB, so only the small fixed sample taken from it is kept, in the
+      # workflow cache (never committed). It is downloaded again only when the cache is gone.
+      - name: Restore the Aalto sample
+        id: aalto
+        uses: actions/cache@v4
+        with:
+          path: ${{ runner.temp }}/benchmarks/aalto/sample.tsv
+          key: aalto-sample-${{ hashFiles('scripts/aalto-sample.mjs') }}
+      - name: Make the Aalto sample
+        if: steps.aalto.outputs.cache-hit != 'true'
+        run: |
+          curl -fsSL "https://userinterfaces.aalto.fi/136Mkeystrokes/data/Keystrokes.zip" -o "$RUNNER_TEMP/Keystrokes.zip"
+          node scripts/aalto-sample.mjs "$RUNNER_TEMP/Keystrokes.zip" "$RUNNER_TEMP/benchmarks/aalto/sample.tsv"
+          rm "$RUNNER_TEMP/Keystrokes.zip"
+      - name: Run benchmarks
+        run: npm run evaluate:benchmarks
+        env:
+          WORDWARDEN_BENCHMARK_DIR: ${{ runner.temp }}/benchmarks
+          WORDWARDEN_BENCHMARK_REPORT: ${{ runner.temp }}/report.json
+      - run: node scripts/accuracy-chart.mjs "$RUNNER_TEMP/report.json"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: benchmark-report
+          path: ${{ runner.temp }}/report.json
+          retention-days: 30
+      - name: Commit the updated chart
+        run: |
+          git diff --quiet docs/accuracy.svg && exit 0
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/accuracy.svg
+          git commit -m "Update accuracy chart"
+          git push

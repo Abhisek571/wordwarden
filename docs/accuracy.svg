@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="470" viewBox="0 0 760 470" font-family="Segoe UI, system-ui, -apple-system, sans-serif" role="img" aria-label="Spelling accuracy chart">
+<rect width="100%" height="100%" rx="8" fill="#fbfaf7"/>
+<text x="24" y="38" font-size="20" font-weight="700" fill="#1d1d1b">Spelling accuracy</text>
+<text x="24" y="60" font-size="13" fill="#6b6a66">Held-out test data, not used for tuning · v1.0.0 · Oct 2026</text>
+<line x1="230" y1="84" x2="230" y2="408" stroke="#e4e2dc"/>
+<text x="230" y="424" font-size="11" fill="#6b6a66" text-anchor="middle">0%</text>
+<line x1="347.5" y1="84" x2="347.5" y2="408" stroke="#e4e2dc"/>
+<text x="347.5" y="424" font-size="11" fill="#6b6a66" text-anchor="middle">25%</text>
+<line x1="465" y1="84" x2="465" y2="408" stroke="#e4e2dc"/>
+<text x="465" y="424" font-size="11" fill="#6b6a66" text-anchor="middle">50%</text>
+<line x1="582.5" y1="84" x2="582.5" y2="408" stroke="#e4e2dc"/>
+<text x="582.5" y="424" font-size="11" fill="#6b6a66" text-anchor="middle">75%</text>
+<line x1="700" y1="84" x2="700" y2="408" stroke="#e4e2dc"/>
+<text x="700" y="424" font-size="11" fill="#6b6a66" text-anchor="middle">100%</text>
+<text x="216" y="122" font-size="14" font-weight="600" fill="#1d1d1b" text-anchor="end">Typing test slips (Aalto)</text>
+<rect x="230" y="92" width="321.48" height="14" rx="2" fill="#2f7d5b"/>
+<text x="557.48" y="103" font-size="11.5" font-weight="600" fill="#1d1d1b">68.4%</text>
+<rect x="230" y="110" width="228.42" height="14" rx="2" fill="#1e6fd9"/>
+<text x="464.41999999999996" y="121" font-size="11.5" font-weight="600" fill="#1d1d1b">48.6%</text>
+<rect x="230" y="128" width="268.84000000000003" height="14" rx="2" fill="#8fb3e8"/>
+<text x="504.84000000000003" y="139" font-size="11.5" font-weight="600" fill="#1d1d1b">57.2%</text>
+<text x="216" y="198" font-size="14" font-weight="600" fill="#1d1d1b" text-anchor="end">Tweets (LexNorm2015)</text>
+<rect x="230" y="168" width="420.18" height="14" rx="2" fill="#2f7d5b"/>
+<text x="656.1800000000001" y="179" font-size="11.5" font-weight="600" fill="#1d1d1b">89.4%</text>
+<rect x="230" y="186" width="297.04" height="14" rx="2" fill="#1e6fd9"/>
+<text x="533.04" y="197" font-size="11.5" font-weight="600" fill="#1d1d1b">63.2%</text>
+<rect x="230" y="204" width="331.34999999999997" height="14" rx="2" fill="#8fb3e8"/>
+<text x="567.3499999999999" y="215" font-size="11.5" font-weight="600" fill="#1d1d1b">70.5%</text>
+<text x="216" y="274" font-size="14" font-weight="600" fill="#1d1d1b" text-anchor="end">Wikipedia misspellings</text>
+<rect x="230" y="244" width="464.36" height="14" rx="2" fill="#2f7d5b"/>
+<text x="700.36" y="255" font-size="11.5" font-weight="600" fill="#1d1d1b">98.8%</text>
+<rect x="230" y="262" width="418.77" height="14" rx="2" fill="#1e6fd9"/>
+<text x="654.77" y="273" font-size="11.5" font-weight="600" fill="#1d1d1b">89.1%</text>
+<rect x="230" y="280" width="445.56" height="14" rx="2" fill="#8fb3e8"/>
+<text x="681.56" y="291" font-size="11.5" font-weight="600" fill="#1d1d1b">94.8%</text>
+<text x="216" y="350" font-size="14" font-weight="600" fill="#1d1d1b" text-anchor="end">Birkbeck (children, students)</text>
+<rect x="230" y="320" width="431.93" height="14" rx="2" fill="#2f7d5b"/>
+<text x="667.9300000000001" y="331" font-size="11.5" font-weight="600" fill="#1d1d1b">91.9%</text>
+<rect x="230" y="338" width="196.92999999999998" height="14" rx="2" fill="#1e6fd9"/>
+<text x="432.92999999999995" y="349" font-size="11.5" font-weight="600" fill="#1d1d1b">41.9%</text>
+<rect x="230" y="356" width="232.18" height="14" rx="2" fill="#8fb3e8"/>
+<text x="468.18" y="367" font-size="11.5" font-weight="600" fill="#1d1d1b">49.4%</text>
+<rect x="230" y="444" width="12" height="12" rx="2" fill="#2f7d5b"/>
+<text x="248" y="454" font-size="12.5" fill="#1d1d1b">Caught</text>
+<rect x="308" y="444" width="12" height="12" rx="2" fill="#1e6fd9"/>
+<text x="326" y="454" font-size="12.5" fill="#1d1d1b">Right word first</text>
+<rect x="456" y="444" width="12" height="12" rx="2" fill="#8fb3e8"/>
+<text x="474" y="454" font-size="12.5" fill="#1d1d1b">Right word in top three</text>
+</svg>

@@ -14,19 +14,26 @@ bundled into the extension.
 ## Real-world datasets
 
 Download into `WORDWARDEN_BENCHMARK_DIR` (default `E:/CODING/Wordwarden/benchmarks`). Missing files are skipped.
+The weekly Accuracy workflow on GitHub downloads the same files from their original sites on each run and
+redraws `docs/accuracy.svg`; none of the data is committed.
 
 | Folder / file | Source | What it measures | Licence |
 |---|---|---|---|
 | `birkbeck/missp.dat` | Roger Mitton, <https://www.dcs.bbk.ac.uk/~ROGER/corpora.html> | 36k real misspellings (British, mostly children and students) | free research download, no stated licence |
-| `birkbeck/wikipedia.dat`, `birkbeck/aspell.dat` | same | misspellings by Wikipedia editors / Aspell test set (American engine) | same |
+| `birkbeck/wikipedia.dat` | same | misspellings by Wikipedia editors (American engine) | same |
 | `birkbeck/holbrook-tagged.dat` | same | misspellings in running text, plus spelling false alarms | same |
 | `jfleg/{dev,test}.{src,ref0..3}` | <https://github.com/keisks/jfleg> | learner sentences + 4 human corrections | CC BY-NC-SA 4.0 |
+| `lexnorm/{train,dev,test}.norm` | LexNorm2015 (Baldwin et al., 2015), English part of MultiLexNorm, <https://huggingface.co/datasets/larrylawl/multilexnorm> | misspellings in tweets, in context; only one-word fixes within two letters are scored, so slang expansions ("lol") are left out | CC BY 4.0 |
+| `aalto/sample.tsv` | 136M Keystrokes (Dhakal, Feit, Kristensson & Oulasvirta, CHI 2018), <https://userinterfaces.aalto.fi/136Mkeystrokes/>; sample made with `node scripts/aalto-sample.mjs Keystrokes.zip aalto/sample.tsv` | typing-test slips by 168,000 people, in context | free for research and non-commercial use with attribution |
 
 ## Metrics
 
 - **Spelling lists:** detected (flagged at all), top-1 and top-3 (the right word is the first / in the
   first three suggestions). Pairs are split by a stable hash into `tune` and `holdout`; tune rules on
   failures from `tune`, report `holdout`.
+- **Tweets and typing slips:** the same three numbers, but each mistake is checked inside its whole
+  sentence. Tweets: `train` and `dev` are tune, `test` is holdout. Typing slips: sentences are split by
+  a stable hash; a typed word is a mistake when it differs from the word the person was asked to type.
 - **Holbrook:** recall on tagged errors in context; spelling precision = spelling flags that land on a
   tagged error. Children's writing has many untagged grammar slips, so only spelling flags count.
 - **JFLEG clean text:** the human corrections should get almost no underlines. `flaggedSentencesPct` is
@@ -42,7 +49,7 @@ Download into `WORDWARDEN_BENCHMARK_DIR` (default `E:/CODING/Wordwarden/benchmar
 
 1. Precision first. A change must not lower clean-text or fix precision, even if recall rises.
 2. Tune on `tune` / `dev`; report `holdout` / `test`.
-3. Paste the before/after numbers into `docs/PROJECT_HANDOVER.md` with each accuracy change.
+3. Note the before/after numbers with each accuracy change.
 4. Read the failure examples each run, not just the scores.
 
 ## Manual real-site checklist (before each release, Chrome and Firefox)
@@ -55,6 +62,22 @@ Download into `WORDWARDEN_BENCHMARK_DIR` (default `E:/CODING/Wordwarden/benchmar
 - [ ] Badge shows checking → count / tick; clicking it opens the first suggestion.
 - [ ] Suggestion card near the bottom of the window opens above the word.
 - [ ] Turn the site off in the popup: underlines disappear without a reload.
+
+## Results — 2026-10-11
+
+Holdout numbers, full run about 17 minutes. Adds the tweet and typing-slip sets; the Aspell list is dropped
+(small, and covered by Wikipedia).
+
+| Benchmark | Mistakes scored | Detected | Top-1 | Top-3 |
+|---|---|---|---|---|
+| Typing slips (Aalto sample) | 4,840 | 68.4% | 48.6% | 57.2% |
+| Tweets (LexNorm2015 test) | 903 | 89.4% | 63.2% | 70.5% |
+| Wikipedia misspellings | 1,094 | 98.8% | 89.1% | 94.8% |
+| Birkbeck | 16,390 | 91.9% | 41.9% | 49.4% |
+| Holbrook (in context) | 2,599 | 61.2% | 28.1% | 33.7% |
+
+JFLEG and Holbrook precision are unchanged from 2026-10-08. Many missed typing slips make another real word
+("can" for "can't", "beach" for "bench"), which a spelling check alone cannot catch.
 
 ## Results — 2026-10-08
 

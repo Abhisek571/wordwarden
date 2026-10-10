@@ -253,7 +253,7 @@ test('opens Settings as a full tab and previews diagnostics before sharing', asy
   expect(report.website).toHaveProperty('hostname');
   await settingsPage.getByRole('button', { name: 'Copy log' }).click();
   await expect(settingsPage.getByText('Report copied to the clipboard.')).toBeVisible();
-  await expect(settingsPage.getByRole('button', { name: 'Open GitHub Issue' })).toBeDisabled();
+  await expect(settingsPage.getByRole('button', { name: 'Open GitHub Issue' })).toBeEnabled();
   await expect(settingsPage.getByText('Nothing is sent automatically.')).toBeVisible();
   await settingsPage.getByRole('button', { name: 'Close', exact: true }).click();
   await expect(settingsPage.getByTestId('issue-report')).toHaveCount(0);

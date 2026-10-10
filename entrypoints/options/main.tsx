@@ -13,9 +13,8 @@ import { exportDictionary, parseDictionaryImport, type DictionaryImportPreview }
 import { BrandMark, CloseIcon } from '#/ui/brand';
 import '#/ui/app.css';
 
-// Mandatory before publishing: set this to the repository's GitHub new-issue URL.
-// See RELEASE_TODO.md. Leaving it null keeps the action safely unavailable.
-const GITHUB_ISSUE_URL: string | null = null;
+// The project's GitHub new-issue page. Setting it to null hides the action.
+const GITHUB_ISSUE_URL: string | null = 'https://github.com/Abhisek571/wordwarden/issues/new';
 
 function Toggle(props: Readonly<{ enabled: boolean; label: string; onToggle: () => void; disabled?: boolean }>): React.JSX.Element {
   return (
