@@ -115,6 +115,42 @@ describe('issue popover', () => {
     vi.useRealTimers();
   });
 
+  it('stays open when the pointer moves from the word straight onto the top of the card', () => {
+    vi.useFakeTimers();
+    const nativeAttachShadow = Element.prototype.attachShadow;
+    let capturedShadow: ShadowRoot | null = null;
+    vi.spyOn(Element.prototype, 'attachShadow').mockImplementation(function (this: Element, init: ShadowRootInit) {
+      capturedShadow = nativeAttachShadow.call(this, { ...init, mode: 'open' });
+      return capturedShadow;
+    });
+    const textarea = document.createElement('textarea');
+    document.body.append(textarea);
+    const overlay = createTypeCheckOverlay(Object.freeze({ apply: vi.fn(), ignoreOnce: vi.fn(), ignoreAlways: vi.fn(), addWord: vi.fn() }));
+    overlay.renderIssues(editorAdapter(textarea), Object.freeze([issue]));
+    const shadow = capturedShadow as ShadowRoot | null;
+    const pointAt = (clientX: number, clientY: number): void => {
+      document.dispatchEvent(new PointerEvent('pointermove', { clientX, clientY }));
+    };
+    pointAt(20, 15);
+    vi.advanceTimersByTime(180);
+    const card = shadow?.querySelector<HTMLElement>('[data-testid="issue-popover"]');
+    expect(card).not.toBeNull();
+    // The card's top overlaps the bottom of the word's box (the word is 10 to 28 tall).
+    vi.spyOn(card as HTMLElement, 'getBoundingClientRect').mockReturnValue(new DOMRect(0, 24, 320, 200));
+    pointAt(30, 26);
+    card?.dispatchEvent(new Event('pointerenter'));
+    pointAt(60, 80);
+    vi.advanceTimersByTime(250);
+    expect(shadow?.querySelector('[data-testid="issue-popover"]')).not.toBeNull();
+
+    card?.dispatchEvent(new Event('pointerleave'));
+    pointAt(400, 400);
+    vi.advanceTimersByTime(250);
+    expect(shadow?.querySelector('[data-testid="issue-popover"]')).toBeNull();
+    overlay.destroy();
+    vi.useRealTimers();
+  });
+
   it('shows the original struck through, one main fix, and plain action labels', () => {
     const nativeAttachShadow = Element.prototype.attachShadow;
     let capturedShadow: ShadowRoot | null = null;

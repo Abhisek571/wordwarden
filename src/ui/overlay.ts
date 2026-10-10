@@ -575,6 +575,15 @@ export function createTypeCheckOverlay(actions: OverlayActions): TypeCheckOverla
 
   // The underlines take no pointer events, so hovering is worked out from their boxes.
   function onPointerMove(event: PointerEvent): void {
+    // The card opens right under the word, so the word's box can overlap the card's top. While the pointer is on
+    // the card, the card's own enter/leave handling decides; leaving the word's box there must not close it.
+    const card = popoverElement?.getBoundingClientRect();
+    if (card !== undefined && event.clientX >= card.left && event.clientX <= card.right &&
+      event.clientY >= card.top && event.clientY <= card.bottom) {
+      hoveredIssueId = null;
+      cancelHoverClose();
+      return;
+    }
     const target = markTargets.find(({ box }) => (
       event.clientX >= box.left && event.clientX <= box.right && event.clientY >= box.top && event.clientY <= box.bottom
     ));
