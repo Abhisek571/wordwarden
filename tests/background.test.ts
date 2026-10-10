@@ -1,0 +1,138 @@
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { DEFAULT_SETTINGS, type TypeCheckSettings } from '#/core/settings';
+
+const storage = vi.hoisted(() => ({
+  loadSettings: vi.fn<() => Promise<TypeCheckSettings>>(),
+  saveSettings: vi.fn<(settings: TypeCheckSettings) => Promise<void>>(),
+  clearSettings: vi.fn<() => Promise<void>>(),
+  recordTypingStats: vi.fn<(delta: unknown) => Promise<void>>(),
+}));
+
+vi.mock('#/core/storage', () => storage);
+vi.mock('wxt/browser', () => ({
+  browser: {
+    runtime: {
+      getManifest: vi.fn(),
+      getPlatformInfo: vi.fn(),
+      onMessage: { addListener: vi.fn() },
+    },
+  },
+}));
+
+beforeEach(() => {
+  vi.resetModules();
+  vi.clearAllMocks();
+  vi.stubGlobal('defineBackground', vi.fn());
+});
+
+describe('background settings writes', () => {
+  it('serializes concurrent site updates so neither change is lost', async () => {
+    let stored: TypeCheckSettings = DEFAULT_SETTINGS;
+    storage.loadSettings.mockImplementation(async () => stored);
+    storage.saveSettings.mockImplementation(async (settings) => {
+      stored = settings;
+    });
+
+    const { handleRequest } = await import('../entrypoints/background');
+    await Promise.all([
+      handleRequest({ type: 'site:set-enabled', hostname: 'one.example', enabled: false }),
+      handleRequest({ type: 'site:set-enabled', hostname: 'two.example', enabled: false }),
+    ]);
+
+    expect(stored.disabledSites).toEqual(['one.example', 'two.example']);
+  });
+
+  it('rejects stale array edits without overwriting intervening dictionary additions', async () => {
+    const stored = { ...DEFAULT_SETTINGS, dictionary: ['newword'] };
+    storage.loadSettings.mockResolvedValue(stored);
+    const { handleRequest } = await import('../entrypoints/background');
+    await expect(handleRequest({
+      type: 'settings:update', patch: { dictionary: ['imported'] }, base: { dictionary: [] },
+    })).rejects.toThrow('Settings changed in another tab');
+    expect(storage.saveSettings).not.toHaveBeenCalled();
+  });
+
+  it.each([
+    ['dictionary', { dictionary: ['first'] }, { dictionary: ['second'] }, { dictionary: [] }],
+    ['ignored issue hashes', { ignoredIssueHashes: ['first'] }, { ignoredIssueHashes: ['second'] }, { ignoredIssueHashes: [] }],
+    ['disabled sites', { disabledSites: ['first.example'] }, { disabledSites: ['second.example'] }, { disabledSites: [] }],
+  ] as const)('rejects concurrent %s array edits with a conflict', async (_field, firstPatch, secondPatch, base) => {
+    let stored: TypeCheckSettings = DEFAULT_SETTINGS;
+    storage.loadSettings.mockImplementation(async () => stored);
+    storage.saveSettings.mockImplementation(async (settings) => {
+      stored = settings;
+    });
+    const { handleRequest } = await import('../entrypoints/background');
+
+    const [first, second] = await Promise.allSettled([
+      handleRequest({ type: 'settings:update', patch: firstPatch, base }),
+      handleRequest({ type: 'settings:update', patch: secondPatch, base }),
+    ]);
+
+    expect(first).toMatchObject({ status: 'fulfilled', value: { ok: true, settings: expect.any(Object) } });
+    expect(second).toMatchObject({
+      status: 'rejected',
+      reason: expect.objectContaining({ message: 'Settings changed in another tab. Reload this page and try again.' }),
+    });
+    expect(storage.saveSettings).toHaveBeenCalledTimes(1);
+  });
+
+  it('returns authoritative settings without saving a no-op patch', async () => {
+    const stored = { ...DEFAULT_SETTINGS, dictionary: ['existing'] };
+    storage.loadSettings.mockResolvedValue(stored);
+    const { handleRequest } = await import('../entrypoints/background');
+
+    await expect(handleRequest({ type: 'settings:update', patch: { dictionary: ['existing'] } }))
+      .resolves.toEqual({ ok: true, settings: stored });
+    expect(storage.saveSettings).not.toHaveBeenCalled();
+  });
+
+  it('records typing counts only while typing stats are on', async () => {
+    const delta = { characters: 120, typingMs: 30_000, mistakes: 2 };
+    storage.loadSettings.mockResolvedValue(DEFAULT_SETTINGS);
+    const { handleRequest } = await import('../entrypoints/background');
+    await expect(handleRequest({ type: 'typing-stats:add', delta })).resolves.toEqual({ ok: true });
+    expect(storage.recordTypingStats).toHaveBeenCalledWith(delta);
+
+    storage.recordTypingStats.mockClear();
+    storage.loadSettings.mockResolvedValue({ ...DEFAULT_SETTINGS, typingStats: false });
+    await handleRequest({ type: 'typing-stats:add', delta });
+    expect(storage.recordTypingStats).not.toHaveBeenCalled();
+    await expect(handleRequest({ type: 'typing-stats:add', delta: { ...delta, characters: -1 } }))
+      .resolves.toEqual({ ok: false, error: 'Invalid request.' });
+  });
+
+  it('saves a colour-vision change', async () => {
+    let stored: TypeCheckSettings = DEFAULT_SETTINGS;
+    storage.loadSettings.mockImplementation(async () => stored);
+    storage.saveSettings.mockImplementation(async (settings) => {
+      stored = settings;
+    });
+
+    const { handleRequest } = await import('../entrypoints/background');
+    await handleRequest({ type: 'settings:update', patch: { colorVision: 'red-green' } });
+
+    expect(stored.colorVision).toBe('red-green');
+  });
+
+  it('merges a settings patch with concurrent site changes', async () => {
+    let stored: TypeCheckSettings = DEFAULT_SETTINGS;
+    storage.loadSettings.mockImplementation(async () => stored);
+    storage.saveSettings.mockImplementation(async (settings) => {
+      stored = settings;
+    });
+
+    const { handleRequest } = await import('../entrypoints/background');
+    const [updateResponse, siteResponse] = await Promise.all([
+      handleRequest({ type: 'settings:update', patch: { enabled: false } }),
+      handleRequest({ type: 'site:set-enabled', hostname: 'example.com', enabled: false }),
+    ]);
+
+    expect(updateResponse).toEqual({ ok: true, settings: { ...DEFAULT_SETTINGS, enabled: false } });
+    expect(siteResponse).toEqual({
+      ok: true,
+      settings: { ...DEFAULT_SETTINGS, enabled: false, disabledSites: ['example.com'] },
+    });
+    expect(stored).toEqual({ ...DEFAULT_SETTINGS, enabled: false, disabledSites: ['example.com'] });
+  });
+});

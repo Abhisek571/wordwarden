@@ -1,0 +1,51 @@
+{
+  "name": "wordwarden",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Privacy-first local spelling and grammar browser extension.",
+  "license": "MIT",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "dev": "wxt",
+    "dev:firefox": "wxt -b firefox --mv3",
+    "build": "node scripts/run-wxt.mjs build chrome-mv3",
+    "build:firefox": "node scripts/run-wxt.mjs build firefox-mv3 -b firefox --mv3",
+    "zip": "node scripts/run-wxt.mjs zip chrome-mv3",
+    "zip:firefox": "node scripts/run-wxt.mjs zip firefox-mv3 -b firefox --mv3",
+    "compile": "wxt prepare && tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:e2e": "playwright test",
+    "evaluate:datasets": "vitest run -c vitest.evaluation.config.ts --disableConsoleIntercept",
+    "evaluate:benchmarks": "vitest run -c vitest.benchmark.config.ts --disableConsoleIntercept",
+    "lint:firefox": "node scripts/lint-firefox.mjs"
+  },
+  "dependencies": {
+    "dictionary-en": "4.0.0",
+    "dictionary-en-au": "3.0.0",
+    "dictionary-en-ca": "3.0.0",
+    "dictionary-en-gb": "3.0.0",
+    "harper.js": "2.7.0",
+    "nspell": "2.1.5",
+    "react": "19.2.8",
+    "react-dom": "19.2.8",
+    "subtlex-word-frequencies": "2.0.0"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.60.0",
+    "@types/chrome": "0.1.34",
+    "@types/node": "24.10.1",
+    "@types/nspell": "2.1.6",
+    "@types/react": "19.2.14",
+    "@types/react-dom": "19.2.3",
+    "happy-dom": "20.8.3",
+    "typescript": "5.9.3",
+    "vite": "8.0.5",
+    "vitest": "4.1.10",
+    "web-ext": "10.5.0",
+    "wxt": "0.21.3"
+  }
+}

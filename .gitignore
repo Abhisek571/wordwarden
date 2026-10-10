@@ -1,0 +1,23 @@
+node_modules/
+.wxt/
+.output/
+.cache/
+coverage/
+playwright-report/
+test-results/
+web-ext-artifacts/
+*.log
+
+# Local design-tool notes (not for the repo)
+PRODUCT.md
+DESIGN.md
+.impeccable/
+AGENTS.md
+.hermes/
+.code-review-graph/
+docs/plans/
+RELEASE_TODO.md
+docs/PROJECT_HANDOVER.md
+CLAUDE.md
+.claude/
+.codex/

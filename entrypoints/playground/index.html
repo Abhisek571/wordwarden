@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Wordwarden typing test</title>
+  </head>
+  <body>
+    <main>
+      <header class="intro">
+        <h1>Try your writing here.</h1>
+        <p>
+          Enter a sentence below, then pause for a moment. Click an underline to review and apply a
+          local suggestion.
+        </p>
+      </header>
+      <div class="workspace">
+        <section class="writing" aria-labelledby="editor-label">
+          <label id="editor-label" for="editor">Writing to check</label>
+          <div class="editor-wrap">
+            <div class="ghost" aria-hidden="true"><span class="ghost-typed"></span><span class="ghost-rest"></span></div>
+            <textarea id="editor" autofocus spellcheck="false">I has finished teh report, but we was late again.</textarea>
+          </div>
+          <p class="hint"><span class="privacy-ring" aria-hidden="true"></span>Everything stays on your device. Try replacing this text with your own.</p>
+          <ul class="keys" aria-label="Keyboard shortcuts">
+            <li><kbd>Esc</kbd> closes a suggestion</li>
+            <li><kbd>Ctrl</kbd> <kbd>Z</kbd> undoes a fix</li>
+            <li>Click the ring in the corner to open the first suggestion</li>
+          </ul>
+          <p id="playground-status" class="status" role="status"></p>
+        </section>
+        <aside class="test-panel" aria-labelledby="test-heading">
+          <div class="test-head">
+            <h2 id="test-heading">Typing test</h2>
+            <button type="button" class="panel-toggle" aria-expanded="true" aria-controls="test-body" aria-label="Hide typing test">
+              <svg viewBox="0 0 16 16" width="20" height="20" aria-hidden="true"><path d="M3 3.5 7.5 8 3 12.5M8.5 3.5 13 8l-4.5 4.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              <span class="panel-toggle-label">Hide</span>
+            </button>
+          </div>
+          <div id="test-body">
+            <p class="test-help">Start a test to get a paragraph to copy into the box. Speed counts from your first key.</p>
+            <div class="test-actions">
+              <button type="button" class="action primary" data-action="start">Start typing test</button>
+              <button type="button" class="action stop" data-action="stop" hidden>Stop test</button>
+              <button type="button" class="action" data-action="clear">Clear text field</button>
+            </div>
+            <p class="test-result" data-testid="test-result" role="status"></p>
+            <section class="bests" aria-labelledby="current-heading">
+              <div class="bests-head"><h3 id="current-heading">Current result</h3></div>
+              <dl class="current" data-testid="current" aria-live="off">
+                <div><dt>Time</dt><dd data-stat="time">–</dd></div>
+                <div><dt>WPM</dt><dd data-stat="wpm">–</dd></div>
+                <div><dt>Accuracy</dt><dd data-stat="accuracy">–</dd></div>
+                <div><dt>Mistakes</dt><dd data-stat="mistakes">–</dd></div>
+              </dl>
+              <div class="bests-head spaced"><h3 id="averages-heading">Personal average</h3>
+                <span class="bests-count" data-testid="average-count"></span></div>
+              <dl data-testid="averages">
+                <div><dt>Average time</dt><dd data-average="time">–</dd></div>
+                <div><dt>Average WPM</dt><dd data-average="wpm">–</dd></div>
+                <div><dt>Average accuracy</dt><dd data-average="accuracy">–</dd></div>
+                <div><dt>Average mistakes</dt><dd data-average="mistakes">–</dd></div>
+              </dl>
+              <div class="bests-head spaced"><h3 id="bests-heading">Personal best</h3></div>
+              <dl data-testid="bests">
+                <div><dt>Fastest time</dt><dd data-best="time">–</dd></div>
+                <div><dt>Best WPM</dt><dd data-best="wpm">–</dd></div>
+                <div><dt>Best accuracy</dt><dd data-best="accuracy">–</dd></div>
+                <div><dt>Fewest mistakes</dt><dd data-best="mistakes">–</dd></div>
+              </dl>
+              <p class="bests-note">Average and best only count finished typing tests on this page, not your typing on other websites.
+                <button type="button" class="link" data-action="reset-bests" hidden>Reset</button></p>
+            </section>
+            <p class="target" data-testid="test-target" hidden></p>
+          </div>
+        </aside>
+      </div>
+    </main>
+    <script type="module" src="./main.ts"></script>
+  </body>
+</html>
