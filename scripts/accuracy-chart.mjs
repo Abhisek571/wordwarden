@@ -89,7 +89,11 @@ if (GRAMMAR.length > 0) {
   y = legend(y + 50, GRAMMAR.map(([label, , color]) => [label, color]));
 }
 
-const height = y + 6;
+y += 14;
+parts.push(`<line x1="24" y1="${y}" x2="${width - 24}" y2="${y}" stroke="${hair}"/>`);
+y += 22;
+parts.push(`<text x="24" y="${y}" font-size="12" fill="${muted}">Generated automatically for every release except small bug fixes.</text>`);
+const height = y + 18;
 parts.unshift(
   `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" font-family="Segoe UI, system-ui, -apple-system, sans-serif" role="img" aria-label="Accuracy chart">`,
   `<rect width="100%" height="100%" rx="8" fill="${ground}"/>`,
