@@ -1,49 +1,81 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="760" height="470" viewBox="0 0 760 470" font-family="Segoe UI, system-ui, -apple-system, sans-serif" role="img" aria-label="Spelling accuracy chart">
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="792" viewBox="0 0 800 792" font-family="Segoe UI, system-ui, -apple-system, sans-serif" role="img" aria-label="Accuracy chart">
 <rect width="100%" height="100%" rx="8" fill="#fbfaf7"/>
-<text x="24" y="38" font-size="20" font-weight="700" fill="#1d1d1b">Spelling accuracy</text>
-<text x="24" y="60" font-size="13" fill="#6b6a66">Held-out test data, not used for tuning · v1.0.0 · Oct 2026</text>
-<line x1="230" y1="84" x2="230" y2="408" stroke="#e4e2dc"/>
-<text x="230" y="424" font-size="11" fill="#6b6a66" text-anchor="middle">0%</text>
-<line x1="347.5" y1="84" x2="347.5" y2="408" stroke="#e4e2dc"/>
-<text x="347.5" y="424" font-size="11" fill="#6b6a66" text-anchor="middle">25%</text>
-<line x1="465" y1="84" x2="465" y2="408" stroke="#e4e2dc"/>
-<text x="465" y="424" font-size="11" fill="#6b6a66" text-anchor="middle">50%</text>
-<line x1="582.5" y1="84" x2="582.5" y2="408" stroke="#e4e2dc"/>
-<text x="582.5" y="424" font-size="11" fill="#6b6a66" text-anchor="middle">75%</text>
-<line x1="700" y1="84" x2="700" y2="408" stroke="#e4e2dc"/>
-<text x="700" y="424" font-size="11" fill="#6b6a66" text-anchor="middle">100%</text>
-<text x="216" y="122" font-size="14" font-weight="600" fill="#1d1d1b" text-anchor="end">Typing test slips (Aalto)</text>
-<rect x="230" y="92" width="321.48" height="14" rx="2" fill="#2f7d5b"/>
-<text x="557.48" y="103" font-size="11.5" font-weight="600" fill="#1d1d1b">68.4%</text>
-<rect x="230" y="110" width="228.42" height="14" rx="2" fill="#1e6fd9"/>
-<text x="464.41999999999996" y="121" font-size="11.5" font-weight="600" fill="#1d1d1b">48.6%</text>
-<rect x="230" y="128" width="268.84000000000003" height="14" rx="2" fill="#8fb3e8"/>
-<text x="504.84000000000003" y="139" font-size="11.5" font-weight="600" fill="#1d1d1b">57.2%</text>
-<text x="216" y="198" font-size="14" font-weight="600" fill="#1d1d1b" text-anchor="end">Tweets (LexNorm2015)</text>
-<rect x="230" y="168" width="420.18" height="14" rx="2" fill="#2f7d5b"/>
-<text x="656.1800000000001" y="179" font-size="11.5" font-weight="600" fill="#1d1d1b">89.4%</text>
-<rect x="230" y="186" width="297.04" height="14" rx="2" fill="#1e6fd9"/>
-<text x="533.04" y="197" font-size="11.5" font-weight="600" fill="#1d1d1b">63.2%</text>
-<rect x="230" y="204" width="331.34999999999997" height="14" rx="2" fill="#8fb3e8"/>
-<text x="567.3499999999999" y="215" font-size="11.5" font-weight="600" fill="#1d1d1b">70.5%</text>
-<text x="216" y="274" font-size="14" font-weight="600" fill="#1d1d1b" text-anchor="end">Wikipedia misspellings</text>
-<rect x="230" y="244" width="464.36" height="14" rx="2" fill="#2f7d5b"/>
-<text x="700.36" y="255" font-size="11.5" font-weight="600" fill="#1d1d1b">98.8%</text>
-<rect x="230" y="262" width="418.77" height="14" rx="2" fill="#1e6fd9"/>
-<text x="654.77" y="273" font-size="11.5" font-weight="600" fill="#1d1d1b">89.1%</text>
-<rect x="230" y="280" width="445.56" height="14" rx="2" fill="#8fb3e8"/>
-<text x="681.56" y="291" font-size="11.5" font-weight="600" fill="#1d1d1b">94.8%</text>
-<text x="216" y="350" font-size="14" font-weight="600" fill="#1d1d1b" text-anchor="end">Birkbeck (children, students)</text>
-<rect x="230" y="320" width="431.93" height="14" rx="2" fill="#2f7d5b"/>
-<text x="667.9300000000001" y="331" font-size="11.5" font-weight="600" fill="#1d1d1b">91.9%</text>
-<rect x="230" y="338" width="196.92999999999998" height="14" rx="2" fill="#1e6fd9"/>
-<text x="432.92999999999995" y="349" font-size="11.5" font-weight="600" fill="#1d1d1b">41.9%</text>
-<rect x="230" y="356" width="232.18" height="14" rx="2" fill="#8fb3e8"/>
-<text x="468.18" y="367" font-size="11.5" font-weight="600" fill="#1d1d1b">49.4%</text>
-<rect x="230" y="444" width="12" height="12" rx="2" fill="#2f7d5b"/>
-<text x="248" y="454" font-size="12.5" fill="#1d1d1b">Caught</text>
-<rect x="308" y="444" width="12" height="12" rx="2" fill="#1e6fd9"/>
-<text x="326" y="454" font-size="12.5" fill="#1d1d1b">Right word first</text>
-<rect x="456" y="444" width="12" height="12" rx="2" fill="#8fb3e8"/>
-<text x="474" y="454" font-size="12.5" fill="#1d1d1b">Right word in top three</text>
+<line x1="272" y1="102" x2="272" y2="464" stroke="#e4e2dc"/>
+<text x="272" y="480" font-size="11" fill="#6b6a66" text-anchor="middle">0%</text>
+<line x1="388" y1="102" x2="388" y2="464" stroke="#e4e2dc"/>
+<text x="388" y="480" font-size="11" fill="#6b6a66" text-anchor="middle">25%</text>
+<line x1="504" y1="102" x2="504" y2="464" stroke="#e4e2dc"/>
+<text x="504" y="480" font-size="11" fill="#6b6a66" text-anchor="middle">50%</text>
+<line x1="620" y1="102" x2="620" y2="464" stroke="#e4e2dc"/>
+<text x="620" y="480" font-size="11" fill="#6b6a66" text-anchor="middle">75%</text>
+<line x1="736" y1="102" x2="736" y2="464" stroke="#e4e2dc"/>
+<text x="736" y="480" font-size="11" fill="#6b6a66" text-anchor="middle">100%</text>
+<line x1="272" y1="618" x2="272" y2="684" stroke="#e4e2dc"/>
+<text x="272" y="700" font-size="11" fill="#6b6a66" text-anchor="middle">0%</text>
+<line x1="388" y1="618" x2="388" y2="684" stroke="#e4e2dc"/>
+<text x="388" y="700" font-size="11" fill="#6b6a66" text-anchor="middle">25%</text>
+<line x1="504" y1="618" x2="504" y2="684" stroke="#e4e2dc"/>
+<text x="504" y="700" font-size="11" fill="#6b6a66" text-anchor="middle">50%</text>
+<line x1="620" y1="618" x2="620" y2="684" stroke="#e4e2dc"/>
+<text x="620" y="700" font-size="11" fill="#6b6a66" text-anchor="middle">75%</text>
+<line x1="736" y1="618" x2="736" y2="684" stroke="#e4e2dc"/>
+<text x="736" y="700" font-size="11" fill="#6b6a66" text-anchor="middle">100%</text>
+<text x="24" y="38" font-size="20" font-weight="700" fill="#1d1d1b">Accuracy</text>
+<text x="24" y="60" font-size="13" fill="#6b6a66">Held-out test data, not used for tuning · v1.1.0 · Oct 2026</text>
+<text x="24" y="92" font-size="14" font-weight="700" fill="#1d1d1b">Spelling</text>
+<text x="258" y="140" font-size="14" font-weight="600" fill="#1d1d1b" text-anchor="end">Typing test slips (Aalto)</text>
+<rect x="272" y="110" width="317.376" height="14" rx="2" fill="#2f7d5b"/>
+<text x="595.376" y="121" font-size="11.5" font-weight="600" fill="#1d1d1b">68.4%</text>
+<rect x="272" y="128" width="225.50400000000002" height="14" rx="2" fill="#1e6fd9"/>
+<text x="503.504" y="139" font-size="11.5" font-weight="600" fill="#1d1d1b">48.6%</text>
+<rect x="272" y="146" width="265.408" height="14" rx="2" fill="#8fb3e8"/>
+<text x="543.408" y="157" font-size="11.5" font-weight="600" fill="#1d1d1b">57.2%</text>
+<text x="258" y="214" font-size="14" font-weight="600" fill="#1d1d1b" text-anchor="end">Tweets (LexNorm2015)</text>
+<rect x="272" y="184" width="414.81600000000003" height="14" rx="2" fill="#2f7d5b"/>
+<text x="692.816" y="195" font-size="11.5" font-weight="600" fill="#1d1d1b">89.4%</text>
+<rect x="272" y="202" width="293.24800000000005" height="14" rx="2" fill="#1e6fd9"/>
+<text x="571.248" y="213" font-size="11.5" font-weight="600" fill="#1d1d1b">63.2%</text>
+<rect x="272" y="220" width="327.12" height="14" rx="2" fill="#8fb3e8"/>
+<text x="605.12" y="231" font-size="11.5" font-weight="600" fill="#1d1d1b">70.5%</text>
+<text x="258" y="288" font-size="14" font-weight="600" fill="#1d1d1b" text-anchor="end">Wikipedia misspellings</text>
+<rect x="272" y="258" width="458.432" height="14" rx="2" fill="#2f7d5b"/>
+<text x="736.432" y="269" font-size="11.5" font-weight="600" fill="#1d1d1b">98.8%</text>
+<rect x="272" y="276" width="413.424" height="14" rx="2" fill="#1e6fd9"/>
+<text x="691.424" y="287" font-size="11.5" font-weight="600" fill="#1d1d1b">89.1%</text>
+<rect x="272" y="294" width="439.87199999999996" height="14" rx="2" fill="#8fb3e8"/>
+<text x="717.872" y="305" font-size="11.5" font-weight="600" fill="#1d1d1b">94.8%</text>
+<text x="258" y="362" font-size="14" font-weight="600" fill="#1d1d1b" text-anchor="end">Birkbeck (children, students)</text>
+<rect x="272" y="332" width="426.41599999999994" height="14" rx="2" fill="#2f7d5b"/>
+<text x="704.4159999999999" y="343" font-size="11.5" font-weight="600" fill="#1d1d1b">91.9%</text>
+<rect x="272" y="350" width="194.416" height="14" rx="2" fill="#1e6fd9"/>
+<text x="472.416" y="361" font-size="11.5" font-weight="600" fill="#1d1d1b">41.9%</text>
+<rect x="272" y="368" width="229.216" height="14" rx="2" fill="#8fb3e8"/>
+<text x="507.216" y="379" font-size="11.5" font-weight="600" fill="#1d1d1b">49.4%</text>
+<text x="258" y="436" font-size="14" font-weight="600" fill="#1d1d1b" text-anchor="end">Children's writing (Holbrook)</text>
+<rect x="272" y="406" width="283.9680000000001" height="14" rx="2" fill="#2f7d5b"/>
+<text x="561.9680000000001" y="417" font-size="11.5" font-weight="600" fill="#1d1d1b">61.2%</text>
+<rect x="272" y="424" width="130.38400000000001" height="14" rx="2" fill="#1e6fd9"/>
+<text x="408.384" y="435" font-size="11.5" font-weight="600" fill="#1d1d1b">28.1%</text>
+<rect x="272" y="442" width="156.36800000000005" height="14" rx="2" fill="#8fb3e8"/>
+<text x="434.36800000000005" y="453" font-size="11.5" font-weight="600" fill="#1d1d1b">33.7%</text>
+<rect x="272" y="512" width="12" height="12" rx="2" fill="#2f7d5b"/>
+<text x="290" y="522" font-size="12.5" fill="#1d1d1b">Caught</text>
+<rect x="272" y="532" width="12" height="12" rx="2" fill="#1e6fd9"/>
+<text x="290" y="542" font-size="12.5" fill="#1d1d1b">Correct word first</text>
+<rect x="272" y="552" width="12" height="12" rx="2" fill="#8fb3e8"/>
+<text x="290" y="562" font-size="12.5" fill="#1d1d1b">Correct word in top three</text>
+<text x="24" y="608" font-size="14" font-weight="700" fill="#1d1d1b">Grammar</text>
+<text x="258" y="656" font-size="14" font-weight="600" fill="#1d1d1b" text-anchor="end">Learner essays (JFLEG)</text>
+<rect x="272" y="626" width="312.7360000000001" height="14" rx="2" fill="#b45309"/>
+<text x="590.7360000000001" y="637" font-size="11.5" font-weight="600" fill="#1d1d1b">67.4%</text>
+<rect x="272" y="644" width="269.58400000000006" height="14" rx="2" fill="#e0a458"/>
+<text x="547.5840000000001" y="655" font-size="11.5" font-weight="600" fill="#1d1d1b">58.1%</text>
+<rect x="272" y="662" width="52.432000000000016" height="14" rx="2" fill="#9a9893"/>
+<text x="330.432" y="673" font-size="11.5" font-weight="600" fill="#1d1d1b">11.3%</text>
+<rect x="272" y="716" width="12" height="12" rx="2" fill="#b45309"/>
+<text x="290" y="726" font-size="12.5" fill="#1d1d1b">Sentences with mistakes that get flagged</text>
+<rect x="272" y="736" width="12" height="12" rx="2" fill="#e0a458"/>
+<text x="290" y="746" font-size="12.5" fill="#1d1d1b">Fixes that move the text closer to a human correction</text>
+<rect x="272" y="756" width="12" height="12" rx="2" fill="#9a9893"/>
+<text x="290" y="766" font-size="12.5" fill="#1d1d1b">Correct sentences wrongly flagged (lower is better)</text>
 </svg>

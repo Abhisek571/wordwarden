@@ -24,16 +24,12 @@ latest zip from [Releases](../../releases) and load it yourself:
 
 ## Accuracy
 
-![Spelling accuracy chart](docs/accuracy.svg)
+![Accuracy chart](docs/accuracy.svg)
 
 Measured on public test sets that are not bundled with the extension, using held-out data that
 was not used for tuning. The chart is redrawn automatically for each bigger release.
 
-| Grammar and speed | Result |
-|---|---|
-| [JFLEG](https://github.com/keisks/jfleg) learner essays | flags 67.4% of sentences that need edits; 58.1% of first fixes move the text closer to a human correction |
-| JFLEG human-corrected text | 11.3% of sentences get any underline (an upper bound on false alarms) |
-| Speed | 85 ms median to check 535 words on a desktop PC |
+It checks 535 words in about 85 ms (median, desktop PC).
 
 Wordwarden catches most everyday typos but still misses many grammar and fluency problems, and
 typing slips that make another real word ("form" for "from"). Test sets, method and credits:
