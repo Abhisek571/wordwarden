@@ -18,6 +18,8 @@ jobs:
         with:
           node-version: 22
           cache: npm
+      # The lock file is written by npm 12; older npm versions reject it.
+      - run: npm install -g npm@12.0.2
       - run: npm ci
       - run: npm run compile
       - run: npm test
