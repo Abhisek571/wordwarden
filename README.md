@@ -15,7 +15,7 @@ only assets packaged with the extension.
 ## Install
 
 Wordwarden is on its way to Firefox Add-ons and the Chrome Web Store. Until then, download the
-latest zip from [Releases](../../releases) and load it yourself:
+latest zip from [Releases](https://github.com/Abhisek571/wordwarden/releases) and load it yourself:
 
 - **Chromium browsers:** unzip the `chrome` zip, open `chrome://extensions`, turn on
   Developer mode and choose **Load unpacked**.
