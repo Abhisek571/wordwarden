@@ -10,6 +10,7 @@ export default defineConfig({
   test: {
     environment: 'node',
     include: ['tests/benchmark-evaluation.test.ts'],
-    testTimeout: 1_800_000,
+    // The full run with LanguageTool takes about 35 minutes on GitHub's machines.
+    testTimeout: 4_800_000,
   },
 });
