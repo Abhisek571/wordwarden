@@ -29,8 +29,6 @@ latest zip from [Releases](https://github.com/Abhisek571/wordwarden/releases) an
 Measured on public test sets that are not bundled with the extension, using held-out data that
 was not used for tuning. The chart is redrawn automatically for each bigger release.
 
-It checks 535 words in about 85 ms (median, desktop PC).
-
 Wordwarden catches most everyday typos but still misses many grammar and fluency problems, and
 typing slips that make another real word ("form" for "from"). Test sets, method and credits:
 [docs/BENCHMARKS.md](docs/BENCHMARKS.md).
