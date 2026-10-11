@@ -13,8 +13,10 @@ import { exportDictionary, parseDictionaryImport, type DictionaryImportPreview }
 import { BrandMark, CloseIcon } from '#/ui/brand';
 import '#/ui/app.css';
 
+const PROJECT_URL = 'https://github.com/Abhisek571/wordwarden';
 // The project's GitHub new-issue page. Setting it to null hides the action.
-const GITHUB_ISSUE_URL: string | null = 'https://github.com/Abhisek571/wordwarden/issues/new';
+const GITHUB_ISSUE_URL: string | null = `${PROJECT_URL}/issues/new`;
+const LICENSE_URL = 'https://www.gnu.org/licenses/gpl-3.0.html';
 
 function Toggle(props: Readonly<{ enabled: boolean; label: string; onToggle: () => void; disabled?: boolean }>): React.JSX.Element {
   return (
@@ -452,6 +454,12 @@ function Options(): React.JSX.Element {
                 void runtimeRequest(Object.freeze({ type: 'data:clear' })).then((response) => { if (!response.ok) throw new Error(response.error); window.location.reload(); }).catch(reportError);
               }}>Delete all data</button></div>
           </section>
+
+          <footer className="settings-footer">
+            Wordwarden {browser.runtime?.getManifest?.().version} · Free software under the{' '}
+            <a href={LICENSE_URL} target="_blank" rel="noreferrer">GNU GPL v3.0 or later</a> ·{' '}
+            <a href={PROJECT_URL} target="_blank" rel="noreferrer">Source code on GitHub</a>
+          </footer>
         </div>
       </div>
       {reportOpen ? <div className="report-dialog-backdrop">
@@ -460,7 +468,7 @@ function Options(): React.JSX.Element {
           <div className="setting-row"><div><h3 id="report-heading" tabIndex={-1}>Diagnostic report</h3>
             <p id="report-description" className="muted">Generate a local diagnostic log to help investigate the issue. You can review it before sharing.</p></div>
             <button className="secondary compact" type="button" aria-label="Close diagnostic report" onClick={closeReport}>Close</button></div>
-          <div className="privacy-note">The log includes useful extension, browser, capability, settings-count, and error-state details. It excludes writing, page contents, passwords, tokens, form data, dictionary words, and ignored-issue values. Nothing is uploaded automatically.</div>
+          <div className="privacy-note">The log includes the extension and browser versions, your settings and counts, how checking went on the page you came from, and recent error messages with any quoted text removed. It excludes writing, page contents, passwords, tokens, form data, dictionary words, and ignored-issue values. Nothing is uploaded automatically.</div>
           <button className="primary" type="button" onClick={() => void generateReport().catch(reportError)}>Generate diagnostic log</button>
           {reportText !== null ? <div className="report-preview"><label htmlFor="diagnostic-report">Review before sharing</label>
             <textarea id="diagnostic-report" readOnly rows={18} value={reportText} />
