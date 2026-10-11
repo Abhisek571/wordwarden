@@ -217,9 +217,9 @@ const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="800" height="${heigh
 <line x1="24" y1="80" x2="776" y2="80" stroke="${RULE}"/>
 ${parts.join('\n')}
 <rect x="${left}" y="${y + 4}" width="12" height="12" rx="2" fill="${BLUE}"/>
-<text x="${left + 18}" y="${y + 14}" font-size="12.5" fill="${INK}">Wordwarden in Chromium (all tabs share one checker)</text>
+<text x="${left + 18}" y="${y + 14}" font-size="12.5" fill="${INK}">Wordwarden</text>
 <rect x="${left}" y="${y + 24}" width="12" height="12" rx="2" fill="${GREY}"/>
-<text x="${left + 18}" y="${y + 34}" font-size="12.5" fill="${INK}">LanguageTool server (default setup, without the 8 GB n-gram data)</text>
+<text x="${left + 18}" y="${y + 34}" font-size="12.5" fill="${INK}">LanguageTool server</text>
 <line x1="24" y1="${footer}" x2="776" y2="${footer}" stroke="${RULE}"/>
 <text x="24" y="${footer + 22}" font-size="12" fill="${MUTED}">Measured on ${machine}. Memory is private memory; CPU time is summed over all cores. Check times are</text>
 <text x="24" y="${footer + 38}" font-size="12" fill="${MUTED}">the median of ${RUNS} checks of the same text. LanguageTool also needs its own browser extension, which is not counted.</text>
