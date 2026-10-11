@@ -53,6 +53,8 @@ jobs:
           name: libreoffice
           path: .output/*.oxt
           if-no-files-found: error
+          # .output starts with a dot, which the upload skips unless told otherwise.
+          include-hidden-files: true
 
   release:
     needs: libreoffice
