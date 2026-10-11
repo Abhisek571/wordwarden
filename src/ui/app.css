@@ -92,7 +92,7 @@ select, input[type="text"], input[type="search"] { width: 100%; min-height: 36px
 select:hover, input[type="text"]:hover, input[type="search"]:hover { border-color: var(--ink-2); }
 input::placeholder, textarea::placeholder { color: var(--ink-2); opacity: 1; }
 .input-row { display: grid; grid-template-columns: 1fr auto; gap: 8px; }
-.input-row.spaced:has(input[type="search"]) { grid-template-columns: 1fr auto auto; }
+.input-row.spaced:has(input[type="search"]) { grid-template-columns: 1fr; }
 label.secondary { display: inline-flex; position: relative; color: var(--ink); font-size: 13px; font-weight: 600; cursor: pointer; }
 label.secondary input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
 .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
@@ -172,6 +172,8 @@ textarea { width: 100%; resize: vertical; border: 1px solid var(--hair); border-
 .report-preview { display: grid; gap: 8px; padding-top: 4px; }
 .report-preview textarea { min-height: 300px; resize: vertical; font: 12px/1.5 var(--mono); }
 .button-row { display: flex; flex-wrap: wrap; gap: 8px; }
+.setting-row > .button-row { flex-shrink: 0; }
+.setting-row + .warning { margin-top: 12px; }
 
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }

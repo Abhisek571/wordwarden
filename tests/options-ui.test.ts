@@ -94,9 +94,9 @@ describe('options settings UI', () => {
       enabled: true, dialect: 'american', disabledSites: [], dictionary: [], ignoredIssueHashes: [], googleDocsWarningDismissed: false, colorVision: 'standard', customUnderlines: DEFAULT_CUSTOM_UNDERLINES, applyShortcut: 'alt', ignoreCapitals: true,
     } });
     await renderOptions();
-    await waitFor(() => expect(document.querySelector('[data-testid="dictionary-import"]')).not.toBeNull());
-    const input = document.querySelector<HTMLInputElement>('[data-testid="dictionary-import"]');
-    if (input === null) throw new Error('Dictionary import input is missing.');
+    await waitFor(() => expect(document.querySelector('[data-testid="settings-import"]')).not.toBeNull());
+    const input = document.querySelector<HTMLInputElement>('[data-testid="settings-import"]');
+    if (input === null) throw new Error('Settings import input is missing.');
     const selectFile = (file: File): void => {
       Object.defineProperty(input, 'files', { configurable: true, value: [file] });
       input.dispatchEvent(new Event('change', { bubbles: true }));

@@ -299,7 +299,7 @@ test('does not annotate tokenized payment or OTP fields', async () => {
   await page.close();
 });
 
-test('persists the dialect and manages dictionary import, search, and export', async () => {
+test('persists the dialect, searches the dictionary, and imports and exports settings', async () => {
   if (context === null) throw new Error('Extension browser context did not start.');
   const popup = await context.newPage();
   await popup.goto(`chrome-extension://${loadedExtensionId()}/options.html`);
@@ -311,28 +311,37 @@ test('persists the dialect and manages dictionary import, search, and export', a
   await options.getByTestId('dictionary-word').fill('TypeCheckTestWord');
   await options.getByRole('button', { name: 'Add word', exact: true }).click();
   await expect(options.getByTestId('dictionary-word')).toHaveValue('');
-  await options.getByTestId('dictionary-import').setInputFiles({
+  await options.getByTestId('settings-import').setInputFiles({
     name: 'words.txt', mimeType: 'text/plain', buffer: Buffer.from('TypeCheckTestWord\nImportedTestWord\n'),
   });
   await expect(options.getByText('Merge 1 new word with the current dictionary?')).toBeVisible();
-  await options.getByRole('button', { name: 'Confirm merge', exact: true }).click();
+  await options.getByRole('button', { name: 'Confirm import', exact: true }).click();
   await expect(options.getByRole('button', { name: 'Remove ImportedTestWord', exact: true })).toBeVisible();
   await options.getByRole('searchbox', { name: 'Search dictionary' }).fill('Imported');
   await expect(options.getByRole('button', { name: 'Remove TypeCheckTestWord', exact: true })).toHaveCount(0);
   const downloadPromise = options.waitForEvent('download');
   await options.getByRole('button', { name: 'Export', exact: true }).click();
   const download = await downloadPromise;
-  expect(download.suggestedFilename()).toBe('wordwarden-dictionary.txt');
+  expect(download.suggestedFilename()).toBe('wordwarden-settings.json');
   const stream = await download.createReadStream();
-  if (stream === null) throw new Error('Dictionary export was not downloaded.');
+  if (stream === null) throw new Error('Settings export was not downloaded.');
   const chunks: Buffer[] = [];
   for await (const chunk of stream) chunks.push(Buffer.from(chunk));
-  expect(Buffer.concat(chunks).toString('utf8')).toContain('TypeCheckTestWord');
-  expect(Buffer.concat(chunks).toString('utf8')).toContain('ImportedTestWord');
-  expect(Buffer.concat(chunks).toString('utf8').split(/\r?\n/u)).not.toContain('OpenAI');
-  expect(Buffer.concat(chunks).toString('utf8').split(/\r?\n/u)).not.toContain('SpaceX');
+  const exported = JSON.parse(Buffer.concat(chunks).toString('utf8')) as { settings: { dialect: string; dictionary: string[] } };
+  expect(exported.settings.dialect).toBe('australian');
+  expect(exported.settings.dictionary).toEqual(expect.arrayContaining(['TypeCheckTestWord', 'ImportedTestWord']));
+  expect(exported.settings.dictionary).not.toContain('OpenAI');
+  expect(exported.settings.dictionary).not.toContain('SpaceX');
+  await options.getByTestId('settings-import').setInputFiles({
+    name: 'wordwarden-settings.json', mimeType: 'application/json',
+    buffer: Buffer.from(JSON.stringify({ format: 'wordwarden-settings', version: 1, settings: { ...exported.settings, dialect: 'canadian' } })),
+  });
+  await expect(options.getByText('Replace your current settings with this file?', { exact: false })).toBeVisible();
+  await options.getByRole('button', { name: 'Confirm import', exact: true }).click();
+  await expect(options.getByTestId('dialect')).toHaveValue('canadian');
   await options.reload();
   await expect(options.getByRole('button', { name: 'Remove ImportedTestWord', exact: true })).toBeVisible();
+  await expect(options.getByTestId('dialect')).toHaveValue('canadian');
   await options.close();
   await popup.close();
 });

@@ -2,15 +2,10 @@ import { describe, expect, it } from 'vitest';
 import {
   MAX_DICTIONARY_IMPORT_BYTES,
   MAX_DICTIONARY_WORDS,
-  exportDictionary,
   parseDictionaryImport,
 } from '#/core/dictionary-transfer';
 
 describe('dictionary transfer', () => {
-  it('exports a sorted plain-text dictionary', () => {
-    expect(exportDictionary(['Zulu', 'alpha', 'Beta'])).toBe('alpha\nBeta\nZulu\n');
-  });
-
   it('previews a deduplicated merge without replacing existing words', () => {
     expect(parseDictionaryImport('Beta\nalpha\nbeta\n', ['Alpha', 'zulu'])).toEqual({
       words: ['Alpha', 'Beta', 'zulu'],

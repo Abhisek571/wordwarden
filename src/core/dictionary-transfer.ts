@@ -19,10 +19,6 @@ function uniqueWords(words: readonly string[]): string[] {
   });
 }
 
-export function exportDictionary(words: readonly string[]): string {
-  return [...uniqueWords(words)].sort(compareWords).join('\n') + (words.length === 0 ? '' : '\n');
-}
-
 export function parseDictionaryImport(text: string, existing: readonly string[]): DictionaryImportPreview {
   if (new TextEncoder().encode(text).byteLength > MAX_DICTIONARY_IMPORT_BYTES) {
     throw new Error('Dictionary import is too large.');

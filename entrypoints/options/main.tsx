@@ -9,7 +9,7 @@ import {
 import { isSafeHostname } from '#/core/diagnostics';
 import { runtimeRequest } from '#/ui/runtime';
 import { updateSettings } from '#/ui/settings-update';
-import { exportDictionary, parseDictionaryImport, type DictionaryImportPreview } from '#/core/dictionary-transfer';
+import { exportSettings, parseSettingsImport, type SettingsImportPreview } from '#/core/settings-transfer';
 import { BrandMark, CloseIcon } from '#/ui/brand';
 import '#/ui/app.css';
 
@@ -150,7 +150,7 @@ function Options(): React.JSX.Element {
   const [settings, setSettings] = useState<TypeCheckSettings | null>(null);
   const [newWord, setNewWord] = useState('');
   const [dictionarySearch, setDictionarySearch] = useState('');
-  const [importPreview, setImportPreview] = useState<DictionaryImportPreview | null>(null);
+  const [importPreview, setImportPreview] = useState<SettingsImportPreview | null>(null);
   const [saving, setSaving] = useState(false);
   const saveLock = useRef(false);
   const [message, setMessage] = useState('');
@@ -294,17 +294,17 @@ function Options(): React.JSX.Element {
     if (await save({ ...settings, dictionary: [...new Set([...settings.dictionary, word])].sort() })) setNewWord('');
   }
 
-  async function importDictionary(file: File | undefined): Promise<void> {
+  async function importSettingsFile(file: File | undefined): Promise<void> {
     if (file === undefined) return;
     setImportPreview(null);
-    setImportPreview(parseDictionaryImport(await file.text(), currentSettings.dictionary));
+    setImportPreview(parseSettingsImport(await file.text(), currentSettings));
   }
 
-  function downloadDictionary(): void {
-    const url = URL.createObjectURL(new Blob([exportDictionary(currentSettings.dictionary)], { type: 'text/plain' }));
+  function downloadSettings(): void {
+    const url = URL.createObjectURL(new Blob([exportSettings(currentSettings)], { type: 'application/json' }));
     const link = document.createElement('a');
     link.href = url;
-    link.download = 'wordwarden-dictionary.txt';
+    link.download = 'wordwarden-settings.json';
     link.click();
     URL.revokeObjectURL(url);
   }
@@ -412,12 +412,7 @@ function Options(): React.JSX.Element {
                 aria-label="Dictionary word" placeholder="Add a word, e.g. a name or brand" onChange={(event) => setNewWord(event.target.value)}
                 onKeyDown={(event) => { if (event.key === 'Enter') void addWord().catch(reportError); }} />
                 <button className="primary" type="button" disabled={saving} onClick={() => void addWord().catch(reportError)}>Add word</button></div>
-              <div className="input-row spaced"><input type="search" value={dictionarySearch} aria-label="Search dictionary" placeholder="Search words" onChange={(event) => setDictionarySearch(event.target.value)} />
-                <button className="secondary" type="button" onClick={downloadDictionary}>Export</button>
-                <label className="secondary">Import<input data-testid="dictionary-import" type="file" accept="text/plain" disabled={saving} onChange={(event) => { void importDictionary(event.currentTarget.files?.[0]).catch(reportError); event.currentTarget.value = ''; }} /></label></div>
-              {importPreview !== null ? <div className="warning"><p>Merge {importPreview.addedCount} new word{importPreview.addedCount === 1 ? '' : 's'} with the current dictionary?</p>
-                <button className="primary" type="button" disabled={saving} onClick={() => void save({ ...settings, dictionary: importPreview.words }).then((saved) => { if (saved) setImportPreview(null); }).catch(reportError)}>Confirm merge</button>
-                <button className="secondary" type="button" disabled={saving} onClick={() => setImportPreview(null)}>Cancel</button></div> : null}
+              <div className="input-row spaced"><input type="search" value={dictionarySearch} aria-label="Search dictionary" placeholder="Search words" onChange={(event) => setDictionarySearch(event.target.value)} /></div>
               {settings.dictionary.length === 0 ? <p className="empty-state">No personal words added.</p> : dictionaryWords.length === 0 ? <p className="empty-state">No matching personal words.</p> : null}
               <ul className="chips" aria-label="Personal dictionary words">{dictionaryWords.map((word) => (
                 <li className="chip" key={word}>{word}<button type="button" disabled={saving} aria-label={`Remove ${word}`}
@@ -435,8 +430,15 @@ function Options(): React.JSX.Element {
           </section>
 
           <section id="advanced" className="settings-section" aria-labelledby="advanced-heading">
-            <div className="section-heading"><h2 id="advanced-heading">Advanced</h2><p>Sites Wordwarden cannot check.</p></div>
-            <div className="card"><h3>Google Docs and Sheets</h3><p className="muted">Docs and Sheets draw their text in a way Wordwarden cannot read, so it stays quiet there: no underlines, no pop-ups, and no changes to your documents.</p></div>
+            <div className="section-heading"><h2 id="advanced-heading">Advanced</h2><p>Back up your settings or move them to another browser.</p></div>
+            <div className="card">
+              <div className="setting-row"><div><h3>Export and import settings</h3><p className="muted">The file holds all your settings, including your dictionary and turned-off websites. Import also accepts a plain word list, one word per line.</p></div>
+                <div className="button-row"><button className="secondary" type="button" onClick={downloadSettings}>Export</button>
+                  <label className="secondary">Import<input data-testid="settings-import" type="file" accept=".json,.txt,application/json,text/plain" disabled={saving} onChange={(event) => { void importSettingsFile(event.currentTarget.files?.[0]).catch(reportError); event.currentTarget.value = ''; }} /></label></div></div>
+              {importPreview !== null ? <div className="warning"><p>{importPreview.summary}</p>
+                <button className="primary" type="button" disabled={saving} onClick={() => void save(importPreview.settings).then((saved) => { if (saved) setImportPreview(null); }).catch(reportError)}>Confirm import</button>
+                <button className="secondary" type="button" disabled={saving} onClick={() => setImportPreview(null)}>Cancel</button></div> : null}
+            </div>
           </section>
 
           <section id="support" className="settings-section" aria-labelledby="support-heading">
