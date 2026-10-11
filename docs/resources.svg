@@ -4,30 +4,30 @@
 <text x="24" y="60" font-size="13" fill="#6b6a66">The newest Wordwarden release against the newest LanguageTool server, on the same machine. Shorter is better.</text>
 <line x1="24" y1="80" x2="776" y2="80" stroke="#e4e2dc"/>
 <text x="258" y="126" font-size="14" font-weight="600" fill="#1d1d1b" text-anchor="end">Memory while checking, 1 tab</text>
-<rect x="272" y="104" width="111.0" height="16" rx="2" fill="#1e6fd9"/>
-<text x="389.0" y="116.5" font-size="12" font-weight="600" fill="#1d1d1b">231 MB</text>
+<rect x="272" y="104" width="109.3" height="16" rx="2" fill="#1e6fd9"/>
+<text x="387.3" y="116.5" font-size="12" font-weight="600" fill="#1d1d1b">234 MB</text>
 <rect x="272" y="124" width="378.0" height="16" rx="2" fill="#9a9893"/>
-<text x="656.0" y="136.5" font-size="12" font-weight="600" fill="#1d1d1b">788 MB</text>
+<text x="656.0" y="136.5" font-size="12" font-weight="600" fill="#1d1d1b">808 MB</text>
 <text x="258" y="192" font-size="14" font-weight="600" fill="#1d1d1b" text-anchor="end">Memory while checking, 3 tabs</text>
-<rect x="272" y="170" width="128.6" height="16" rx="2" fill="#1e6fd9"/>
-<text x="406.6" y="182.5" font-size="12" font-weight="600" fill="#1d1d1b">268 MB</text>
+<rect x="272" y="170" width="124.0" height="16" rx="2" fill="#1e6fd9"/>
+<text x="402.0" y="182.5" font-size="12" font-weight="600" fill="#1d1d1b">265 MB</text>
 <rect x="272" y="190" width="378.0" height="16" rx="2" fill="#9a9893"/>
-<text x="656.0" y="202.5" font-size="12" font-weight="600" fill="#1d1d1b">788 MB</text>
+<text x="656.0" y="202.5" font-size="12" font-weight="600" fill="#1d1d1b">808 MB</text>
 <text x="258" y="258" font-size="14" font-weight="600" fill="#1d1d1b" text-anchor="end">CPU time to start</text>
-<rect x="272" y="236" width="65.4" height="16" rx="2" fill="#1e6fd9"/>
-<text x="343.4" y="248.5" font-size="12" font-weight="600" fill="#1d1d1b">3.2 s</text>
+<rect x="272" y="236" width="67.2" height="16" rx="2" fill="#1e6fd9"/>
+<text x="345.2" y="248.5" font-size="12" font-weight="600" fill="#1d1d1b">3.3 s</text>
 <rect x="272" y="256" width="378.0" height="16" rx="2" fill="#9a9893"/>
 <text x="656.0" y="268.5" font-size="12" font-weight="600" fill="#1d1d1b">19 s</text>
 <text x="258" y="324" font-size="14" font-weight="600" fill="#1d1d1b" text-anchor="end">Time to check 492 words</text>
-<rect x="272" y="302" width="251.4" height="16" rx="2" fill="#1e6fd9"/>
-<text x="529.4" y="314.5" font-size="12" font-weight="600" fill="#1d1d1b">185 ms</text>
+<rect x="272" y="302" width="263.0" height="16" rx="2" fill="#1e6fd9"/>
+<text x="541.0" y="314.5" font-size="12" font-weight="600" fill="#1d1d1b">200 ms</text>
 <rect x="272" y="322" width="378.0" height="16" rx="2" fill="#9a9893"/>
-<text x="656.0" y="334.5" font-size="12" font-weight="600" fill="#1d1d1b">279 ms</text>
+<text x="656.0" y="334.5" font-size="12" font-weight="600" fill="#1d1d1b">287 ms</text>
 <text x="258" y="390" font-size="14" font-weight="600" fill="#1d1d1b" text-anchor="end">CPU time per check</text>
-<rect x="272" y="368" width="137.1" height="16" rx="2" fill="#1e6fd9"/>
-<text x="415.1" y="380.5" font-size="12" font-weight="600" fill="#1d1d1b">219 ms</text>
+<rect x="272" y="368" width="154.4" height="16" rx="2" fill="#1e6fd9"/>
+<text x="432.4" y="380.5" font-size="12" font-weight="600" fill="#1d1d1b">261 ms</text>
 <rect x="272" y="388" width="378.0" height="16" rx="2" fill="#9a9893"/>
-<text x="656.0" y="400.5" font-size="12" font-weight="600" fill="#1d1d1b">605 ms</text>
+<text x="656.0" y="400.5" font-size="12" font-weight="600" fill="#1d1d1b">638 ms</text>
 <text x="258" y="456" font-size="14" font-weight="600" fill="#1d1d1b" text-anchor="end">Size on disk</text>
 <rect x="272" y="434" width="20.8" height="16" rx="2" fill="#1e6fd9"/>
 <text x="298.8" y="446.5" font-size="12" font-weight="600" fill="#1d1d1b">21 MB</text>
