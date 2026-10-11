@@ -1,6 +1,7 @@
 import { isApplyShortcut, isColorVision, isCustomUnderlines, isDialect, isFixEffect, isTypeCheckSettings, type TypeCheckSettings } from './settings';
 import { isDiagnostics, isSafeHostname, type Diagnostics } from './diagnostics';
 import { isTypingStatsDelta, type TypingStatsDelta } from './typing-stats';
+import type { WritingIssue } from './types';
 export type { Diagnostics } from './diagnostics';
 
 /** Sent by the background to the content script of one tab; answered with a PageStatus. */
@@ -96,11 +97,16 @@ export type RuntimeRequest =
     }>
   | Readonly<{ type: 'error:report'; message: string }>
   | Readonly<{ type: 'typing-stats:add'; delta: TypingStatsDelta }>
-  | Readonly<{ type: 'data:clear' }>;
+  | Readonly<{ type: 'data:clear' }>
+  /** Checks text with the shared engine in the background. */
+  | Readonly<{ type: 'engine:lint'; text: string }>
+  /** Sent while a text box has focus, so the background (and its engine) is not shut down mid-writing. */
+  | Readonly<{ type: 'engine:keep-alive' }>;
 
 export type RuntimeResponse =
   | Readonly<{ ok: true; settings: TypeCheckSettings }>
   | Readonly<{ ok: true; diagnostics: Diagnostics }>
+  | Readonly<{ ok: true; issues: readonly WritingIssue[] }>
   | Readonly<{ ok: true }>
   | Readonly<{ ok: false; error: string }>;
 
@@ -111,9 +117,11 @@ export function isRuntimeResponse(value: unknown): value is RuntimeResponse {
   if (record.ok !== true) return false;
   const hasSettings = 'settings' in record;
   const hasDiagnostics = 'diagnostics' in record;
-  if (hasSettings && hasDiagnostics) return false;
+  const hasIssues = 'issues' in record;
+  if (Number(hasSettings) + Number(hasDiagnostics) + Number(hasIssues) > 1) return false;
   if (hasSettings && !isTypeCheckSettings(record.settings)) return false;
   if (hasDiagnostics && !isDiagnostics(record.diagnostics)) return false;
+  if (hasIssues && !Array.isArray(record.issues)) return false;
   return true;
 }
 
@@ -122,10 +130,12 @@ export function isRuntimeRequest(value: unknown): value is RuntimeRequest {
   const record = value as Record<string, unknown>;
   if (
     record.type === 'settings:get' ||
-    record.type === 'data:clear'
+    record.type === 'data:clear' ||
+    record.type === 'engine:keep-alive'
   ) {
     return true;
   }
+  if (record.type === 'engine:lint') return typeof record.text === 'string';
   if (record.type === 'diagnostics:get') {
     return (
       (record.hostname === null || isSafeHostname(record.hostname)) &&

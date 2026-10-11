@@ -5,8 +5,11 @@ import {
 import { PAGE_STATUS_REQUEST, isRuntimeRequest, type Diagnostics, type RuntimeResponse } from '#/core/messages';
 import { mergeSettings, parseSettings, type TypeCheckSettings } from '#/core/settings';
 import { createDiagnostics, isPageStatus, type PageStatus, type RecentError } from '#/core/diagnostics';
+import { createEngineService } from '#/engines/engine-service';
 
 const PAGE_STATUS_TIMEOUT_MS = 1500;
+// Started on the first check. The browser frees it with the rest of the background after a short idle time.
+const engine = createEngineService();
 let settingsWriteTail: Promise<void> = Promise.resolve();
 let errorWriteTail: Promise<void> = Promise.resolve();
 
@@ -86,6 +89,11 @@ export async function handleRequest(request: unknown): Promise<RuntimeResponse> 
   if (request.type === 'error:report') {
     await recordError('page', request.message);
     return Object.freeze({ ok: true });
+  }
+  if (request.type === 'engine:keep-alive') return Object.freeze({ ok: true });
+  if (request.type === 'engine:lint') {
+    const issues = await engine.lint(request.text, await loadSettings());
+    return Object.freeze({ ok: true, issues });
   }
   if (request.type === 'data:clear') {
     return enqueueSettingsWrite(async () => {

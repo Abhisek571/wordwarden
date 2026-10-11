@@ -10,7 +10,6 @@ import { createEditorEffectQueue } from '#/core/effect-queue';
 import { issueMatchesText, rebaseIssuesAfterReplacement } from '#/core/issue-ranges';
 import { mergeSettings, parseSettings, type TypeCheckSettings } from '#/core/settings';
 import type { EditorAdapter, EditorSnapshot, WritingIssue } from '#/core/types';
-import { createHarperEngine, type HarperEngine } from '#/engines/harper-engine';
 import { caretOffset, createEditorAdapter } from '#/editors/editor-adapter';
 import { isCapitalsWord } from '#/core/popular-vocabulary';
 import { createTypingMeter, typedCharacterCount } from '#/core/typing-stats';
@@ -19,6 +18,8 @@ import { updateSettings } from '#/ui/settings-update';
 import { createTypeCheckOverlay, type TypeCheckOverlay } from '#/ui/overlay';
 
 const LINT_DEBOUNCE_MS = 260;
+// Browsers stop an idle extension background after about 30 seconds, and with it the checking engine.
+const ENGINE_KEEP_ALIVE_MS = 20_000;
 const TYPING_STATS_FLUSH_MS = 10_000;
 // A mistake counts toward typing accuracy only inside the text typed since the last check, not older text.
 const TYPED_MISTAKE_SLACK = 2;
@@ -97,8 +98,7 @@ export async function startTypeCheck(context: Readonly<{
     if (!isAvailable()) return;
 
     const effects = createEditorEffectQueue();
-    let harper: HarperEngine | null = null;
-    let harperReady: Promise<void> | null = null;
+    let keepAliveTimer: number | null = null;
     let activeWritingConfiguration = writingConfigurationKey(settings);
     let writingConfigurationRevision = 0;
     let engineQueue: Promise<void> = Promise.resolve();
@@ -149,7 +149,9 @@ export async function startTypeCheck(context: Readonly<{
     }
 
     function onPageHidden(): void {
-      if (document.visibilityState === 'hidden') flushTypingStats();
+      if (document.visibilityState !== 'hidden') return;
+      flushTypingStats();
+      stopKeepingEngineAlive();
     }
 
     function enqueueEngineOperation<T>(operation: () => Promise<T>): Promise<T> {
@@ -237,24 +239,10 @@ export async function startTypeCheck(context: Readonly<{
       )));
     }
 
+    // The background rebuilds its engine for the new settings on the next check; this tab only checks again.
     function queueWritingEngineReset(targetRevision: number): Promise<void> {
       effects.cancel();
-      const previousHarper = harper;
-      const previousReady = harperReady;
-      harper = null;
-      harperReady = null;
       return enqueueEngineOperation(async () => {
-        if (previousReady !== null) {
-          try {
-            await previousReady;
-          } catch (error) {
-            if (!invalidated) {
-              reportError(`Previous grammar checker stopped: ${errorText(error)}`);
-              overlay.showStatus(`Previous grammar checker stopped: ${errorText(error)}`);
-            }
-          }
-        }
-        if (previousHarper !== null) await previousHarper.dispose();
         if (
           !invalidated &&
           targetRevision === writingConfigurationRevision &&
@@ -286,25 +274,31 @@ export async function startTypeCheck(context: Readonly<{
       await applySettings(saved);
     }
 
-    async function ensureHarper(): Promise<HarperEngine> {
-      if (harper === null) harper = createHarperEngine();
-      const engine = harper;
-      // The field badge shows "checking" while the engine starts.
-      if (harperReady === null) {
-        checkerState = 'starting';
-        harperReady = engine.setup(settings.dialect, settings.dictionary).then(
-          () => { checkerState = 'ready'; },
-          (error: unknown) => {
-            checkerState = 'failed';
-            throw error;
-          },
-        );
+    async function lintText(text: string): Promise<readonly WritingIssue[]> {
+      if (checkerState !== 'ready') checkerState = 'starting';
+      try {
+        const answer = await sendRequest(Object.freeze({ type: 'engine:lint', text }));
+        if (!answer.ok) throw new Error(answer.error);
+        if (!('issues' in answer)) throw new Error('Checker response is missing data.');
+        checkerState = 'ready';
+        return answer.issues;
+      } catch (error) {
+        checkerState = 'failed';
+        throw error;
       }
-      const ready = harperReady;
-      await ready;
-      return engine;
     }
 
+    function keepEngineAlive(): void {
+      if (keepAliveTimer !== null) return;
+      keepAliveTimer = window.setInterval(() => {
+        void sendRequest(Object.freeze({ type: 'engine:keep-alive' })).catch(() => undefined);
+      }, ENGINE_KEEP_ALIVE_MS);
+    }
+
+    function stopKeepingEngineAlive(): void {
+      if (keepAliveTimer !== null) window.clearInterval(keepAliveTimer);
+      keepAliveTimer = null;
+    }
 
     async function analyze(adapter: EditorAdapter, snapshot: EditorSnapshot): Promise<void> {
       const sourceRevision = snapshot.revision;
@@ -323,9 +317,8 @@ export async function startTypeCheck(context: Readonly<{
           return;
         }
         try {
-          const engine = await ensureHarper();
           const started = performance.now();
-          const issues = await engine.lint(snapshot.text);
+          const issues = await lintText(snapshot.text);
           lastCheckMs = Math.round(performance.now() - started);
           if (isStale()) return;
           currentIssues = visibleIssues(issues);
@@ -365,6 +358,7 @@ export async function startTypeCheck(context: Readonly<{
         currentIssues = Object.freeze([]);
         overlay.clear();
       }
+      keepEngineAlive();
       scheduleAnalysis(activeAdapter);
     }
 
@@ -392,6 +386,7 @@ export async function startTypeCheck(context: Readonly<{
       // Focus moving into the suggestion card or badge keeps the badge visible.
       const next = event.relatedTarget;
       if (next instanceof Element && next.id === 'typecheck-root') return;
+      stopKeepingEngineAlive();
       overlay.hideBadge();
     }
 
@@ -476,22 +471,7 @@ export async function startTypeCheck(context: Readonly<{
       document.removeEventListener('visibilitychange', onPageHidden);
       browser.storage.onChanged.removeListener(onStorageChanged);
       flushTypingStats();
-      const previousHarper = harper;
-      const previousReady = harperReady;
-      harper = null;
-      harperReady = null;
-      void enqueueEngineOperation(async () => {
-        if (previousReady !== null) {
-          try {
-            await previousReady;
-          } catch {
-            // Failed setup already disposes its partially initialized linter.
-          }
-        }
-        await previousHarper?.dispose();
-      }).catch((error: unknown) => {
-        console.error('Wordwarden cleanup failed.', error);
-      });
+      stopKeepingEngineAlive();
       overlay.destroy();
     });
 }

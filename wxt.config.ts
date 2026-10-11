@@ -19,10 +19,6 @@ const spellingRuntimeAssets = Object.freeze([
     path: './node_modules/subtlex-word-frequencies/index.json',
   }),
 ]);
-const packagedRuntimeAssets = Object.freeze([
-  'harper_wasm_bg.wasm',
-  ...spellingRuntimeAssets.map((asset) => asset.fileName),
-]);
 const packageNoticeAssets = Object.freeze([
   Object.freeze({ fileName: 'THIRD_PARTY_NOTICES.txt', path: './THIRD_PARTY_NOTICES.md' }),
   Object.freeze({ fileName: 'licenses/Apache-2.0.txt', path: './node_modules/harper.js/LICENSE' }),
@@ -66,12 +62,6 @@ export default defineConfig({
       extension_pages:
         "script-src 'self' 'wasm-unsafe-eval'; object-src 'self'; worker-src 'self'",
     },
-    web_accessible_resources: [
-      {
-        resources: [...packagedRuntimeAssets],
-        matches: ['<all_urls>'],
-      },
-    ],
     browser_specific_settings:
       browser === 'firefox'
         ? {
