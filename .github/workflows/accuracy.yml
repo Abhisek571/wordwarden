@@ -1,6 +1,6 @@
 name: Accuracy
 
-# Runs the real-world benchmarks and redraws docs/accuracy.svg and docs/resources.svg. The datasets are downloaded from
+# Runs the real-world benchmarks and redraws docs/accuracy.svg. The datasets are downloaded from
 # their original sites on each run and are never committed (see docs/BENCHMARKS.md for licences).
 # Runs for bigger releases only (v1.1.0, v2.0.0; not bug-fix tags like v1.0.1), or by hand.
 on:
@@ -85,23 +85,18 @@ jobs:
           WORDWARDEN_BENCHMARK_DIR: ${{ runner.temp }}/benchmarks
           WORDWARDEN_BENCHMARK_REPORT: ${{ runner.temp }}/report.json
       - run: node scripts/accuracy-chart.mjs "$RUNNER_TEMP/report.json"
-      # Memory and CPU of the built extension against the same LanguageTool server; redraws docs/resources.svg.
-      - run: npx playwright install --with-deps chromium
-      - run: npm run build
-      - name: Measure resource use
-        run: node scripts/resource-chart.mjs "$RUNNER_TEMP/benchmarks/languagetool" "$RUNNER_TEMP/resources.json"
       - uses: actions/upload-artifact@v4
         with:
           name: benchmark-report
-          path: |
-            ${{ runner.temp }}/report.json
-            ${{ runner.temp }}/resources.json
+          path: ${{ runner.temp }}/report.json
           retention-days: 30
-      - name: Commit the updated charts
+      # The Resources workflow may push its chart at the same time, so take its commit first.
+      - name: Commit the updated chart
         run: |
-          git diff --quiet docs/accuracy.svg docs/resources.svg && exit 0
+          git diff --quiet docs/accuracy.svg && exit 0
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add docs/accuracy.svg docs/resources.svg
-          git commit -m "Update benchmark charts"
+          git add docs/accuracy.svg
+          git commit -m "Update accuracy chart"
+          git pull --rebase
           git push

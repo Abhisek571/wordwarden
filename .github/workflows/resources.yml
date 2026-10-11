@@ -1,0 +1,67 @@
+name: Resources
+
+# Measures the memory and CPU of the built extension against the newest LanguageTool server and redraws
+# docs/resources.svg. Runs for bigger releases only (v1.1.0, v2.0.0; not bug-fix tags like v1.0.1), or by hand.
+on:
+  push:
+    tags: ['v*.*.0']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  resources:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      # The chart is saved to main, so the README shows it, even when a tag started the run.
+      - uses: actions/checkout@v5
+        with:
+          ref: main
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+      # The lock file is written by npm 12; older npm versions reject it.
+      - run: npm install -g npm@12.0.2
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - run: npm run build
+      # Always the latest LanguageTool release, read from its download page; cached until a newer one appears.
+      # GitHub's Linux machines include Java.
+      - name: Find the latest LanguageTool
+        id: latest
+        run: |
+          version=$(curl -fsSL https://languagetool.org/download/ | grep -oE 'LanguageTool-[0-9]+\.[0-9]+(\.[0-9]+)?\.zip' | sed -E 's/LanguageTool-(.*)\.zip/\1/' | sort -uV | tail -1)
+          test -n "$version"
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+      - name: Restore LanguageTool
+        id: languagetool
+        uses: actions/cache@v4
+        with:
+          path: ${{ runner.temp }}/benchmarks/languagetool
+          key: languagetool-${{ steps.latest.outputs.version }}
+      - name: Download LanguageTool
+        if: steps.languagetool.outputs.cache-hit != 'true'
+        run: |
+          curl -fsSL "https://languagetool.org/download/LanguageTool-${{ steps.latest.outputs.version }}.zip" -o "$RUNNER_TEMP/languagetool.zip"
+          unzip -q "$RUNNER_TEMP/languagetool.zip" -d "$RUNNER_TEMP/benchmarks/languagetool"
+          rm "$RUNNER_TEMP/languagetool.zip"
+      - name: Measure resource use
+        run: node scripts/resource-chart.mjs "$RUNNER_TEMP/benchmarks/languagetool" "$RUNNER_TEMP/resources.json"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: resource-report
+          path: ${{ runner.temp }}/resources.json
+          retention-days: 30
+      # The Accuracy workflow may push its chart at the same time, so take its commit first.
+      - name: Commit the updated chart
+        run: |
+          git diff --quiet docs/resources.svg && exit 0
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/resources.svg
+          git commit -m "Update resource chart"
+          git pull --rebase
+          git push

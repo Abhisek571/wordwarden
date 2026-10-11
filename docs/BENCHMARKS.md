@@ -38,8 +38,8 @@ Missing LanguageTool is skipped.
 
 `node scripts/resource-chart.mjs <LanguageTool folder> [report.json]` measures the built Chromium extension
 (`npm run build`) and the LanguageTool server on the same machine, with the same 492-word text full of mistakes,
-and redraws `docs/resources.svg`. The Accuracy workflow runs it on GitHub's Linux machine with the same
-LanguageTool download, so the chart is updated with the accuracy chart.
+and redraws `docs/resources.svg`. The Resources workflow runs it on GitHub's Linux machine with the newest
+LanguageTool, for bigger releases or by hand.
 
 - **Wordwarden memory:** the extension in Playwright's Chromium; private memory of all browser processes before
   the text box is focused and once the underlines appear, with 1 and with 3 tabs. Before all tabs shared one
