@@ -48,7 +48,7 @@ await build({
     emptyOutDir: true,
     target: 'node22',
     minify: true,
-    rollupOptions: { output: { format: 'cjs', entryFileNames: 'engine-host.cjs', inlineDynamicImports: true } },
+    rollupOptions: { output: { format: 'cjs', entryFileNames: 'engine-host.cjs', codeSplitting: false } },
   },
 });
 const engineScript = readFileSync(join(engineDir, 'engine-host.cjs'));
