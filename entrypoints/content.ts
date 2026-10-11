@@ -76,6 +76,8 @@ export async function startTypeCheck(context: Readonly<{
 
     let activeAdapter: EditorAdapter | null = null;
     let revision = 0;
+    // Applying a fix in a rich editor waits briefly; a second click meanwhile is ignored.
+    let applying = false;
     let currentIssues: readonly WritingIssue[] = Object.freeze([]);
     let checkerState: PageStatus['checker'] = 'not started';
     let lastCheckMs: number | null = null;
@@ -172,19 +174,26 @@ export async function startTypeCheck(context: Readonly<{
             issue,
             replacement,
           );
-          const result = activeAdapter.applySuggestion(issue.range, replacement, revision);
-          if (!result.applied) {
+          if (applying) return;
+          applying = true;
+          const adapter = activeAdapter;
+          void adapter.applySuggestion(issue.range, replacement, revision).then((result) => {
+            applying = false;
+            if (activeAdapter !== adapter) return;
+            if (!result.applied) {
+              overlay.showStatus('Could not apply this suggestion safely.');
+              scheduleAnalysis(adapter);
+              return;
+            }
+            revision = result.revision;
+            scheduleAnalysis(adapter);
+            currentIssues = remainingIssues;
+            overlay.renderIssues(adapter, currentIssues);
+          }, (error: unknown) => {
+            applying = false;
+            reportError(`Could not apply suggestion: ${errorText(error)}`);
             overlay.showStatus('Could not apply this suggestion safely.');
-            return;
-          }
-          revision = result.revision;
-          scheduleAnalysis(activeAdapter);
-          currentIssues = remainingIssues;
-          overlay.renderIssues(activeAdapter, currentIssues);
-        },
-        ignoreOnce: (issue: WritingIssue): void => {
-          currentIssues = currentIssues.filter((candidate) => candidate.id !== issue.id);
-          if (activeAdapter !== null) overlay.renderIssues(activeAdapter, currentIssues);
+          });
         },
         ignoreAlways: (issue: WritingIssue): void => {
           const hashes = new Set(ignoredIssueHashes);

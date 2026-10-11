@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<oor:component-schema xmlns:oor="http://openoffice.org/2001/registry" xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    oor:name="Wordwarden" oor:package="org.wordwarden" xml:lang="en-US">
+  <component>
+    <group oor:name="Settings">
+      <!-- document (follow each paragraph's language), American, British, Australian or Canadian -->
+      <prop oor:name="Dialect" oor:type="xs:string"><value>document</value></prop>
+      <!-- standard, red-green, blue-yellow or custom -->
+      <prop oor:name="ColorVision" oor:type="xs:string"><value>standard</value></prop>
+      <!-- Used when ColorVision is custom. -->
+      <prop oor:name="GrammarColor" oor:type="xs:string"><value>#e08a00</value></prop>
+      <prop oor:name="StyleColor" oor:type="xs:string"><value>#1e6fd9</value></prop>
+      <!-- wave, thin or thick -->
+      <prop oor:name="LineStyle" oor:type="xs:string"><value>wave</value></prop>
+      <prop oor:name="StyleSuggestions" oor:type="xs:boolean"><value>true</value></prop>
+      <!-- Set once Wordwarden has been made the English spelling and grammar checker. -->
+      <prop oor:name="Activated" oor:type="xs:boolean"><value>false</value></prop>
+    </group>
+  </component>
+</oor:component-schema>

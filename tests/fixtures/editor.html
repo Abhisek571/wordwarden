@@ -6,5 +6,28 @@
     <label>Private<input id="private" type="password" value="secret"></label>
     <div id="rich" contenteditable="true">We was ready.</div>
     <div id="rich-blocks" contenteditable="true"><div>First line here.</div><div>Second wrods here.</div></div>
+    <!-- Behaves like Reddit's editor: it keeps its own copy of the text and selection, redraws the field from that
+         copy after every input, and only updates its selection when the browser reports a change, which happens
+         a moment after the selection moves. -->
+    <div id="lagging" contenteditable="true">Some cloud features. which i find annoying.</div>
+    <script>
+      const lagging = document.getElementById('lagging');
+      let model = lagging.textContent;
+      let known = { start: model.length, end: model.length };
+      document.addEventListener('selectionchange', () => {
+        const selection = document.getSelection();
+        if (selection.rangeCount === 0 || !lagging.contains(selection.anchorNode)) return;
+        const range = selection.getRangeAt(0);
+        known = { start: range.startOffset, end: range.endOffset };
+      });
+      lagging.addEventListener('input', (event) => {
+        if (event.inputType !== 'insertText') { model = lagging.textContent; return; }
+        model = model.slice(0, known.start) + event.data + model.slice(known.end);
+        const caret = known.start + event.data.length;
+        lagging.textContent = model;
+        document.getSelection().collapse(lagging.firstChild, caret);
+        known = { start: caret, end: caret };
+      });
+    </script>
   </body>
 </html>

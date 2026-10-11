@@ -4,7 +4,6 @@ import type { EditorAdapter, IssueCategory, TextRange, WritingIssue } from '#/co
 
 export type OverlayActions = Readonly<{
   apply(issue: WritingIssue, replacement: string): void;
-  ignoreOnce(issue: WritingIssue): void;
   ignoreAlways(issue: WritingIssue): void;
   addWord(issue: WritingIssue): void;
 }>;
@@ -62,12 +61,12 @@ const OVERLAY_STYLES = `
 
   .popover { position: fixed; width: min(320px, calc(100vw - 24px)); max-height: min(400px, calc(100vh - 24px));
     overflow-y: auto; pointer-events: auto; border: 1px solid var(--keyline); border-radius: 6px;
-    background: var(--paper); color: var(--ink); box-shadow: var(--shadow); padding: 8px 8px 12px;
+    background: var(--paper); color: var(--ink); box-shadow: var(--shadow); padding: 6px 6px 8px;
     font: 400 13px/1.45 var(--face); scrollbar-width: thin; scrollbar-color: var(--hair) transparent; }
   .popover > :not(.summary) { margin-left: 8px; margin-right: 8px; }
   /* The summary: what kind of mistake, the fix, and how the line reads with it. */
-  .summary { border-radius: 4px; background: var(--ink); color: var(--paper); padding: 4px 8px 8px 12px; }
-  .popover-header { display: flex; align-items: center; gap: 8px; min-height: 28px; }
+  .summary { border-radius: 4px; background: var(--ink); color: var(--paper); padding: 2px 6px 6px 10px; }
+  .popover-header { display: flex; align-items: center; gap: 8px; min-height: 24px; }
   .popover { --cat: var(--grammar-ink); }
   .popover.spelling { --cat: var(--spelling); }
   .popover.style { --cat: var(--style); }
@@ -77,7 +76,7 @@ const OVERLAY_STYLES = `
   .summary .dot { box-shadow: inset 0 0 0 2px var(--ink), inset 0 0 0 3px var(--cat); }
   .category { flex: none; color: color-mix(in srgb, var(--cat) 72%, var(--paper)); font-size: 13px; font-weight: 650; }
   .summary { --dim: color-mix(in srgb, var(--paper) 58%, var(--ink)); }
-  .popover-header button.close { margin-left: auto; margin-right: -4px; flex: none; color: var(--dim); }
+  .popover-header button.close { margin-left: auto; margin-right: -4px; flex: none; width: 24px; height: 24px; color: var(--dim); }
   .popover-header button.close:hover { background: color-mix(in srgb, var(--paper) 14%, var(--ink)); color: var(--paper); }
   .fix { display: flex; align-items: center; flex-wrap: wrap; gap: 2px 6px; margin-left: 4px; min-width: 0;
     font-size: 17px; line-height: 1.25; letter-spacing: -.01em; overflow-wrap: anywhere; }
@@ -87,8 +86,8 @@ const OVERLAY_STYLES = `
   .preview { margin: 2px 0 0; color: var(--dim); white-space: pre-wrap; overflow-wrap: anywhere; }
   .preview b { color: var(--paper); font-weight: 700; text-decoration: underline; text-underline-offset: 3px;
     text-decoration-color: var(--dim); }
-  .options-label { margin: 12px 0 0; color: var(--ink-2); font-size: 12px; font-weight: 650; }
-  .replacements { display: flex; gap: 8px; margin-top: 6px; flex-wrap: wrap; }
+  .options-label { margin: 8px 0 0; color: var(--ink-2); font-size: 12px; font-weight: 650; }
+  .replacements { display: flex; gap: 8px; margin-top: 4px; flex-wrap: wrap; }
   button.action { appearance: none; border: 1px solid var(--hair); border-radius: 4px; background: transparent;
     color: var(--ink); padding: 4px 12px; min-height: 28px; font: 500 13px/1.3 var(--face); cursor: pointer;
     transition: border-color .12s ease-out, background-color .12s ease-out; }
@@ -97,13 +96,12 @@ const OVERLAY_STYLES = `
   button.action.current { border-color: var(--ink-2); }
   button:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
   button:disabled { cursor: progress; opacity: .6; }
-  .message { margin: 10px 0 0; color: var(--ink-2); max-width: 60ch; }
+  .message { margin: 6px 0 0; color: var(--ink-2); max-width: 60ch; }
   button.close { appearance: none; display: grid; place-items: center; width: 28px; height: 28px; border: 0;
     border-radius: 4px; background: transparent; color: var(--ink-2); padding: 0; cursor: pointer; }
   button.close:hover { background: var(--wash); color: var(--ink); }
-  .secondary { display: flex; gap: 4px 16px; margin-top: 12px; padding-top: 8px;
-    border-top: 1px solid var(--hair); flex-wrap: wrap; }
-  button.link { appearance: none; border: 0; background: transparent; color: var(--ink-2); padding: 4px 0;
+  .secondary { display: flex; gap: 4px 16px; margin-top: 6px; flex-wrap: wrap; }
+  button.link { appearance: none; border: 0; background: transparent; color: var(--ink-2); padding: 2px 0;
     font: 500 12px/1.3 var(--face); cursor: pointer; text-underline-offset: 3px; }
   button.link:hover { color: var(--ink); text-decoration: underline; }
 
@@ -431,12 +429,8 @@ export function createTypeCheckOverlay(actions: OverlayActions): TypeCheckOverla
 
     const secondary = document.createElement('div');
     secondary.className = 'secondary';
-    const ignoreOnce = button('Dismiss', 'link', 'ignore-once');
-    ignoreOnce.addEventListener('click', () => {
-      actions.ignoreOnce(issue);
-      closePopover();
-    });
-    const ignoreAlways = button('Always ignore this', 'link', 'ignore-always');
+    // Moving away already closes the card, so there is no separate one-off dismiss.
+    const ignoreAlways = button('Add to ignore list', 'link', 'ignore-always');
     ignoreAlways.addEventListener('click', () => {
       actions.ignoreAlways(issue);
       closePopover();
@@ -446,7 +440,7 @@ export function createTypeCheckOverlay(actions: OverlayActions): TypeCheckOverla
       actions.addWord(issue);
       closePopover();
     });
-    secondary.append(ignoreOnce, ignoreAlways);
+    secondary.append(ignoreAlways);
     if (issue.category === 'spelling') secondary.append(addWord);
     popover.addEventListener('pointerenter', cancelHoverClose);
     popover.addEventListener('pointerleave', scheduleHoverClose);

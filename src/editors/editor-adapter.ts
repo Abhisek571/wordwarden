@@ -134,21 +134,64 @@ function applyTextControl(
   return Object.freeze({ applied: true, revision: revision + 1 });
 }
 
-function applyContentEditable(
+const SELECTION_WAIT_MS = 50;
+
+/**
+ * Editors such as Reddit's keep their own copy of the selection and update it only when the browser reports a
+ * selection change, which arrives a moment after the selection moves. Typing before then lands at their old
+ * cursor. Waits for that report (or a short timeout when nothing reports), then one more task so the editor's
+ * own handler has run.
+ */
+function selectionSettled(document: Document): Promise<void> {
+  return new Promise((resolve) => {
+    const done = (): void => {
+      document.removeEventListener('selectionchange', done);
+      window.clearTimeout(timer);
+      window.setTimeout(resolve, 0);
+    };
+    const timer = window.setTimeout(done, SELECTION_WAIT_MS);
+    document.addEventListener('selectionchange', done);
+  });
+}
+
+function nextTask(): Promise<void> {
+  return new Promise((resolve) => window.setTimeout(resolve, 0));
+}
+
+// Editors may swap ordinary spaces for no-break spaces while redrawing.
+function comparable(text: string): string {
+  return text.replace(/ /gu, ' ');
+}
+
+async function applyContentEditable(
   element: HTMLElement,
   range: TextRange,
   replacement: string,
   revision: number,
-): ApplyResult {
+): Promise<ApplyResult> {
+  const declined = Object.freeze({ applied: false, revision });
+  const before = buildTextModel(element).text;
   const domRange = rangeForOffsets(element, range);
-  if (domRange === null) return Object.freeze({ applied: false, revision });
+  if (domRange === null) return declined;
   const selection = element.ownerDocument.getSelection();
-  if (selection === null) return Object.freeze({ applied: false, revision });
+  if (selection === null) return declined;
   element.focus();
   selection.removeAllRanges();
   selection.addRange(domRange);
+  await selectionSettled(element.ownerDocument);
+  if (buildTextModel(element).text !== before) return declined;
   const applied = element.ownerDocument.execCommand('insertText', false, replacement);
-  if (!applied) return Object.freeze({ applied: false, revision });
+  if (!applied) return declined;
+  // Some editors redraw the field after the input event; check what they ended up with.
+  await nextTask();
+  const expected = before.slice(0, range.start) + replacement + before.slice(range.end);
+  const after = buildTextModel(element).text;
+  if (comparable(after) !== comparable(expected)) {
+    // The editor put the text somewhere else. Undo it rather than leave a mangled sentence, but only when
+    // something changed: an undo with nothing inserted would remove the writer's own last edit.
+    if (after !== before) element.ownerDocument.execCommand('undo');
+    return declined;
+  }
   return Object.freeze({ applied: true, revision: revision + 1 });
 }
 
@@ -182,9 +225,9 @@ export function createEditorAdapter(element: SupportedEditor): EditorAdapter {
       range: TextRange,
       replacement: string,
       revision: number,
-    ): ApplyResult =>
+    ): Promise<ApplyResult> =>
       element instanceof HTMLInputElement || element instanceof HTMLTextAreaElement
-        ? applyTextControl(element, range, replacement, revision)
+        ? Promise.resolve(applyTextControl(element, range, replacement, revision))
         : applyContentEditable(element, range, replacement, revision),
   });
 }

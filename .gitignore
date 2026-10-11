@@ -21,3 +21,4 @@ docs/PROJECT_HANDOVER.md
 CLAUDE.md
 .claude/
 .codex/
+__pycache__/

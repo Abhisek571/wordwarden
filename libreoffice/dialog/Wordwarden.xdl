@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE dlg:window PUBLIC "-//OpenOffice.org//DTD OfficeDocument 1.0//EN" "dialog.dtd">
+<dlg:window xmlns:dlg="http://openoffice.org/2000/dialog" xmlns:script="http://openoffice.org/2000/script"
+    dlg:id="Wordwarden" dlg:left="0" dlg:top="0" dlg:width="260" dlg:height="186" dlg:closeable="true"
+    dlg:moveable="true" dlg:withtitlebar="false">
+ <dlg:bulletinboard>
+  <dlg:fixedline dlg:id="LanguageHeading" dlg:tab-index="0" dlg:left="5" dlg:top="5" dlg:width="250" dlg:height="10" dlg:value="Language"/>
+  <dlg:text dlg:id="DialectLabel" dlg:tab-index="1" dlg:left="10" dlg:top="21" dlg:width="80" dlg:height="10" dlg:value="English"/>
+  <dlg:menulist dlg:id="Dialect" dlg:tab-index="2" dlg:left="95" dlg:top="19" dlg:width="155" dlg:height="12" dlg:spin="true">
+   <dlg:menupopup>
+    <dlg:menuitem dlg:value="Follow the document"/>
+    <dlg:menuitem dlg:value="American"/>
+    <dlg:menuitem dlg:value="British"/>
+    <dlg:menuitem dlg:value="Australian"/>
+    <dlg:menuitem dlg:value="Canadian"/>
+   </dlg:menupopup>
+  </dlg:menulist>
+  <dlg:fixedline dlg:id="UnderlinesHeading" dlg:tab-index="3" dlg:left="5" dlg:top="41" dlg:width="250" dlg:height="10" dlg:value="Underlines"/>
+  <dlg:text dlg:id="ColorVisionLabel" dlg:tab-index="4" dlg:left="10" dlg:top="57" dlg:width="80" dlg:height="10" dlg:value="Colour vision"/>
+  <dlg:menulist dlg:id="ColorVision" dlg:tab-index="5" dlg:left="95" dlg:top="55" dlg:width="155" dlg:height="12" dlg:spin="true">
+   <dlg:menupopup>
+    <dlg:menuitem dlg:value="Standard"/>
+    <dlg:menuitem dlg:value="Red-green colour blindness"/>
+    <dlg:menuitem dlg:value="Blue-yellow colour blindness"/>
+    <dlg:menuitem dlg:value="Custom colours"/>
+   </dlg:menupopup>
+  </dlg:menulist>
+  <dlg:text dlg:id="GrammarColorLabel" dlg:tab-index="6" dlg:left="20" dlg:top="74" dlg:width="70" dlg:height="10" dlg:value="Grammar colour"/>
+  <dlg:textfield dlg:id="GrammarColor" dlg:tab-index="7" dlg:left="95" dlg:top="72" dlg:width="60" dlg:height="12" dlg:maxlength="7"/>
+  <dlg:text dlg:id="StyleColorLabel" dlg:tab-index="8" dlg:left="20" dlg:top="90" dlg:width="70" dlg:height="10" dlg:value="Style colour"/>
+  <dlg:textfield dlg:id="StyleColor" dlg:tab-index="9" dlg:left="95" dlg:top="88" dlg:width="60" dlg:height="12" dlg:maxlength="7"/>
+  <dlg:text dlg:id="ColorHint" dlg:tab-index="10" dlg:left="160" dlg:top="74" dlg:width="95" dlg:height="26" dlg:multiline="true" dlg:value="Used with Custom colours. Write them like #e08a00."/>
+  <dlg:text dlg:id="LineStyleLabel" dlg:tab-index="11" dlg:left="10" dlg:top="108" dlg:width="80" dlg:height="10" dlg:value="Line"/>
+  <dlg:menulist dlg:id="LineStyle" dlg:tab-index="12" dlg:left="95" dlg:top="106" dlg:width="155" dlg:height="12" dlg:spin="true">
+   <dlg:menupopup>
+    <dlg:menuitem dlg:value="Wave"/>
+    <dlg:menuitem dlg:value="Thin wave"/>
+    <dlg:menuitem dlg:value="Thick wave"/>
+   </dlg:menupopup>
+  </dlg:menulist>
+  <dlg:fixedline dlg:id="SuggestionsHeading" dlg:tab-index="13" dlg:left="5" dlg:top="128" dlg:width="250" dlg:height="10" dlg:value="Suggestions"/>
+  <dlg:checkbox dlg:id="StyleSuggestions" dlg:tab-index="14" dlg:left="10" dlg:top="142" dlg:width="245" dlg:height="10" dlg:value="Show style suggestions, such as wordy or hard-to-read phrases" dlg:checked="true"/>
+  <dlg:text dlg:id="SpellingNote" dlg:tab-index="15" dlg:left="10" dlg:top="160" dlg:width="245" dlg:height="20" dlg:multiline="true" dlg:value="Spelling mistakes keep LibreOffice's red underline. Words in your LibreOffice dictionaries are never marked."/>
+ </dlg:bulletinboard>
+</dlg:window>

@@ -42,5 +42,5 @@ export interface EditorAdapter {
   readonly element: HTMLElement;
   capture(revision: number): EditorSnapshot;
   rangeToRects(range: TextRange): readonly DOMRect[];
-  applySuggestion(range: TextRange, replacement: string, revision: number): ApplyResult;
+  applySuggestion(range: TextRange, replacement: string, revision: number): Promise<ApplyResult>;
 }

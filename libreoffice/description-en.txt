@@ -1,0 +1,1 @@
+Private, on-device spelling and grammar checking for English, with the same engine as the Wordwarden browser extension. Nothing you write leaves your computer.

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<components xmlns="http://openoffice.org/2010/uno-components">
+  <component loader="com.sun.star.loader.Python" uri="./Wordwarden.py">
+    <implementation name="org.wordwarden.libreoffice.Proofreader">
+      <service name="com.sun.star.linguistic2.Proofreader"/>
+    </implementation>
+    <implementation name="org.wordwarden.libreoffice.SpellChecker">
+      <service name="com.sun.star.linguistic2.SpellChecker"/>
+    </implementation>
+    <implementation name="org.wordwarden.libreoffice.SetupJob">
+      <service name="com.sun.star.task.Job"/>
+    </implementation>
+    <implementation name="org.wordwarden.libreoffice.OptionsHandler"/>
+  </component>
+</components>

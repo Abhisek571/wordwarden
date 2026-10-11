@@ -26,7 +26,7 @@ function editorAdapter(element: HTMLElement): EditorAdapter {
         text: 'wors',
       }),
     rangeToRects: () => Object.freeze([new DOMRect(10, 10, 40, 18)]),
-    applySuggestion: () => Object.freeze({ applied: true, revision: 1 }),
+    applySuggestion: () => Promise.resolve(Object.freeze({ applied: true, revision: 1 })),
   });
 }
 
@@ -53,7 +53,6 @@ describe('issue popover', () => {
     const overlay = createTypeCheckOverlay(
       Object.freeze({
         apply: vi.fn(),
-        ignoreOnce: vi.fn(),
         ignoreAlways: vi.fn(),
         addWord: vi.fn(),
       }),
@@ -89,7 +88,7 @@ describe('issue popover', () => {
     });
     const textarea = document.createElement('textarea');
     document.body.append(textarea);
-    const overlay = createTypeCheckOverlay(Object.freeze({ apply: vi.fn(), ignoreOnce: vi.fn(), ignoreAlways: vi.fn(), addWord: vi.fn() }));
+    const overlay = createTypeCheckOverlay(Object.freeze({ apply: vi.fn(), ignoreAlways: vi.fn(), addWord: vi.fn() }));
     overlay.renderIssues(editorAdapter(textarea), Object.freeze([issue]));
     const shadow = capturedShadow as ShadowRoot | null;
     const mark = shadow?.querySelector<HTMLButtonElement>('[data-testid="issue-mark"]');
@@ -125,7 +124,7 @@ describe('issue popover', () => {
     });
     const textarea = document.createElement('textarea');
     document.body.append(textarea);
-    const overlay = createTypeCheckOverlay(Object.freeze({ apply: vi.fn(), ignoreOnce: vi.fn(), ignoreAlways: vi.fn(), addWord: vi.fn() }));
+    const overlay = createTypeCheckOverlay(Object.freeze({ apply: vi.fn(), ignoreAlways: vi.fn(), addWord: vi.fn() }));
     overlay.renderIssues(editorAdapter(textarea), Object.freeze([issue]));
     const shadow = capturedShadow as ShadowRoot | null;
     const pointAt = (clientX: number, clientY: number): void => {
@@ -160,7 +159,7 @@ describe('issue popover', () => {
     });
     const textarea = document.createElement('textarea');
     document.body.append(textarea);
-    const overlay = createTypeCheckOverlay(Object.freeze({ apply: vi.fn(), ignoreOnce: vi.fn(), ignoreAlways: vi.fn(), addWord: vi.fn() }));
+    const overlay = createTypeCheckOverlay(Object.freeze({ apply: vi.fn(), ignoreAlways: vi.fn(), addWord: vi.fn() }));
     const otherIssue = Object.freeze({ ...issue, id: 'issue-2', originalText: 'othr' });
     overlay.renderIssues(editorAdapter(textarea), [issue, otherIssue]);
 
@@ -179,8 +178,8 @@ describe('issue popover', () => {
     expect(popover?.querySelector('.message')).toBeNull();
     expect(popover?.textContent).not.toContain('Original:');
     expect(popover?.textContent).not.toContain('Suggested replacement');
-    expect(popover?.querySelector('[data-testid="ignore-once"]')?.textContent).toBe('Dismiss');
-    expect(popover?.querySelector('[data-testid="ignore-always"]')?.textContent).toBe('Always ignore this');
+    expect(popover?.querySelector('[data-testid="ignore-once"]')).toBeNull();
+    expect(popover?.querySelector('[data-testid="ignore-always"]')?.textContent).toBe('Add to ignore list');
     expect(popover?.querySelector('[data-testid="add-word"]')?.textContent).toBe('Add to dictionary');
     expect(marks?.[0]?.classList.contains('underline-hidden')).toBe(true);
     expect(marks?.[1]?.classList.contains('underline-hidden')).toBe(false);
@@ -198,7 +197,7 @@ describe('issue popover', () => {
     const textarea = document.createElement('textarea');
     document.body.append(textarea);
     const apply = vi.fn();
-    const overlay = createTypeCheckOverlay(Object.freeze({ apply, ignoreOnce: vi.fn(), ignoreAlways: vi.fn(), addWord: vi.fn() }));
+    const overlay = createTypeCheckOverlay(Object.freeze({ apply, ignoreAlways: vi.fn(), addWord: vi.fn() }));
     const text = 'why is he filling uo the drive from same source?';
     const uo = Object.freeze({ ...issue, range: Object.freeze({ start: 18, end: 20 }), originalText: 'uo',
       replacements: Object.freeze(['ufo', 'up', 'quo']) });
@@ -229,7 +228,7 @@ describe('issue popover', () => {
     const textarea = document.createElement('textarea');
     document.body.append(textarea);
     const apply = vi.fn();
-    const overlay = createTypeCheckOverlay(Object.freeze({ apply, ignoreOnce: vi.fn(), ignoreAlways: vi.fn(), addWord: vi.fn() }));
+    const overlay = createTypeCheckOverlay(Object.freeze({ apply, ignoreAlways: vi.fn(), addWord: vi.fn() }));
     overlay.setApplyShortcut('Alt');
     overlay.renderIssues(editorAdapter(textarea), Object.freeze([issue]));
     const shadow = capturedShadow as ShadowRoot | null;
@@ -261,7 +260,7 @@ describe('issue popover', () => {
     });
     const textarea = document.createElement('textarea');
     document.body.append(textarea);
-    const overlay = createTypeCheckOverlay(Object.freeze({ apply: vi.fn(), ignoreOnce: vi.fn(), ignoreAlways: vi.fn(), addWord: vi.fn() }));
+    const overlay = createTypeCheckOverlay(Object.freeze({ apply: vi.fn(), ignoreAlways: vi.fn(), addWord: vi.fn() }));
     const shadow = capturedShadow as ShadowRoot | null;
     const applyFirst = (): Element | null | undefined => {
       overlay.renderIssues(editorAdapter(textarea), Object.freeze([issue]));
@@ -282,7 +281,7 @@ describe('issue popover', () => {
   });
 
   it('switches the page palette for colour-blind writers', () => {
-    const overlay = createTypeCheckOverlay(Object.freeze({ apply: vi.fn(), ignoreOnce: vi.fn(), ignoreAlways: vi.fn(), addWord: vi.fn() }));
+    const overlay = createTypeCheckOverlay(Object.freeze({ apply: vi.fn(), ignoreAlways: vi.fn(), addWord: vi.fn() }));
     const host = document.querySelector<HTMLElement>('#typecheck-root');
     overlay.setColorVision('red-green', DEFAULT_CUSTOM_UNDERLINES);
     expect(host?.dataset.vision).toBe('red-green');
@@ -308,7 +307,7 @@ describe('issue popover', () => {
     });
     const textarea = document.createElement('textarea');
     document.body.append(textarea);
-    const overlay = createTypeCheckOverlay(Object.freeze({ apply: vi.fn(), ignoreOnce: vi.fn(), ignoreAlways: vi.fn(), addWord: vi.fn() }));
+    const overlay = createTypeCheckOverlay(Object.freeze({ apply: vi.fn(), ignoreAlways: vi.fn(), addWord: vi.fn() }));
     const grammarIssue = Object.freeze({
       ...issue,
       id: 'issue-grammar',
@@ -343,7 +342,7 @@ describe('issue popover', () => {
     const textarea = document.createElement('textarea');
     document.body.append(textarea);
     const apply = vi.fn();
-    const overlay = createTypeCheckOverlay(Object.freeze({ apply, ignoreOnce: vi.fn(), ignoreAlways: vi.fn(), addWord: vi.fn() }));
+    const overlay = createTypeCheckOverlay(Object.freeze({ apply, ignoreAlways: vi.fn(), addWord: vi.fn() }));
     const punctuation = { ...issue, category: 'punctuation' as const, message: 'Use a single space between words.' };
     const extraSpace = Object.freeze({ ...punctuation, id: 'issue-extra', originalText: '  ', replacements: Object.freeze([' ']) });
     const missingSpace = Object.freeze({ ...punctuation, id: 'issue-missing', originalText: 'end.Next', replacements: Object.freeze(['end. Next']) });
@@ -382,7 +381,7 @@ describe('issue popover', () => {
     const textarea = document.createElement('textarea');
     document.body.append(textarea);
     vi.spyOn(textarea, 'getBoundingClientRect').mockReturnValue(new DOMRect(0, 100, 300, 60));
-    const overlay = createTypeCheckOverlay(Object.freeze({ apply: vi.fn(), ignoreOnce: vi.fn(), ignoreAlways: vi.fn(), addWord: vi.fn() }));
+    const overlay = createTypeCheckOverlay(Object.freeze({ apply: vi.fn(), ignoreAlways: vi.fn(), addWord: vi.fn() }));
     const scrolled = Object.freeze({ ...editorAdapter(textarea),
       rangeToRects: (range: { start: number }) => Object.freeze([range.start === 0 ? new DOMRect(10, 20, 40, 18) : new DOMRect(10, 120, 40, 18)]) });
     overlay.renderIssues(scrolled, [issue, Object.freeze({ ...issue, id: 'issue-visible', range: Object.freeze({ start: 5, end: 9 }) })]);
@@ -403,7 +402,7 @@ describe('issue popover', () => {
     vi.spyOn(HTMLElement.prototype, 'offsetHeight', 'get').mockReturnValue(200);
     const textarea = document.createElement('textarea');
     document.body.append(textarea);
-    const overlay = createTypeCheckOverlay(Object.freeze({ apply: vi.fn(), ignoreOnce: vi.fn(), ignoreAlways: vi.fn(), addWord: vi.fn() }));
+    const overlay = createTypeCheckOverlay(Object.freeze({ apply: vi.fn(), ignoreAlways: vi.fn(), addWord: vi.fn() }));
     const bottomAdapter = Object.freeze({
       ...editorAdapter(textarea),
       rangeToRects: () => Object.freeze([new DOMRect(10, window.innerHeight - 40, 40, 18)]),
@@ -432,7 +431,6 @@ describe('issue popover', () => {
     const overlay = createTypeCheckOverlay(
       Object.freeze({
         apply: vi.fn(),
-        ignoreOnce: vi.fn(),
         ignoreAlways: vi.fn(),
         addWord: vi.fn(),
       }),
@@ -481,7 +479,7 @@ describe('status badge', () => {
       shadow = nativeAttachShadow.call(this, { ...init, mode: 'open' });
       return shadow;
     });
-    const overlay = createTypeCheckOverlay(Object.freeze({ apply: vi.fn(), ignoreOnce: vi.fn(), ignoreAlways: vi.fn(), addWord: vi.fn() }));
+    const overlay = createTypeCheckOverlay(Object.freeze({ apply: vi.fn(), ignoreAlways: vi.fn(), addWord: vi.fn() }));
     if (shadow === null) throw new Error('Overlay shadow root was not created.');
     return { overlay, shadow };
   }

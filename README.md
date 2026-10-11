@@ -11,6 +11,7 @@ only assets packaged with the extension.
 - Your own dictionary, per-site on/off, and US, UK, Canadian or Australian English.
 - A typing test page with speed and accuracy.
 - Works in Firefox and Chromium browsers (Chrome, Edge, Brave and others).
+- A LibreOffice add-on with the same spelling and grammar engine.
 
 ## Install
 
@@ -21,6 +22,10 @@ latest zip from [Releases](https://github.com/Abhisek571/wordwarden/releases) an
   Developer mode and choose **Load unpacked**.
 - **Firefox:** open `about:debugging#/runtime/this-firefox`, choose **Load Temporary Add-on** and
   pick the `firefox` zip. Firefox removes it when it restarts.
+- **LibreOffice:** download the `libreoffice` file for your system (`windows`, `macos` or
+  `linux`) and double-click it, or open **Tools > Extension Manager** and choose **Add**. Restart
+  LibreOffice. Wordwarden then checks spelling and grammar in English documents; settings are in
+  **Tools > Options > Languages and Locales > Wordwarden**. Apache OpenOffice may work but is not tested.
 
 ## Accuracy
 
