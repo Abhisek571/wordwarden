@@ -34,6 +34,26 @@ that only accepts connections from the same computer, and stops it when the run 
 It uses the default setup, without the optional n-gram data (about 8 GB), which would improve its results.
 Missing LanguageTool is skipped.
 
+## Resource use
+
+`node scripts/resource-chart.mjs <LanguageTool folder> [report.json]` measures the built Chromium extension
+(`npm run build`) and the LanguageTool server on the same machine, with the same 492-word text full of mistakes,
+and redraws `docs/resources.svg`. The Accuracy workflow runs it on GitHub's Linux machine with the same
+LanguageTool download, so the chart is updated with the accuracy chart.
+
+- **Wordwarden memory:** the extension in Playwright's Chromium; private memory of all browser processes before
+  the text box is focused and once the underlines appear, with 1 and with 3 tabs. Before all tabs shared one
+  checker (1.3.5), each tab started its own: 3 tabs added 708 MB, against about 315 MB since.
+- **CPU time to start:** from focusing the first text box to its underlines, and for LanguageTool from launch
+  to its first answer. CPU time is summed over all cores.
+- **Check times:** Wordwarden through the extension's own check message, LanguageTool through its HTTP API.
+  Both get 3 warm-up checks and a 5-second pause (so Java compiling hot code is not counted), then 30 timed
+  checks. Time is the median; CPU per check is the average, over all processes involved.
+- **LanguageTool:** the Java process serving the port, default setup without the n-gram data. Its memory
+  varies by a few hundred MB between runs as Java collects garbage. Its browser extension, which a self-hosted
+  setup also needs, is not counted.
+- **Size on disk:** the unpacked extension against the unpacked LanguageTool download (Java not included).
+
 ## Metrics
 
 - **Spelling lists:** detected (flagged at all), top-1 and top-3 (the right word is the first / in the

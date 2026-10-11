@@ -4,26 +4,30 @@ Wordwarden is a free, privacy-first browser extension for one-click English
 spelling and grammar corrections. Text stays on the device, and all checks use
 only assets packaged with the extension.
 
+**[Get it for Firefox](https://addons.mozilla.org/en-GB/firefox/addon/wordwarden-spell-grammar/)** ·
+[Chromium and LibreOffice downloads](https://github.com/Abhisek571/wordwarden/releases/latest)
+
 ## Features
 
 - Spelling and grammar checks as you type, on your device. Nothing you write is sent anywhere.
 - Click an underline to pick a fix. Text never changes without a click.
 - Your own dictionary, per-site on/off, and US, UK, Canadian or Australian English.
 - A typing test page with speed and accuracy.
-- Works in Firefox and Chromium browsers (Chrome, Edge, Brave and others).
+- Works in Firefox and Chromium browsers (Chrome, Edge, Brave and others). Light on memory: all
+  tabs share one checker.
 - A LibreOffice add-on with the same spelling and grammar engine.
 
 ## Install
 
-Wordwarden is on its way to Firefox Add-ons and the Chrome Web Store. Until then, download the
-latest zip from [Releases](https://github.com/Abhisek571/wordwarden/releases) and load it yourself:
-
-- **Chromium browsers:** unzip the `chrome` zip, open `chrome://extensions`, turn on
-  Developer mode and choose **Load unpacked**.
-- **Firefox:** open `about:debugging#/runtime/this-firefox`, choose **Load Temporary Add-on** and
-  pick the `firefox` zip. Firefox removes it when it restarts.
+- **Firefox:** install it from
+  [Firefox Add-ons](https://addons.mozilla.org/en-GB/firefox/addon/wordwarden-spell-grammar/). It updates itself.
+- **Chromium browsers (Chrome, Edge, Brave and others):** Wordwarden is on its way to the Chrome Web
+  Store. Until then, download the `chrome` zip from
+  [Releases](https://github.com/Abhisek571/wordwarden/releases/latest), unzip it, open
+  `chrome://extensions`, turn on Developer mode and choose **Load unpacked**. This copy does not
+  update itself; download the new zip for each release.
 - **LibreOffice:** download the `libreoffice` file for your system (`windows`, `macos` or
-  `linux`) and double-click it, or open **Tools > Extension Manager** and choose **Add**. Restart
+  `linux`) from [Releases](https://github.com/Abhisek571/wordwarden/releases/latest) and double-click it, or open **Tools > Extension Manager** and choose **Add**. Restart
   LibreOffice. Wordwarden then checks spelling and grammar in English documents; settings are in
   **Tools > Options > Languages and Locales > Wordwarden**. Apache OpenOffice may work but is not tested.
 
@@ -37,6 +41,17 @@ was not used for tuning. The chart is redrawn automatically for each bigger rele
 Wordwarden catches most everyday typos but still misses many grammar and fluency problems, and
 typing slips that make another real word ("form" for "from"). Test sets, method and credits:
 [docs/BENCHMARKS.md](docs/BENCHMARKS.md).
+
+## Performance
+
+![Resource use chart](docs/resources.svg)
+
+The newest release against your own LanguageTool server, checking the same text on the same
+machine. Wordwarden needs far less memory and start-up time, and nothing to install besides the
+extension. All tabs share one checker, so a second or third tab adds little memory. It uses no CPU
+while you are not typing, and once you leave a text box the browser may unload the checker to free
+its memory. The chart is redrawn automatically for each bigger release. Method:
+[docs/BENCHMARKS.md](docs/BENCHMARKS.md#resource-use).
 
 ## Reporting a problem
 
