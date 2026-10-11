@@ -42,7 +42,7 @@ and redraws `docs/resources.svg`. The Resources workflow runs it on GitHub's Lin
 LanguageTool, for bigger releases or by hand.
 
 - **Wordwarden memory:** the extension in Playwright's Chromium; private memory of all browser processes before
-  the text box is focused and once the underlines appear, with 1 and with 3 tabs. Before all tabs shared one
+  the text box is focused and once the underlines appear, with 1 and with 20 tabs. Before all tabs shared one
   checker (1.3.5), each tab started its own: 3 tabs added 708 MB, against about 315 MB since.
 - **CPU time to start:** from focusing the first text box to its underlines, and for LanguageTool from launch
   to its first answer. CPU time is summed over all cores.

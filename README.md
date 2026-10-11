@@ -48,7 +48,7 @@ typing slips that make another real word ("form" for "from"). Test sets, method 
 
 The newest release against your own LanguageTool server, checking the same text on the same
 machine. Wordwarden needs far less memory and start-up time, and nothing to install besides the
-extension. All tabs share one checker, so a second or third tab adds little memory. It uses no CPU
+extension. All tabs share one checker, so each extra tab adds only a little memory. It uses no CPU
 while you are not typing, and once you leave a text box the browser may unload the checker to free
 its memory. The chart is redrawn automatically for each bigger release. Method:
 [docs/BENCHMARKS.md](docs/BENCHMARKS.md#resource-use).

@@ -15,6 +15,7 @@ const languageToolDir = [languageToolArg, ...readdirSync(languageToolArg).map((n
 if (languageToolDir === undefined) throw new Error(`No languagetool-server.jar in ${languageToolArg}.`);
 const extensionDir = resolve('.output/chrome-mv3');
 const RUNS = 30;
+const MANY_TABS = 20;
 // Checks before timing, then a pause, so start-up work (such as Java compiling hot code) is not counted per check.
 const WARM_UP = 3;
 const SETTLE_MS = 5000;
@@ -77,7 +78,7 @@ const browserProcesses = () => processes((command) => command.includes('ms-playw
 async function measureTabs(tabs) {
   const context = await launchBrowser();
   const pages = [];
-  for (const host of 'abc'.slice(0, tabs)) {
+  for (const host of 'abcdefghijklmnopqrstuvwxyz'.slice(0, tabs)) {
     const page = await context.newPage();
     await page.goto(`https://${host}.example/`);
     pages.push(page);
@@ -161,14 +162,14 @@ async function measureLanguageTool() {
 }
 
 const oneTab = await measureTabs(1);
-const threeTabs = await measureTabs(3);
+const manyTabs = await measureTabs(MANY_TABS);
 const extensionChecks = await measureExtensionChecks();
 const languageTool = await measureLanguageTool();
 const report = {
   measuredAt: new Date().toISOString(),
   machine: { platform: process.platform, cpus: os.cpus().length },
   words: WORDS,
-  wordwarden: { oneTabMb: oneTab.addedMb, threeTabsMb: threeTabs.addedMb, startCpu: oneTab.startCpu, ...extensionChecks, diskMb: folderMb(extensionDir) },
+  wordwarden: { oneTabMb: oneTab.addedMb, manyTabsMb: manyTabs.addedMb, manyTabs: MANY_TABS, startCpu: oneTab.startCpu, ...extensionChecks, diskMb: folderMb(extensionDir) },
   languageTool: { ...languageTool, diskMb: folderMb(languageToolDir) },
 };
 if (reportPath !== undefined) writeFileSync(reportPath, `${JSON.stringify(report, null, 2)}\n`);
@@ -179,7 +180,7 @@ const ww = report.wordwarden;
 const lt = report.languageTool;
 const rows = [
   ['Memory while checking, 1 tab', ww.oneTabMb, lt.memoryMb, 'MB'],
-  ['Memory while checking, 3 tabs', ww.threeTabsMb, lt.memoryMb, 'MB'],
+  [`Memory while checking, ${MANY_TABS} tabs`, ww.manyTabsMb, lt.memoryMb, 'MB'],
   ['CPU time to start', ww.startCpu, lt.startCpu, 's'],
   [`Time to check ${WORDS} words`, ww.checkMs, lt.checkMs, 'ms'],
   ['CPU time per check', ww.checkCpuMs, lt.checkCpuMs, 'ms'],
