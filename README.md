@@ -69,3 +69,11 @@ loading.
 
 See [privacy](docs/PRIVACY.md), [permissions](docs/PERMISSIONS.md) and
 [third-party notices](THIRD_PARTY_NOTICES.md).
+
+## License
+
+Copyright (C) 2026 Wordwarden contributors. Wordwarden is free software under the
+[GNU General Public License v3.0 or later](LICENSE): you can use, change and share it, and any version
+you share, free or paid, must stay under the same licence with its full source code.
+
+For the licences of the open-source parts it includes, see [third-party notices](THIRD_PARTY_NOTICES.md).

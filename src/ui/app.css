@@ -142,6 +142,9 @@ label.secondary input[type="file"] { position: absolute; inset: 0; opacity: 0; c
 /* Every rule spans the column edge to edge: an ink rule under each section title, a hairline between rows. */
 .settings-content { min-width: 0; }
 .settings-section { scroll-margin-top: 52px; padding-bottom: 40px; }
+.settings-footer { border-top: 1px solid var(--hair); padding: 20px 0 8px; color: var(--ink-2); font-size: 13px; }
+.settings-footer a { color: inherit; text-underline-offset: 3px; }
+.settings-footer a:hover { color: var(--ink); }
 .section-heading { margin-bottom: 12px; }
 .section-heading h2 { margin: 0 0 4px; font-size: 24px; font-weight: 700; letter-spacing: -.02em; }
 .section-heading p { margin: 0; color: var(--ink-2); font-size: 15px; }
