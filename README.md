@@ -69,3 +69,14 @@ loading.
 
 See [privacy](docs/PRIVACY.md), [permissions](docs/PERMISSIONS.md) and
 [third-party notices](THIRD_PARTY_NOTICES.md).
+
+## License
+
+Wordwarden is released under the [MIT License](LICENSE).
+
+It bundles open-source parts under their own licences: Harper (Apache 2.0), React, WXT and nspell (MIT),
+the English Hunspell dictionaries (MIT and BSD) and the SUBTLEX word frequencies (ISC). Full details are
+in [third-party notices](THIRD_PARTY_NOTICES.md).
+
+The accuracy test sets and LanguageTool are not part of Wordwarden; they are downloaded only to run the
+benchmarks and keep their own licences, listed in [docs/BENCHMARKS.md](docs/BENCHMARKS.md).
