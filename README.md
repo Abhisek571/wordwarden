@@ -65,6 +65,19 @@ npm run lint:firefox
 npm run test:e2e
 ```
 
+### Building the Firefox package from source
+
+Works on Windows, macOS and Linux with [Node.js](https://nodejs.org/) 22 or newer and the npm
+that comes with it. No other tools are needed.
+
+```sh
+npm ci
+npm run zip:firefox
+```
+
+The package is written to `.output/wordwarden-<version>-firefox.zip`, and the unpacked files to
+`.output/firefox-mv3/`.
+
 `npm run zip` and `npm run zip:firefox` create store archives; pushing a version tag such as
 `v1.1.0` builds them on GitHub and attaches them to a release. The browser tests need an
 open-source Chromium build, because branded Chrome and Edge 137+ block command-line extension

@@ -1,5 +1,5 @@
 import { defineConfig } from 'wxt';
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 
 const harperWasmPath = fileURLToPath(
@@ -38,7 +38,9 @@ const packageNoticeAssets = Object.freeze([
   }),
 ]);
 
-const gitIgnoredPatterns = readFileSync(new URL('./.gitignore', import.meta.url), 'utf8')
+// The sources zip has no .gitignore, and reviewers build from that zip.
+const gitIgnorePath = new URL('./.gitignore', import.meta.url);
+const gitIgnoredPatterns = (existsSync(gitIgnorePath) ? readFileSync(gitIgnorePath, 'utf8') : '')
   .split(/\r?\n/u)
   .map((line) => line.trim())
   .filter((line) => line.length > 0 && !line.startsWith('#'))
