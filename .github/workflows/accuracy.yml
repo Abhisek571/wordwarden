@@ -14,7 +14,7 @@ permissions:
 jobs:
   accuracy:
     runs-on: ubuntu-latest
-    timeout-minutes: 60
+    timeout-minutes: 90
     steps:
       # The chart is saved to main, so the README shows it, even when a tag started the run.
       - uses: actions/checkout@v5
@@ -58,6 +58,27 @@ jobs:
           curl -fsSL "https://userinterfaces.aalto.fi/136Mkeystrokes/data/Keystrokes.zip" -o "$RUNNER_TEMP/Keystrokes.zip"
           node scripts/aalto-sample.mjs "$RUNNER_TEMP/Keystrokes.zip" "$RUNNER_TEMP/benchmarks/aalto/sample.tsv"
           rm "$RUNNER_TEMP/Keystrokes.zip"
+      # LanguageTool, for the comparison in the chart: always the latest release, read from its download page.
+      # The benchmark starts it as a local server for the run and stops it afterwards. GitHub's Linux machines
+      # include Java. The download is cached until a newer release appears.
+      - name: Find the latest LanguageTool
+        id: latest
+        run: |
+          version=$(curl -fsSL https://languagetool.org/download/ | grep -oE 'LanguageTool-[0-9]+\.[0-9]+(\.[0-9]+)?\.zip' | sed -E 's/LanguageTool-(.*)\.zip/\1/' | sort -uV | tail -1)
+          test -n "$version"
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+      - name: Restore LanguageTool
+        id: languagetool
+        uses: actions/cache@v4
+        with:
+          path: ${{ runner.temp }}/benchmarks/languagetool
+          key: languagetool-${{ steps.latest.outputs.version }}
+      - name: Download LanguageTool
+        if: steps.languagetool.outputs.cache-hit != 'true'
+        run: |
+          curl -fsSL "https://languagetool.org/download/LanguageTool-${{ steps.latest.outputs.version }}.zip" -o "$RUNNER_TEMP/languagetool.zip"
+          unzip -q "$RUNNER_TEMP/languagetool.zip" -d "$RUNNER_TEMP/benchmarks/languagetool"
+          rm "$RUNNER_TEMP/languagetool.zip"
       - name: Run benchmarks
         run: npm run evaluate:benchmarks
         env:

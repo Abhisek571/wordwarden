@@ -3,6 +3,10 @@ import { isDiagnostics, isSafeHostname, type Diagnostics } from './diagnostics';
 import { isTypingStatsDelta, type TypingStatsDelta } from './typing-stats';
 export type { Diagnostics } from './diagnostics';
 
+/** Sent by the background to the content script of one tab; answered with a PageStatus. */
+export const PAGE_STATUS_REQUEST = 'page:status';
+const MAX_ERROR_REPORT_LENGTH = 1000;
+
 export type SettingsPatch = Readonly<Partial<TypeCheckSettings>>;
 export type SettingsConflictBase = Readonly<Partial<Pick<
   TypeCheckSettings,
@@ -86,12 +90,11 @@ export type RuntimeRequest =
   | Readonly<{
       type: 'diagnostics:get';
       hostname: string | null;
-      capabilities: Readonly<{
-        webGpuAvailable: boolean;
-        webAssemblyAvailable: boolean;
-        workerAvailable: boolean;
-      }>;
+      /** The tab Settings was opened from, so its page can be asked how checking went. */
+      tabId: number | null;
+      webAssemblyAvailable: boolean;
     }>
+  | Readonly<{ type: 'error:report'; message: string }>
   | Readonly<{ type: 'typing-stats:add'; delta: TypingStatsDelta }>
   | Readonly<{ type: 'data:clear' }>;
 
@@ -124,13 +127,14 @@ export function isRuntimeRequest(value: unknown): value is RuntimeRequest {
     return true;
   }
   if (record.type === 'diagnostics:get') {
-    const capabilities = record.capabilities as Record<string, unknown> | undefined;
     return (
       (record.hostname === null || isSafeHostname(record.hostname)) &&
-      typeof capabilities?.webGpuAvailable === 'boolean' &&
-      typeof capabilities.webAssemblyAvailable === 'boolean' &&
-      typeof capabilities.workerAvailable === 'boolean'
+      (record.tabId === null || (Number.isInteger(record.tabId) && (record.tabId as number) >= 0)) &&
+      typeof record.webAssemblyAvailable === 'boolean'
     );
+  }
+  if (record.type === 'error:report') {
+    return typeof record.message === 'string' && record.message.length <= MAX_ERROR_REPORT_LENGTH;
   }
   if (record.type === 'settings:replace') return isTypeCheckSettings(record.settings);
   if (record.type === 'typing-stats:add') return isTypingStatsDelta(record.delta);

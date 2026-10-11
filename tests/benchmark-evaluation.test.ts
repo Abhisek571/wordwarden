@@ -1,5 +1,6 @@
 // Real-world accuracy benchmarks. Datasets live outside the repository; see docs/BENCHMARKS.md.
-import { existsSync } from 'node:fs';
+import { spawn, spawnSync, type ChildProcess } from 'node:child_process';
+import { existsSync, readdirSync } from 'node:fs';
 import { readFile, writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
@@ -13,15 +14,25 @@ const jflegDirectory = resolve(benchmarkDirectory, 'jfleg');
 const lexnormDirectory = resolve(benchmarkDirectory, 'lexnorm');
 const aaltoSample = resolve(benchmarkDirectory, 'aalto', 'sample.tsv');
 const FAILURE_EXAMPLES = 20;
+// LanguageTool, for comparison: the folder holding languagetool-server.jar (or a LanguageTool-x.y folder with it).
+const languageToolDirectory = process.env.WORDWARDEN_LANGUAGETOOL_DIR ?? resolve(benchmarkDirectory, 'languagetool');
+const LANGUAGETOOL_PORT = 8081;
 
 type Split = 'tune' | 'holdout';
 type SpellingPair = Readonly<{ misspelling: string; targets: readonly string[]; split: Split }>;
 type Counts = { total: number; detected: number; topOne: number; topThree: number };
 type Report = Record<string, unknown>;
+type Checker = Readonly<{ lint(text: string): Promise<readonly WritingIssue[]> }>;
+/**
+ * One checker under test. Wordwarden's results go at the top of the report; LanguageTool's go under
+ * `languagetool` and use only the holdout halves, to keep its slower run short.
+ */
+type Suite = Readonly<{ out: Report; american: Checker; british: Checker; holdoutOnly: boolean }>;
 
 const report: Report = {};
 let american: HarperEngine;
 let british: HarperEngine;
+let languageTool: ChildProcess | null = null;
 
 function emptyCounts(): Counts {
   return { total: 0, detected: 0, topOne: 0, topThree: 0 };
@@ -76,17 +87,14 @@ function parseMisspellingList(source: string): readonly SpellingPair[] {
   })));
 }
 
-async function evaluateWordList(
-  name: string,
-  file: string,
-  engine: HarperEngine,
-): Promise<void> {
+async function evaluateWordList(suite: Suite, name: string, file: string, engine: Checker): Promise<void> {
   const path = resolve(birkbeckDirectory, file);
   if (!existsSync(path)) {
-    report[name] = { skipped: `missing ${path}` };
+    suite.out[name] = { skipped: `missing ${path}` };
     return;
   }
-  const pairs = parseMisspellingList(await readFile(path, 'utf8'));
+  const pairs = parseMisspellingList(await readFile(path, 'utf8'))
+    .filter((pair) => !suite.holdoutOnly || pair.split === 'holdout');
   const counts: Record<Split, Counts> = { tune: emptyCounts(), holdout: emptyCounts() };
   const misses: string[] = [];
   for (const pair of pairs) {
@@ -103,7 +111,7 @@ async function evaluateWordList(
       misses.push(`${pair.misspelling} → want ${pair.targets.join('/')}; got ${suggestions.slice(0, 3).join(', ') || '∅'}`);
     }
   }
-  report[name] = { tune: rates(counts.tune), holdout: rates(counts.holdout), holdoutMisses: misses };
+  suite.out[name] = { tune: rates(counts.tune), holdout: rates(counts.holdout), holdoutMisses: misses };
 }
 
 /** JFLEG text is tokenized ("siences ."); rejoin it the way people type. */
@@ -142,10 +150,11 @@ async function readLines(path: string): Promise<readonly string[]> {
   return (await readFile(path, 'utf8')).split(/\r?\n/u).filter((line) => line.trim().length > 0);
 }
 
-async function evaluateJfleg(split: 'dev' | 'test', label: Split): Promise<void> {
+async function evaluateJfleg(suite: Suite, split: 'dev' | 'test', label: Split): Promise<void> {
+  if (suite.holdoutOnly && label === 'tune') return;
   const sourcePath = resolve(jflegDirectory, `${split}.src`);
   if (!existsSync(sourcePath)) {
-    report[`jfleg-${label}`] = { skipped: `missing ${sourcePath}` };
+    suite.out[`jfleg-${label}`] = { skipped: `missing ${sourcePath}` };
     return;
   }
   const sources = (await readLines(sourcePath)).map(detokenize);
@@ -162,7 +171,7 @@ async function evaluateJfleg(split: 'dev' | 'test', label: Split): Promise<void>
   for (const reference of references) {
     for (const sentence of reference) {
       cleanSentences += 1;
-      const issues = await american.lint(sentence);
+      const issues = await suite.american.lint(sentence);
       if (issues.length === 0) continue;
       flaggedCleanSentences += 1;
       cleanFlags += issues.length;
@@ -183,7 +192,7 @@ async function evaluateJfleg(split: 'dev' | 'test', label: Split): Promise<void>
     const baseline = Math.min(...refs.map((ref) => tokenDistance(sourceWords, words(ref))));
     const needsEdits = refs.every((ref) => ref !== source);
     if (needsEdits) sentencesNeedingEdits += 1;
-    const issues = await american.lint(source);
+    const issues = await suite.american.lint(source);
     if (needsEdits && issues.length > 0) sentencesFlagged += 1;
     for (const issue of issues) {
       const fix = issue.replacements[0];
@@ -196,7 +205,7 @@ async function evaluateJfleg(split: 'dev' | 'test', label: Split): Promise<void>
     }
   }
 
-  report[`jfleg-${label}`] = {
+  suite.out[`jfleg-${label}`] = {
     cleanText: {
       sentences: cleanSentences,
       flaggedSentences: flaggedCleanSentences,
@@ -242,10 +251,10 @@ function parseHolbrook(source: string): readonly TaggedLine[] {
   return Object.freeze(lines);
 }
 
-async function evaluateHolbrook(): Promise<void> {
+async function evaluateHolbrook(suite: Suite): Promise<void> {
   const path = resolve(birkbeckDirectory, 'holbrook-tagged.dat');
   if (!existsSync(path)) {
-    report.holbrook = { skipped: `missing ${path}` };
+    suite.out.holbrook = { skipped: `missing ${path}` };
     return;
   }
   const counts = emptyCounts();
@@ -253,7 +262,7 @@ async function evaluateHolbrook(): Promise<void> {
   let spellingFlagsOnTaggedErrors = 0;
   const falseAlarms: string[] = [];
   for (const line of parseHolbrook(await readFile(path, 'utf8'))) {
-    const issues = await british.lint(line.text);
+    const issues = await suite.british.lint(line.text);
     for (const error of line.errors) {
       counts.total += 1;
       const issue = issues.find((candidate) => candidate.range.start < error.end && error.start < candidate.range.end);
@@ -271,7 +280,7 @@ async function evaluateHolbrook(): Promise<void> {
       else if (falseAlarms.length < FAILURE_EXAMPLES) falseAlarms.push(`${line.text} [${issueSummary(issue)}]`);
     }
   }
-  report.holbrook = {
+  suite.out.holbrook = {
     taggedErrors: rates(counts),
     spellingFlags,
     spellingPrecisionPct: percent(spellingFlagsOnTaggedErrors, spellingFlags),
@@ -298,10 +307,12 @@ function letterDistance(left: string, right: string): number {
 }
 
 /** Misspellings marked inside whole sentences: caught, and the right word first or in the top three. */
-async function evaluateInContext(name: string, items: readonly ContextItem[], engine: HarperEngine): Promise<void> {
+async function evaluateInContext(suite: Suite, name: string, items: readonly ContextItem[]): Promise<void> {
   const counts: Record<Split, Counts> = { tune: emptyCounts(), holdout: emptyCounts() };
   const misses: string[] = [];
   for (const item of items) {
+    if (suite.holdoutOnly && item.split === 'tune') continue;
+    const engine = suite.american;
     const issues = await engine.lint(item.text);
     const bucket = counts[item.split];
     for (const error of item.errors) {
@@ -316,7 +327,7 @@ async function evaluateInContext(name: string, items: readonly ContextItem[], en
       }
     }
   }
-  report[name] = { tune: rates(counts.tune), holdout: rates(counts.holdout), holdoutMisses: misses };
+  suite.out[name] = { tune: rates(counts.tune), holdout: rates(counts.holdout), holdoutMisses: misses };
 }
 
 /**
@@ -324,10 +335,10 @@ async function evaluateInContext(name: string, items: readonly ContextItem[], en
  * tweets. Only real misspellings are scored: one word for one word, close in spelling. Slang written out
  * in full ("lol" → "laughing out loud") is left out, because Wordwarden should not change it.
  */
-async function evaluateLexnorm(): Promise<void> {
+async function evaluateLexnorm(suite: Suite): Promise<void> {
   const files = Object.freeze([['train', 'tune'], ['dev', 'tune'], ['test', 'holdout']] as const);
   if (!existsSync(resolve(lexnormDirectory, 'test.norm'))) {
-    report.twitter = { skipped: `missing ${lexnormDirectory}` };
+    suite.out.twitter = { skipped: `missing ${lexnormDirectory}` };
     return;
   }
   const items: ContextItem[] = [];
@@ -354,7 +365,7 @@ async function evaluateLexnorm(): Promise<void> {
       if (errors.length > 0) items.push(Object.freeze({ text, errors: Object.freeze(errors), split }));
     }
   }
-  await evaluateInContext('twitter', items, american);
+  await evaluateInContext(suite, 'twitter', items);
 }
 
 /**
@@ -362,9 +373,9 @@ async function evaluateLexnorm(): Promise<void> {
  * scripts/aalto-sample.mjs. A word is a typing mistake when the typed word differs from the target word
  * at the same position. Sentences where words were run together or split are left out.
  */
-async function evaluateAalto(): Promise<void> {
+async function evaluateAalto(suite: Suite): Promise<void> {
   if (!existsSync(aaltoSample)) {
-    report.aalto = { skipped: `missing ${aaltoSample}` };
+    suite.out.aalto = { skipped: `missing ${aaltoSample}` };
     return;
   }
   const bare = (word: string): string => word.replace(/^[^\p{L}\p{N}']+|[^\p{L}\p{N}']+$/gu, '').toLocaleLowerCase('en');
@@ -389,10 +400,10 @@ async function evaluateAalto(): Promise<void> {
     });
     if (errors.length > 0) items.push(Object.freeze({ text, errors: Object.freeze(errors), split: splitFor(line) }));
   }
-  await evaluateInContext('aalto', items, american);
+  await evaluateInContext(suite, 'aalto', items);
 }
 
-async function evaluateSpeed(): Promise<void> {
+async function evaluateSpeed(suite: Suite): Promise<void> {
   const path = resolve(jflegDirectory, 'dev.ref0');
   if (!existsSync(path)) return;
   const sentences = (await readLines(path)).map(detokenize);
@@ -401,15 +412,109 @@ async function evaluateSpeed(): Promise<void> {
     if (text.split(/\s+/u).length >= 500) break;
     text += `${sentence} `;
   }
-  await american.lint(text);
+  await suite.american.lint(text);
   const timings: number[] = [];
   for (let run = 0; run < 7; run += 1) {
     const started = performance.now();
-    await american.lint(text);
+    await suite.american.lint(text);
     timings.push(performance.now() - started);
   }
   timings.sort((a, b) => a - b);
-  report.speed = { words: text.split(/\s+/u).length - 1, medianMs: Math.round(timings[3] ?? 0) };
+  suite.out.speed = { words: text.split(/\s+/u).length - 1, medianMs: Math.round(timings[3] ?? 0) };
+}
+
+function findLanguageToolJar(): string | null {
+  if (!existsSync(languageToolDirectory)) return null;
+  const folders = [languageToolDirectory, ...readdirSync(languageToolDirectory)
+    .filter((name) => name.startsWith('LanguageTool-'))
+    .map((name) => resolve(languageToolDirectory, name))];
+  return folders.map((folder) => resolve(folder, 'languagetool-server.jar')).find((jar) => existsSync(jar)) ?? null;
+}
+
+// On Windows, `java` on the PATH is often a launcher that starts the real java.exe as a separate process, so
+// the server is started with the real one, and stopping it also ends anything it started.
+function javaExecutable(): string {
+  const settings = spawnSync('java', ['-XshowSettings:properties', '-version'], { encoding: 'utf8' });
+  const home = /java\.home = (.+)/u.exec(`${settings.stderr}${settings.stdout}`)?.[1]?.trim();
+  const java = home === undefined ? null : resolve(home, 'bin', process.platform === 'win32' ? 'java.exe' : 'java');
+  return java !== null && existsSync(java) ? java : 'java';
+}
+
+function stopLanguageTool(): void {
+  const server = languageTool;
+  languageTool = null;
+  if (server?.pid === undefined || server.exitCode !== null) return;
+  if (process.platform === 'win32') spawnSync('taskkill', ['/pid', String(server.pid), '/T', '/F'], { stdio: 'ignore' });
+  else server.kill();
+}
+
+/**
+ * Starts a LanguageTool server on this computer only (it does not accept outside connections) for the
+ * length of the run. It is stopped when the run ends, fails or is interrupted.
+ */
+async function startLanguageTool(jar: string): Promise<void> {
+  languageTool = spawn(javaExecutable(), ['-Xmx1g', '-cp', jar, 'org.languagetool.server.HTTPServer', '--port', String(LANGUAGETOOL_PORT)], {
+    stdio: 'ignore',
+  });
+  process.once('exit', stopLanguageTool);
+  for (const signal of ['SIGINT', 'SIGTERM'] as const) {
+    process.once(signal, () => {
+      stopLanguageTool();
+      process.exit(1);
+    });
+  }
+  const deadline = Date.now() + 120_000;
+  while (Date.now() < deadline) {
+    try {
+      const response = await fetch(`http://127.0.0.1:${LANGUAGETOOL_PORT}/v2/languages`);
+      if (response.ok) return;
+    } catch {
+      // Not listening yet.
+    }
+    await new Promise((done) => setTimeout(done, 500));
+  }
+  stopLanguageTool();
+  throw new Error('LanguageTool did not start within two minutes.');
+}
+
+type LanguageToolMatch = Readonly<{
+  offset: number;
+  length: number;
+  replacements: readonly Readonly<{ value: string }>[];
+  rule: Readonly<{ id: string; issueType?: string }>;
+}>;
+
+function languageToolChecker(language: 'en-US' | 'en-GB'): Checker {
+  return Object.freeze({
+    async lint(text: string): Promise<readonly WritingIssue[]> {
+      const response = await fetch(`http://127.0.0.1:${LANGUAGETOOL_PORT}/v2/check`, {
+        method: 'POST',
+        body: new URLSearchParams({ text, language }),
+      });
+      if (!response.ok) throw new Error(`LanguageTool returned ${response.status}.`);
+      const { matches } = await response.json() as { matches: readonly LanguageToolMatch[] };
+      // Only the fields the benchmarks read are filled in.
+      return matches.map((match) => ({
+        id: `${match.rule.id}:${match.offset}`,
+        ruleId: match.rule.id,
+        category: match.rule.issueType === 'misspelling' ? 'spelling' : 'grammar',
+        range: { start: match.offset, end: match.offset + match.length },
+        originalText: text.slice(match.offset, match.offset + match.length),
+        replacements: match.replacements.map((replacement) => replacement.value),
+      }) as unknown as WritingIssue);
+    },
+  });
+}
+
+async function evaluateAll(suite: Suite): Promise<void> {
+  await evaluateWordList(suite, 'birkbeck', 'missp.dat', suite.british);
+  await evaluateWordList(suite, 'wikipedia', 'wikipedia.dat', suite.american);
+  await evaluateAalto(suite);
+  await evaluateLexnorm(suite);
+  await evaluateHolbrook(suite);
+  await evaluateJfleg(suite, 'dev', 'tune');
+  await evaluateJfleg(suite, 'test', 'holdout');
+  await evaluateSpeed(suite);
 }
 
 beforeAll(async () => {
@@ -417,24 +522,32 @@ beforeAll(async () => {
 }, 120_000);
 
 afterAll(async () => {
+  stopLanguageTool();
   await Promise.all([american?.dispose(), british?.dispose()]);
 });
 
 describe('real-world benchmarks', () => {
   it('reports spelling, grammar, false-alarm, and speed results', async () => {
-    await evaluateWordList('birkbeck', 'missp.dat', british);
-    await evaluateWordList('wikipedia', 'wikipedia.dat', american);
-    await evaluateAalto();
-    await evaluateLexnorm();
-    await evaluateHolbrook();
-    await evaluateJfleg('dev', 'tune');
-    await evaluateJfleg('test', 'holdout');
-    await evaluateSpeed();
+    await evaluateAll(Object.freeze({ out: report, american, british, holdoutOnly: false }));
+    const jar = findLanguageToolJar();
+    if (jar === null) {
+      report.languagetool = { skipped: `missing languagetool-server.jar in ${languageToolDirectory}` };
+    } else {
+      await startLanguageTool(jar);
+      const out: Report = { version: /LanguageTool-([\d.]+)/u.exec(jar)?.[1] ?? null };
+      report.languagetool = out;
+      try {
+        await evaluateAll(Object.freeze({
+          out, american: languageToolChecker('en-US'), british: languageToolChecker('en-GB'), holdoutOnly: true,
+        }));
+      } finally {
+        stopLanguageTool();
+      }
+    }
     console.log(`WORDWARDEN_BENCHMARK_REPORT=${JSON.stringify(report, null, 2)}`);
     // The accuracy chart is drawn from this file (scripts/accuracy-chart.mjs).
     const reportPath = process.env.WORDWARDEN_BENCHMARK_REPORT;
-    if (reportPath !== undefined) await writeFile(reportPath, `${JSON.stringify(report, null, 2)}
-`);
+    if (reportPath !== undefined) await writeFile(reportPath, `${JSON.stringify(report, null, 2)}\n`);
     expect(Object.keys(report).length).toBeGreaterThan(0);
   });
 });

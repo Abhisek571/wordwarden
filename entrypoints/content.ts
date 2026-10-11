@@ -1,9 +1,11 @@
 import { browser } from 'wxt/browser';
 import {
+  PAGE_STATUS_REQUEST,
   isRuntimeResponse,
   type RuntimeRequest,
   type RuntimeResponse,
 } from '#/core/messages';
+import type { PageStatus } from '#/core/diagnostics';
 import { createEditorEffectQueue } from '#/core/effect-queue';
 import { issueMatchesText, rebaseIssuesAfterReplacement } from '#/core/issue-ranges';
 import { mergeSettings, parseSettings, type TypeCheckSettings } from '#/core/settings';
@@ -43,6 +45,21 @@ async function sendRequest(request: RuntimeRequest): Promise<RuntimeResponse> {
   return response;
 }
 
+function errorText(error: unknown): string {
+  return error instanceof Error ? error.message : String(error);
+}
+
+// Kept for the diagnostic log (the background strips quoted text). Reporting must never cause a new error.
+function reportError(message: string): void {
+  void sendRequest(Object.freeze({ type: 'error:report', message: message.slice(0, 1000) })).catch(() => undefined);
+}
+
+function editorKind(element: HTMLElement | undefined): PageStatus['editor'] {
+  if (element === undefined) return 'none';
+  if (element instanceof HTMLTextAreaElement) return 'textarea';
+  return element instanceof HTMLInputElement ? 'input' : 'rich text';
+}
+
 export async function startTypeCheck(context: Readonly<{
   abort: () => void;
   onInvalidated: (callback: () => void) => void;
@@ -56,11 +73,27 @@ export async function startTypeCheck(context: Readonly<{
     const isAvailable = (): boolean =>
       options.alwaysEnabled === true ||
       (settings.enabled && !settings.disabledSites.includes(location.hostname));
-    if (!isAvailable()) return;
 
     let activeAdapter: EditorAdapter | null = null;
     let revision = 0;
     let currentIssues: readonly WritingIssue[] = Object.freeze([]);
+    let checkerState: PageStatus['checker'] = 'not started';
+    let lastCheckMs: number | null = null;
+    // Answers the diagnostic log's question about this tab, even when the site is turned off.
+    const onStatusRequest = (message: unknown): Promise<PageStatus> | undefined => {
+      if ((message as { type?: unknown } | null)?.type !== PAGE_STATUS_REQUEST) return undefined;
+      return Promise.resolve(Object.freeze({
+        hostname: location.hostname,
+        editor: editorKind(activeAdapter?.element),
+        checker: checkerState,
+        lastCheckMs,
+        underlines: currentIssues.length,
+      }));
+    };
+    browser.runtime.onMessage.addListener(onStatusRequest);
+    context.onInvalidated(() => browser.runtime.onMessage.removeListener(onStatusRequest));
+    if (!isAvailable()) return;
+
     const effects = createEditorEffectQueue();
     let harper: HarperEngine | null = null;
     let harperReady: Promise<void> | null = null;
@@ -165,9 +198,8 @@ export async function startTypeCheck(context: Readonly<{
               if (activeAdapter !== null) overlay.renderIssues(activeAdapter, currentIssues);
             })
             .catch((error: unknown) => {
-              overlay.showStatus(
-                `Could not ignore issue: ${error instanceof Error ? error.message : String(error)}`,
-              );
+              reportError(`Could not ignore issue: ${errorText(error)}`);
+              overlay.showStatus(`Could not ignore issue: ${errorText(error)}`);
             });
         },
         addWord: (issue: WritingIssue): void => {
@@ -179,9 +211,8 @@ export async function startTypeCheck(context: Readonly<{
           words.add(word);
           const next = mergeSettings(settings, { dictionary: [...words].sort() });
           void persistSettings(next).catch((error: unknown) => {
-            overlay.showStatus(
-              `Could not add word: ${error instanceof Error ? error.message : String(error)}`,
-            );
+            reportError(`Could not add word: ${errorText(error)}`);
+            overlay.showStatus(`Could not add word: ${errorText(error)}`);
           });
         },
       }),
@@ -209,9 +240,8 @@ export async function startTypeCheck(context: Readonly<{
             await previousReady;
           } catch (error) {
             if (!invalidated) {
-              overlay.showStatus(
-                `Previous grammar checker stopped: ${error instanceof Error ? error.message : String(error)}`,
-              );
+              reportError(`Previous grammar checker stopped: ${errorText(error)}`);
+              overlay.showStatus(`Previous grammar checker stopped: ${errorText(error)}`);
             }
           }
         }
@@ -251,7 +281,16 @@ export async function startTypeCheck(context: Readonly<{
       if (harper === null) harper = createHarperEngine();
       const engine = harper;
       // The field badge shows "checking" while the engine starts.
-      harperReady ??= engine.setup(settings.dialect, settings.dictionary);
+      if (harperReady === null) {
+        checkerState = 'starting';
+        harperReady = engine.setup(settings.dialect, settings.dictionary).then(
+          () => { checkerState = 'ready'; },
+          (error: unknown) => {
+            checkerState = 'failed';
+            throw error;
+          },
+        );
+      }
       const ready = harperReady;
       await ready;
       return engine;
@@ -276,7 +315,9 @@ export async function startTypeCheck(context: Readonly<{
         }
         try {
           const engine = await ensureHarper();
+          const started = performance.now();
           const issues = await engine.lint(snapshot.text);
+          lastCheckMs = Math.round(performance.now() - started);
           if (isStale()) return;
           currentIssues = visibleIssues(issues);
           overlay.renderIssues(adapter, currentIssues);
@@ -290,9 +331,8 @@ export async function startTypeCheck(context: Readonly<{
         } catch (error) {
           if (isStale()) return;
           overlay.hideBadge();
-          overlay.showStatus(
-            `Grammar checker failed: ${error instanceof Error ? error.message : String(error)}`,
-          );
+          reportError(`Grammar checker failed: ${errorText(error)}`);
+          overlay.showStatus(`Grammar checker failed: ${errorText(error)}`);
         }
       });
     }

@@ -6,7 +6,10 @@ const storage = vi.hoisted(() => ({
   saveSettings: vi.fn<(settings: TypeCheckSettings) => Promise<void>>(),
   clearSettings: vi.fn<() => Promise<void>>(),
   recordTypingStats: vi.fn<(delta: unknown) => Promise<void>>(),
+  loadRecentErrors: vi.fn<() => Promise<readonly unknown[]>>(),
+  recordRecentError: vi.fn<(where: string, message: string) => Promise<void>>(),
 }));
+const tabs = vi.hoisted(() => ({ sendMessage: vi.fn<(tabId: number, message: unknown) => Promise<unknown>>() }));
 
 vi.mock('#/core/storage', () => storage);
 vi.mock('wxt/browser', () => ({
@@ -16,6 +19,7 @@ vi.mock('wxt/browser', () => ({
       getPlatformInfo: vi.fn(),
       onMessage: { addListener: vi.fn() },
     },
+    tabs,
   },
 }));
 
@@ -134,5 +138,32 @@ describe('background settings writes', () => {
       settings: { ...DEFAULT_SETTINGS, enabled: false, disabledSites: ['example.com'] },
     });
     expect(stored).toEqual({ ...DEFAULT_SETTINGS, enabled: false, disabledSites: ['example.com'] });
+  });
+
+  it('keeps reported errors and asks the reporting tab how checking went', async () => {
+    storage.loadSettings.mockResolvedValue(DEFAULT_SETTINGS);
+    storage.recordRecentError.mockResolvedValue(undefined);
+    storage.loadRecentErrors.mockResolvedValue([
+      { at: '2026-10-11T00:00:00.000Z', where: 'page', message: 'Grammar checker failed: out of memory' },
+    ]);
+    tabs.sendMessage.mockResolvedValue({
+      hostname: 'github.com', editor: 'textarea', checker: 'ready', lastCheckMs: 31, underlines: 2,
+    });
+    const { browser } = await import('wxt/browser');
+    vi.mocked(browser.runtime.getManifest).mockReturnValue({ version: '1.1.0' } as never);
+    vi.mocked(browser.runtime.getPlatformInfo).mockResolvedValue({ os: 'win' } as never);
+
+    const { handleRequest } = await import('../entrypoints/background');
+    expect(await handleRequest({ type: 'error:report', message: 'Grammar checker failed: out of memory' }))
+      .toEqual({ ok: true });
+    expect(storage.recordRecentError).toHaveBeenCalledWith('page', 'Grammar checker failed: out of memory');
+
+    const response = await handleRequest({ type: 'diagnostics:get', hostname: 'github.com', tabId: 7, webAssemblyAvailable: true });
+    expect(tabs.sendMessage).toHaveBeenCalledWith(7, { type: 'page:status' });
+    if (!response.ok || !('diagnostics' in response)) throw new Error('Expected diagnostics.');
+    expect(response.diagnostics.site).toEqual({
+      hostname: 'github.com', on: true, page: { editor: 'textarea', checker: 'ready', lastCheckMs: 31, underlines: 2 },
+    });
+    expect(response.diagnostics.recentErrors).toHaveLength(1);
   });
 });

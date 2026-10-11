@@ -1,18 +1,21 @@
 import { describe, expect, it } from 'vitest';
-import { browserIdentity, createDiagnostics, isSafeHostname } from '#/core/diagnostics';
+import {
+  addRecentError, browserIdentity, createDiagnostics, isDiagnostics, isSafeHostname, sanitizeErrorMessage,
+} from '#/core/diagnostics';
 import { DEFAULT_SETTINGS } from '#/core/settings';
 
+const page = Object.freeze({
+  hostname: 'editor.example.com', editor: 'rich text', checker: 'ready', lastCheckMs: 42, underlines: 3,
+} as const);
 const environment = Object.freeze({
   generatedAt: '2026-08-31T00:00:00.000Z',
-  extensionName: 'TypeCheck',
-  extensionVersion: '0.1.0',
-  manifestVersion: 3,
+  extensionVersion: '1.1.0',
   userAgent: 'Mozilla/5.0 Firefox/142.0',
   platformOs: 'win',
   hostname: 'editor.example.com',
-  webGpuAvailable: false,
+  page,
   webAssemblyAvailable: true,
-  workerAvailable: true,
+  recentErrors: Object.freeze([]),
 });
 
 describe('diagnostics', () => {
@@ -41,11 +44,18 @@ describe('diagnostics', () => {
     );
     const serialized = JSON.stringify(diagnostics);
 
-    expect(diagnostics.extension.manifestVersion).toBe(3);
-    expect(diagnostics.website).toEqual({ hostname: 'editor.example.com', typeCheckEnabled: true });
-    expect(diagnostics.settings.dictionaryWordCount).toBe(1);
-    expect(diagnostics.runtime.webAssemblyAvailable).toBe(true);
-    expect(diagnostics.recentErrors).toEqual({ tracked: false, entries: [] });
+    expect(diagnostics.wordwarden).toBe('1.1.0');
+    expect(diagnostics.browser).toEqual({ name: 'Firefox', version: '142.0', os: 'win' });
+    expect(diagnostics.site).toEqual({
+      hostname: 'editor.example.com',
+      on: true,
+      page: { editor: 'rich text', checker: 'ready', lastCheckMs: 42, underlines: 3 },
+    });
+    expect(diagnostics.settings.dictionaryWords).toBe(1);
+    expect(diagnostics.settings.sitesTurnedOff).toBe(1);
+    expect(diagnostics.checker).toEqual({ grammar: 'Harper 2.7.0', webAssembly: true });
+    expect(diagnostics.recentErrors).toEqual([]);
+    expect(isDiagnostics(diagnostics)).toBe(true);
     expect(serialized).not.toContain('PrivateProjectName');
     expect(serialized).not.toContain('private.example');
     expect(serialized).not.toContain('secret-hash');
@@ -62,5 +72,31 @@ describe('diagnostics', () => {
     expect(isSafeHostname('https://example.com/private')).toBe(false);
     expect(isSafeHostname('example.com/path')).toBe(false);
     expect(isSafeHostname(null)).toBe(false);
+  });
+});
+
+describe('diagnostic details', () => {
+  it('only uses a page answer from the site Settings was opened for', () => {
+    const elsewhere = createDiagnostics(DEFAULT_SETTINGS, { ...environment, page: { ...page, hostname: 'other.example' } });
+    expect(elsewhere.site?.page).toBeNull();
+    const noSite = createDiagnostics(DEFAULT_SETTINGS, { ...environment, hostname: null });
+    expect(noSite.site).toBeNull();
+    expect(isDiagnostics(noSite)).toBe(true);
+  });
+
+  it('removes quoted text from error messages and keeps them short', () => {
+    expect(sanitizeErrorMessage('Could not add word: "my secret draft" was rejected')).toBe('Could not add word: … was rejected');
+    expect(sanitizeErrorMessage('Lint failed on “private words” here')).toBe('Lint failed on … here');
+    expect(sanitizeErrorMessage('x'.repeat(400)).length).toBe(160);
+  });
+
+  it('keeps only the ten most recent errors', () => {
+    let errors = addRecentError([], 'page', 'first', '2026-08-31T00:00:00.000Z');
+    for (let index = 0; index < 12; index += 1) {
+      errors = addRecentError(errors, 'background', `error ${index}`, '2026-08-31T00:00:01.000Z');
+    }
+    expect(errors).toHaveLength(10);
+    expect(errors[0]?.message).toBe('error 2');
+    expect(errors.at(-1)).toEqual({ at: '2026-08-31T00:00:01.000Z', where: 'background', message: 'error 11' });
   });
 });

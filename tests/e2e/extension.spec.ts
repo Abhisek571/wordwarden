@@ -246,11 +246,16 @@ test('opens Settings as a full tab and previews diagnostics before sharing', asy
   const preview = settingsPage.locator('#diagnostic-report');
   await expect(preview).toBeVisible();
   const report = JSON.parse(await preview.inputValue()) as {
-    extension: { manifestVersion: number };
-    website: { hostname: string | null };
+    schemaVersion: number;
+    wordwarden: string;
+    checker: { webAssembly: boolean };
+    recentErrors: unknown[];
   };
-  expect(report.extension.manifestVersion).toBe(3);
-  expect(report.website).toHaveProperty('hostname');
+  expect(report.schemaVersion).toBe(2);
+  expect(report.wordwarden).toMatch(/^\d+\.\d+\.\d+$/u);
+  expect(report.checker.webAssembly).toBe(true);
+  expect(Array.isArray(report.recentErrors)).toBe(true);
+  expect(report).toHaveProperty('site');
   await settingsPage.getByRole('button', { name: 'Copy log' }).click();
   await expect(settingsPage.getByText('Report copied to the clipboard.')).toBeVisible();
   await expect(settingsPage.getByRole('button', { name: 'Open GitHub Issue' })).toBeEnabled();

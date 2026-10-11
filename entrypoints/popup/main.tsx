@@ -54,6 +54,7 @@ function TypingToday(props: Readonly<{ stats: TypingStats | null }>): React.JSX.
 function Popup(): React.JSX.Element {
   const [settings, setSettings] = useState<TypeCheckSettings | null>(null);
   const [hostname, setHostname] = useState<string | null>(null);
+  const [tabId, setTabId] = useState<number | null>(null);
   const [typing, setTyping] = useState<TypingStats | null>(null);
   const [message, setMessage] = useState('');
   const [hasError, setHasError] = useState(false);
@@ -82,6 +83,7 @@ function Popup(): React.JSX.Element {
       setSettings(response.settings);
       // The numbers are a nicety: if they cannot be read the popup still works.
       void loadTypingStats().then(setTyping, () => setTyping(null));
+      setTabId(tabs[0]?.id ?? null);
       const url = tabs[0]?.url;
       if (url === undefined) return;
       try {
@@ -151,6 +153,8 @@ function Popup(): React.JSX.Element {
   async function openSettings(reportIssue = false): Promise<void> {
     const url = new URL(browser.runtime.getURL('/options.html'));
     if (hostname !== null) url.searchParams.set('site', hostname);
+    // Lets the diagnostic log ask that tab how checking went.
+    if (hostname !== null && tabId !== null) url.searchParams.set('tab', String(tabId));
     if (reportIssue) {
       url.searchParams.set('report', 'issue');
       url.hash = 'support';

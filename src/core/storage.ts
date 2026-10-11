@@ -1,4 +1,5 @@
 import { browser } from 'wxt/browser';
+import { RECENT_ERRORS_KEY, addRecentError, parseRecentErrors, type RecentError } from './diagnostics';
 import { DEFAULT_SETTINGS, parseSettings, type TypeCheckSettings } from './settings';
 import { TYPING_BESTS_KEY, TYPING_STATS_KEY, addTypingStats, parseTypingStats, type TypingStats, type TypingStatsDelta } from './typing-stats';
 
@@ -15,6 +16,18 @@ export async function saveSettings(settings: TypeCheckSettings): Promise<void> {
 
 export async function clearSettings(): Promise<void> {
   await browser.storage.local.remove([SETTINGS_KEY, TYPING_STATS_KEY, TYPING_BESTS_KEY]);
+  await browser.storage.session.remove(RECENT_ERRORS_KEY);
+}
+
+// Recent errors are kept in session storage, so they are gone when the browser closes.
+export async function loadRecentErrors(): Promise<readonly RecentError[]> {
+  const result = await browser.storage.session.get(RECENT_ERRORS_KEY);
+  return parseRecentErrors(result[RECENT_ERRORS_KEY]);
+}
+
+export async function recordRecentError(where: RecentError['where'], message: string): Promise<void> {
+  const errors = addRecentError(await loadRecentErrors(), where, message, new Date().toISOString());
+  await browser.storage.session.set({ [RECENT_ERRORS_KEY]: errors });
 }
 
 export async function loadTypingStats(): Promise<TypingStats> {

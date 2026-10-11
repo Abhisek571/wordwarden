@@ -1,10 +1,29 @@
 import { browser } from 'wxt/browser';
-import { clearSettings, loadSettings, recordTypingStats, saveSettings } from '#/core/storage';
-import { isRuntimeRequest, type Diagnostics, type RuntimeResponse } from '#/core/messages';
+import {
+  clearSettings, loadRecentErrors, loadSettings, recordRecentError, recordTypingStats, saveSettings,
+} from '#/core/storage';
+import { PAGE_STATUS_REQUEST, isRuntimeRequest, type Diagnostics, type RuntimeResponse } from '#/core/messages';
 import { mergeSettings, parseSettings, type TypeCheckSettings } from '#/core/settings';
-import { createDiagnostics } from '#/core/diagnostics';
+import { createDiagnostics, isPageStatus, type PageStatus, type RecentError } from '#/core/diagnostics';
 
+const PAGE_STATUS_TIMEOUT_MS = 1500;
 let settingsWriteTail: Promise<void> = Promise.resolve();
+let errorWriteTail: Promise<void> = Promise.resolve();
+
+// One at a time, so two errors arriving together are both kept. A failure to record is not reported again.
+function recordError(where: RecentError['where'], message: string): Promise<void> {
+  errorWriteTail = errorWriteTail.then(() => recordRecentError(where, message)).catch(() => undefined);
+  return errorWriteTail;
+}
+
+// Asks the content script on that tab how checking went. No answer (no page, not checked yet) is null.
+async function pageStatus(tabId: number | null): Promise<PageStatus | null> {
+  if (tabId === null) return null;
+  const timeout = new Promise<null>((done) => setTimeout(() => done(null), PAGE_STATUS_TIMEOUT_MS));
+  const answer = browser.tabs.sendMessage(tabId, Object.freeze({ type: PAGE_STATUS_REQUEST }))
+    .then((value: unknown) => (isPageStatus(value) ? value : null), () => null);
+  return Promise.race([answer, timeout]);
+}
 
 // Both sides come from parseSettings, so their fields are in the same order and a whole comparison is exact.
 function settingsEqual(left: TypeCheckSettings, right: TypeCheckSettings): boolean {
@@ -64,37 +83,41 @@ export async function handleRequest(request: unknown): Promise<RuntimeResponse> 
       return Object.freeze({ ok: true });
     });
   }
+  if (request.type === 'error:report') {
+    await recordError('page', request.message);
+    return Object.freeze({ ok: true });
+  }
   if (request.type === 'data:clear') {
     return enqueueSettingsWrite(async () => {
       await clearSettings();
       return Object.freeze({ ok: true });
     });
   }
-  const settings = await loadSettings();
-  const manifest = browser.runtime.getManifest();
-  const platform = await browser.runtime.getPlatformInfo();
+  const [settings, platform, page, recentErrors] = await Promise.all([
+    loadSettings(),
+    browser.runtime.getPlatformInfo(),
+    pageStatus(request.tabId),
+    errorWriteTail.then(loadRecentErrors),
+  ]);
   const diagnostics: Diagnostics = createDiagnostics(settings, {
     generatedAt: new Date().toISOString(),
-    extensionName: manifest.name,
-    extensionVersion: manifest.version,
-    manifestVersion: manifest.manifest_version,
+    extensionVersion: browser.runtime.getManifest().version,
     userAgent: navigator.userAgent,
     platformOs: platform.os,
     hostname: request.hostname,
-    webGpuAvailable: request.capabilities.webGpuAvailable,
-    webAssemblyAvailable: request.capabilities.webAssemblyAvailable,
-    workerAvailable: request.capabilities.workerAvailable,
+    page,
+    webAssemblyAvailable: request.webAssemblyAvailable,
+    recentErrors,
   });
   return Object.freeze({ ok: true, diagnostics });
 }
 
 export default defineBackground(() => {
   browser.runtime.onMessage.addListener((request: unknown) =>
-    handleRequest(request).catch((error: unknown): RuntimeResponse =>
-      Object.freeze({
-        ok: false,
-        error: error instanceof Error ? error.message : String(error),
-      }),
-    ),
+    handleRequest(request).catch((error: unknown): RuntimeResponse => {
+      const message = error instanceof Error ? error.message : String(error);
+      void recordError('background', message);
+      return Object.freeze({ ok: false, error: message });
+    }),
   );
 });

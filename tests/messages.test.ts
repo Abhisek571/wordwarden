@@ -3,10 +3,9 @@ import { isRuntimeRequest, isRuntimeResponse } from '#/core/messages';
 import { DEFAULT_SETTINGS } from '#/core/settings';
 import { createDiagnostics } from '#/core/diagnostics';
 
-const capabilities = Object.freeze({
-  webGpuAvailable: false,
-  webAssemblyAvailable: true,
-  workerAvailable: true,
+const environment = Object.freeze({
+  generatedAt: '2026-08-31T00:00:00.000Z', extensionVersion: '1.1.0', userAgent: 'Mozilla/5.0 Firefox/142.0',
+  platformOs: 'win', hostname: null, page: null, webAssemblyAvailable: true, recentErrors: Object.freeze([]),
 });
 
 describe('runtime request validation', () => {
@@ -31,8 +30,9 @@ describe('runtime request validation', () => {
     expect(
       isRuntimeRequest({ type: 'site:set-enabled', hostname: 'twitch.tv', enabled: false }),
     ).toBe(true);
-    expect(isRuntimeRequest({ type: 'diagnostics:get', hostname: 'twitch.tv', capabilities })).toBe(true);
-    expect(isRuntimeRequest({ type: 'diagnostics:get', hostname: null, capabilities })).toBe(true);
+    expect(isRuntimeRequest({ type: 'diagnostics:get', hostname: 'twitch.tv', tabId: 12, webAssemblyAvailable: true })).toBe(true);
+    expect(isRuntimeRequest({ type: 'diagnostics:get', hostname: null, tabId: null, webAssemblyAvailable: false })).toBe(true);
+    expect(isRuntimeRequest({ type: 'error:report', message: 'Grammar checker failed: out of memory' })).toBe(true);
   });
 
   it('rejects requests missing required payload fields', () => {
@@ -64,8 +64,11 @@ describe('runtime request validation', () => {
     expect(isRuntimeRequest({ type: 'site:set-enabled', hostname: 'https://example.com', enabled: false })).toBe(false);
     expect(isRuntimeRequest({ type: 'site:set-enabled', hostname: 'twitch.tv' })).toBe(false);
     expect(isRuntimeRequest({ type: 'diagnostics:get' })).toBe(false);
-    expect(isRuntimeRequest({ type: 'diagnostics:get', hostname: 'https://example.com/path', capabilities })).toBe(false);
-    expect(isRuntimeRequest({ type: 'diagnostics:get', hostname: null, capabilities: {} })).toBe(false);
+    expect(isRuntimeRequest({ type: 'diagnostics:get', hostname: 'https://example.com/path', tabId: null, webAssemblyAvailable: true })).toBe(false);
+    expect(isRuntimeRequest({ type: 'diagnostics:get', hostname: null, tabId: -1, webAssemblyAvailable: true })).toBe(false);
+    expect(isRuntimeRequest({ type: 'diagnostics:get', hostname: null, tabId: null })).toBe(false);
+    expect(isRuntimeRequest({ type: 'error:report', message: 'x'.repeat(1001) })).toBe(false);
+    expect(isRuntimeRequest({ type: 'error:report' })).toBe(false);
   });
 });
 
@@ -75,11 +78,7 @@ describe('runtime response validation', () => {
     expect(isRuntimeResponse({ ok: true, settings: DEFAULT_SETTINGS })).toBe(true);
     expect(isRuntimeResponse({
       ok: true,
-      diagnostics: createDiagnostics(DEFAULT_SETTINGS, {
-        generatedAt: '2026-08-31T00:00:00.000Z', extensionName: 'TypeCheck', extensionVersion: '0.1.0',
-        manifestVersion: 3, userAgent: 'Mozilla/5.0 Firefox/142.0', platformOs: 'win',
-        hostname: null, webGpuAvailable: false, webAssemblyAvailable: true, workerAvailable: true,
-      }),
+      diagnostics: createDiagnostics(DEFAULT_SETTINGS, environment),
     })).toBe(true);
     expect(isRuntimeResponse({ ok: false, error: 'Failed.' })).toBe(true);
   });
@@ -89,11 +88,7 @@ describe('runtime response validation', () => {
     expect(isRuntimeResponse({
       ok: true,
       settings: DEFAULT_SETTINGS,
-      diagnostics: createDiagnostics(DEFAULT_SETTINGS, {
-        generatedAt: '2026-08-31T00:00:00.000Z', extensionName: 'TypeCheck', extensionVersion: '0.1.0',
-        manifestVersion: 3, userAgent: 'Mozilla/5.0 Firefox/142.0', platformOs: 'win',
-        hostname: null, webGpuAvailable: false, webAssemblyAvailable: true, workerAvailable: true,
-      }),
+      diagnostics: createDiagnostics(DEFAULT_SETTINGS, environment),
     })).toBe(false);
     expect(isRuntimeResponse({ ok: false })).toBe(false);
     expect(isRuntimeResponse({ error: 'Failed.' })).toBe(false);

@@ -5,7 +5,6 @@ import { readFileSync, writeFileSync } from 'node:fs';
 const [reportPath] = process.argv.slice(2);
 if (reportPath === undefined) throw new TypeError('Expected the path of a benchmark report.');
 const report = JSON.parse(readFileSync(reportPath, 'utf8'));
-const { version } = JSON.parse(readFileSync(new URL('../package.json', import.meta.url), 'utf8'));
 
 // Spelling sets share three bars. Holbrook has no tune/holdout split, so all of it is shown.
 const SPELLING = [
@@ -39,7 +38,6 @@ const barHeight = 14;
 const barGap = 4;
 const groupGap = 24;
 const groupHeight = SPELLING_BARS.length * barHeight + (SPELLING_BARS.length - 1) * barGap;
-const month = new Date().toLocaleDateString('en-GB', { month: 'short', year: 'numeric', timeZone: 'UTC' });
 const parts = [];
 const gridParts = [];
 const x = (percent) => left + (percent / 100) * plotWidth;
@@ -65,7 +63,7 @@ const legend = (y, items) => {
 
 let y = 92;
 parts.push(`<text x="24" y="38" font-size="20" font-weight="700" fill="${ink}">Accuracy</text>`);
-parts.push(`<text x="24" y="60" font-size="13" fill="${muted}">Held-out test data, not used for tuning · v${version} · ${month}</text>`);
+parts.push(`<text x="24" y="60" font-size="13" fill="${muted}">Held-out test data, not used for tuning</text>`);
 parts.push(`<text x="24" y="${y}" font-size="14" font-weight="700" fill="${ink}">Spelling</text>`);
 y += 18;
 const spellingTop = y;
@@ -89,9 +87,40 @@ if (GRAMMAR.length > 0) {
   y = legend(y + 50, GRAMMAR.map(([label, , color]) => [label, color]));
 }
 
+// Side by side with LanguageTool (default setup, run on the same machine), when the report has it.
+const other = report.languagetool;
+const pairs = [
+  ['Typing test slips (Aalto)', report.aalto?.holdout?.topOnePct, other?.aalto?.holdout?.topOnePct],
+  ['Tweets (LexNorm2015)', report.twitter?.holdout?.topOnePct, other?.twitter?.holdout?.topOnePct],
+  ['Wikipedia misspellings', report.wikipedia?.holdout?.topOnePct, other?.wikipedia?.holdout?.topOnePct],
+  ['Birkbeck (children, students)', report.birkbeck?.holdout?.topOnePct, other?.birkbeck?.holdout?.topOnePct],
+  ['Children\'s writing (Holbrook)', report.holbrook?.taggedErrors?.topOnePct, other?.holbrook?.taggedErrors?.topOnePct],
+  ['JFLEG: fixes that help', jfleg?.learnerText?.fixPrecisionPct, other?.['jfleg-holdout']?.learnerText?.fixPrecisionPct],
+  ['JFLEG: correct text flagged', jfleg?.cleanText?.flaggedSentencesPct, other?.['jfleg-holdout']?.cleanText?.flaggedSentencesPct],
+].filter(([, ours, theirs]) => typeof ours === 'number' && typeof theirs === 'number');
+if (pairs.length > 0) {
+  const pairHeight = 2 * barHeight + barGap;
+  y += 40;
+  parts.push(`<text x="24" y="${y}" font-size="14" font-weight="700" fill="${ink}">Compared with LanguageTool</text>`);
+  y += 20;
+  parts.push(`<text x="24" y="${y}" font-size="12" fill="${muted}">Spelling: correct word first. Lower is better for correct text flagged. LanguageTool: latest release, default setup.</text>`);
+  y += 22;
+  const compareTop = y;
+  for (const [label, ours, theirs] of pairs) {
+    parts.push(`<text x="${left - 14}" y="${y + pairHeight / 2 + 5}" font-size="14" font-weight="600" fill="${ink}" text-anchor="end">${label}</text>`);
+    bar(y, Number(ours), '#1e6fd9');
+    bar(y + barHeight + barGap, Number(theirs), '#9a9893');
+    y += pairHeight + 18;
+  }
+  grid(compareTop - 8, y - 18 + 8);
+  y = legend(y + 32, [['Wordwarden', '#1e6fd9'], ['LanguageTool', '#9a9893']]);
+}
+
 y += 14;
 parts.push(`<line x1="24" y1="${y}" x2="${width - 24}" y2="${y}" stroke="${hair}"/>`);
 y += 22;
+parts.push(`<text x="24" y="${y}" font-size="12" fill="${muted}">Measured when this release came out, against the latest LanguageTool from languagetool.org at that time.</text>`);
+y += 18;
 parts.push(`<text x="24" y="${y}" font-size="12" fill="${muted}">Generated automatically for every release except small bug fixes.</text>`);
 const height = y + 18;
 parts.unshift(

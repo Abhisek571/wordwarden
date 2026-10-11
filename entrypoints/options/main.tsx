@@ -123,6 +123,11 @@ function sourceHostname(): string | null {
   return isSafeHostname(value) ? value.toLowerCase() : null;
 }
 
+function sourceTabId(): number | null {
+  const value = new URLSearchParams(window.location.search).get('tab');
+  return value !== null && /^\d{1,10}$/u.test(value) ? Number(value) : null;
+}
+
 async function copyText(text: string): Promise<void> {
   try {
     await navigator.clipboard.writeText(text);
@@ -234,11 +239,8 @@ function Options(): React.JSX.Element {
     const response = await runtimeRequest(Object.freeze({
       type: 'diagnostics:get',
       hostname,
-      capabilities: Object.freeze({
-        webGpuAvailable: 'gpu' in navigator,
-        webAssemblyAvailable: typeof WebAssembly === 'object',
-        workerAvailable: typeof Worker === 'function',
-      }),
+      tabId: hostname === null ? null : sourceTabId(),
+      webAssemblyAvailable: typeof WebAssembly === 'object',
     }));
     if (!response.ok || !('diagnostics' in response)) {
       throw new Error(response.ok ? 'Diagnostics response is missing.' : response.error);

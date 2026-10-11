@@ -26,6 +26,14 @@ redraws `docs/accuracy.svg`; none of the data is committed.
 | `lexnorm/{train,dev,test}.norm` | LexNorm2015 (Baldwin et al., 2015), English part of MultiLexNorm, <https://huggingface.co/datasets/larrylawl/multilexnorm> | misspellings in tweets, in context; only one-word fixes within two letters are scored, so slang expansions ("lol") are left out | CC BY 4.0 |
 | `aalto/sample.tsv` | 136M Keystrokes (Dhakal, Feit, Kristensson & Oulasvirta, CHI 2018), <https://userinterfaces.aalto.fi/136Mkeystrokes/>; sample made with `node scripts/aalto-sample.mjs Keystrokes.zip aalto/sample.tsv` | typing-test slips by 168,000 people, in context | free for research and non-commercial use with attribution |
 
+## Comparison with LanguageTool
+
+`languagetool/LanguageTool-6.6/` (from <https://languagetool.org/download/LanguageTool-6.6.zip>, LGPL 2.1, about
+250 MB; needs Java 17 or newer) is run on the holdout halves for comparison. The benchmark starts it as a server
+that only accepts connections from the same computer, and stops it when the run ends, fails or is interrupted.
+It uses the default setup, without the optional n-gram data (about 8 GB), which would improve its results.
+Missing LanguageTool is skipped.
+
 ## Metrics
 
 - **Spelling lists:** detected (flagged at all), top-1 and top-3 (the right word is the first / in the
