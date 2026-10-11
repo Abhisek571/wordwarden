@@ -459,7 +459,7 @@ function Options(): React.JSX.Element {
 
           <footer className="settings-footer">
             Wordwarden {browser.runtime?.getManifest?.().version} · Free software under the{' '}
-            <a href={LICENSE_URL} target="_blank" rel="noreferrer">GNU GPL v3.0 or later</a> ·{' '}
+            <a href={LICENSE_URL} target="_blank" rel="noreferrer">GNU GPL v3.0</a> ·{' '}
             <a href={PROJECT_URL} target="_blank" rel="noreferrer">Source code on GitHub</a>
           </footer>
         </div>

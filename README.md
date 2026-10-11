@@ -76,6 +76,6 @@ See [privacy](docs/PRIVACY.md), [permissions](docs/PERMISSIONS.md) and
 ## License
 
 Copyright (C) 2026 Wordwarden contributors. Licensed under the
-[GNU General Public License v3.0 or later](LICENSE).
+[GNU General Public License v3.0](LICENSE).
 
 For the licences of the open-source parts it includes, see [third-party notices](THIRD_PARTY_NOTICES.md).
