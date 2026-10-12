@@ -1,6 +1,6 @@
-# Monthly update pull requests, grouped so each month brings at most one for packages and one for
-# workflow actions. A harper.js update can change the accuracy numbers; run the Accuracy workflow on its
-# branch before merging.
+# Monthly update pull requests. Minor and patch updates come together in one pull request; each major
+# version and every harper.js update come on their own. harper.js is the checking engine, so its updates
+# change the accuracy numbers: run the Accuracy workflow on its branch before merging.
 version: 2
 updates:
   - package-ecosystem: npm
@@ -10,7 +10,9 @@ updates:
     groups:
       packages:
         patterns: ['*']
-    open-pull-requests-limit: 2
+        update-types: [minor, patch]
+        exclude-patterns: [harper.js]
+    open-pull-requests-limit: 10
   - package-ecosystem: github-actions
     directory: /
     schedule:
