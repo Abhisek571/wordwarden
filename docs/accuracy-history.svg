@@ -15,71 +15,84 @@
 <line x1="64" y1="96" x2="64" y2="496" stroke="#e4e2dc" stroke-dasharray="2 4"/>
 <text x="64.0" y="514" font-size="11.5" font-weight="600" fill="#1d1d1b" text-anchor="middle">v1.1.0</text>
 <text x="64.0" y="529" font-size="10.5" fill="#6b6a66" text-anchor="middle">2026-10-11</text>
-<line x1="199.33333333333331" y1="96" x2="199.33333333333331" y2="496" stroke="#e4e2dc" stroke-dasharray="2 4"/>
-<text x="199.3" y="514" font-size="11.5" font-weight="600" fill="#1d1d1b" text-anchor="middle">v1.2.0</text>
-<text x="199.3" y="529" font-size="10.5" fill="#6b6a66" text-anchor="middle">2026-10-11</text>
-<line x1="334.66666666666663" y1="96" x2="334.66666666666663" y2="496" stroke="#e4e2dc" stroke-dasharray="2 4"/>
-<text x="334.7" y="514" font-size="11.5" font-weight="600" fill="#1d1d1b" text-anchor="middle">v1.3.0</text>
-<text x="334.7" y="529" font-size="10.5" fill="#6b6a66" text-anchor="middle">2026-10-11</text>
+<line x1="165.5" y1="96" x2="165.5" y2="496" stroke="#e4e2dc" stroke-dasharray="2 4"/>
+<text x="165.5" y="514" font-size="11.5" font-weight="600" fill="#1d1d1b" text-anchor="middle">v1.2.0</text>
+<text x="165.5" y="529" font-size="10.5" fill="#6b6a66" text-anchor="middle">2026-10-11</text>
+<line x1="267" y1="96" x2="267" y2="496" stroke="#e4e2dc" stroke-dasharray="2 4"/>
+<text x="267.0" y="514" font-size="11.5" font-weight="600" fill="#1d1d1b" text-anchor="middle">v1.3.0</text>
+<text x="267.0" y="529" font-size="10.5" fill="#6b6a66" text-anchor="middle">2026-10-11</text>
+<line x1="368.5" y1="96" x2="368.5" y2="496" stroke="#e4e2dc" stroke-dasharray="2 4"/>
+<text x="368.5" y="514" font-size="11.5" font-weight="600" fill="#1d1d1b" text-anchor="middle">v1.4.0</text>
+<text x="368.5" y="529" font-size="10.5" fill="#6b6a66" text-anchor="middle">2026-10-11</text>
 <line x1="470" y1="96" x2="470" y2="496" stroke="#e4e2dc" stroke-dasharray="2 4"/>
-<text x="470.0" y="514" font-size="11.5" font-weight="600" fill="#1d1d1b" text-anchor="middle">v1.4.0</text>
-<text x="470.0" y="529" font-size="10.5" fill="#6b6a66" text-anchor="middle">2026-10-11</text>
-<path d="M64.0 139.6 L199.3 139.6 L334.7 139.6 L470.0 139.6" fill="none" stroke="#1e6fd9" stroke-width="2.25"/>
+<text x="470.0" y="514" font-size="11.5" font-weight="600" fill="#1d1d1b" text-anchor="middle">v1.5.0</text>
+<text x="470.0" y="529" font-size="10.5" fill="#6b6a66" text-anchor="middle">2026-10-12</text>
+<path d="M64.0 139.6 L165.5 139.6 L267.0 139.6 L368.5 139.6 L470.0 133.2" fill="none" stroke="#1e6fd9" stroke-width="2.25"/>
 <circle cx="64.0" cy="139.6" r="3.75" fill="#1e6fd9"/>
-<circle cx="199.3" cy="139.6" r="3.75" fill="#1e6fd9"/>
-<circle cx="334.7" cy="139.6" r="3.75" fill="#1e6fd9"/>
-<circle cx="470.0" cy="139.6" r="3.75" fill="#1e6fd9"/>
-<path d="M64.0 243.2 L199.3 243.2 L334.7 243.2 L470.0 243.2" fill="none" stroke="#3b8ed0" stroke-width="2.25"/>
+<circle cx="165.5" cy="139.6" r="3.75" fill="#1e6fd9"/>
+<circle cx="267.0" cy="139.6" r="3.75" fill="#1e6fd9"/>
+<circle cx="368.5" cy="139.6" r="3.75" fill="#1e6fd9"/>
+<circle cx="470.0" cy="133.2" r="3.75" fill="#1e6fd9"/>
+<path d="M64.0 243.2 L165.5 243.2 L267.0 243.2 L368.5 243.2 L470.0 237.6" fill="none" stroke="#3b8ed0" stroke-width="2.25"/>
 <circle cx="64.0" cy="243.2" r="3.75" fill="#3b8ed0"/>
-<circle cx="199.3" cy="243.2" r="3.75" fill="#3b8ed0"/>
-<circle cx="334.7" cy="243.2" r="3.75" fill="#3b8ed0"/>
-<circle cx="470.0" cy="243.2" r="3.75" fill="#3b8ed0"/>
-<path d="M64.0 301.6 L199.3 301.6 L334.7 301.6 L470.0 301.6" fill="none" stroke="#2f9e9a" stroke-width="2.25"/>
+<circle cx="165.5" cy="243.2" r="3.75" fill="#3b8ed0"/>
+<circle cx="267.0" cy="243.2" r="3.75" fill="#3b8ed0"/>
+<circle cx="368.5" cy="243.2" r="3.75" fill="#3b8ed0"/>
+<circle cx="470.0" cy="237.6" r="3.75" fill="#3b8ed0"/>
+<path d="M64.0 301.6 L165.5 301.6 L267.0 301.6 L368.5 301.6 L470.0 288.8" fill="none" stroke="#2f9e9a" stroke-width="2.25"/>
 <circle cx="64.0" cy="301.6" r="3.75" fill="#2f9e9a"/>
-<circle cx="199.3" cy="301.6" r="3.75" fill="#2f9e9a"/>
-<circle cx="334.7" cy="301.6" r="3.75" fill="#2f9e9a"/>
-<circle cx="470.0" cy="301.6" r="3.75" fill="#2f9e9a"/>
-<path d="M64.0 328.4 L199.3 328.4 L334.7 328.4 L470.0 328.4" fill="none" stroke="#2f7d5b" stroke-width="2.25"/>
+<circle cx="165.5" cy="301.6" r="3.75" fill="#2f9e9a"/>
+<circle cx="267.0" cy="301.6" r="3.75" fill="#2f9e9a"/>
+<circle cx="368.5" cy="301.6" r="3.75" fill="#2f9e9a"/>
+<circle cx="470.0" cy="288.8" r="3.75" fill="#2f9e9a"/>
+<path d="M64.0 328.4 L165.5 328.4 L267.0 328.4 L368.5 328.4 L470.0 316.8" fill="none" stroke="#2f7d5b" stroke-width="2.25"/>
 <circle cx="64.0" cy="328.4" r="3.75" fill="#2f7d5b"/>
-<circle cx="199.3" cy="328.4" r="3.75" fill="#2f7d5b"/>
-<circle cx="334.7" cy="328.4" r="3.75" fill="#2f7d5b"/>
-<circle cx="470.0" cy="328.4" r="3.75" fill="#2f7d5b"/>
-<path d="M64.0 383.6 L199.3 383.6 L334.7 383.6 L470.0 383.6" fill="none" stroke="#7a9a3a" stroke-width="2.25"/>
+<circle cx="165.5" cy="328.4" r="3.75" fill="#2f7d5b"/>
+<circle cx="267.0" cy="328.4" r="3.75" fill="#2f7d5b"/>
+<circle cx="368.5" cy="328.4" r="3.75" fill="#2f7d5b"/>
+<circle cx="470.0" cy="316.8" r="3.75" fill="#2f7d5b"/>
+<path d="M64.0 383.6 L165.5 383.6 L267.0 383.6 L368.5 383.6 L470.0 375.6" fill="none" stroke="#7a9a3a" stroke-width="2.25"/>
 <circle cx="64.0" cy="383.6" r="3.75" fill="#7a9a3a"/>
-<circle cx="199.3" cy="383.6" r="3.75" fill="#7a9a3a"/>
-<circle cx="334.7" cy="383.6" r="3.75" fill="#7a9a3a"/>
-<circle cx="470.0" cy="383.6" r="3.75" fill="#7a9a3a"/>
-<path d="M64.0 226.4 L199.3 226.4 L334.7 226.4 L470.0 226.4" fill="none" stroke="#b45309" stroke-width="2.25"/>
+<circle cx="165.5" cy="383.6" r="3.75" fill="#7a9a3a"/>
+<circle cx="267.0" cy="383.6" r="3.75" fill="#7a9a3a"/>
+<circle cx="368.5" cy="383.6" r="3.75" fill="#7a9a3a"/>
+<circle cx="470.0" cy="375.6" r="3.75" fill="#7a9a3a"/>
+<path d="M64.0 226.4 L165.5 226.4 L267.0 226.4 L368.5 226.4 L470.0 237.6" fill="none" stroke="#b45309" stroke-width="2.25"/>
 <circle cx="64.0" cy="226.4" r="3.75" fill="#b45309"/>
-<circle cx="199.3" cy="226.4" r="3.75" fill="#b45309"/>
-<circle cx="334.7" cy="226.4" r="3.75" fill="#b45309"/>
-<circle cx="470.0" cy="226.4" r="3.75" fill="#b45309"/>
-<path d="M64.0 263.6 L199.3 263.6 L334.7 263.6 L470.0 263.6" fill="none" stroke="#e0a458" stroke-width="2.25"/>
+<circle cx="165.5" cy="226.4" r="3.75" fill="#b45309"/>
+<circle cx="267.0" cy="226.4" r="3.75" fill="#b45309"/>
+<circle cx="368.5" cy="226.4" r="3.75" fill="#b45309"/>
+<circle cx="470.0" cy="237.6" r="3.75" fill="#b45309"/>
+<path d="M64.0 263.6 L165.5 263.6 L267.0 263.6 L368.5 263.6 L470.0 233.6" fill="none" stroke="#e0a458" stroke-width="2.25"/>
 <circle cx="64.0" cy="263.6" r="3.75" fill="#e0a458"/>
-<circle cx="199.3" cy="263.6" r="3.75" fill="#e0a458"/>
-<circle cx="334.7" cy="263.6" r="3.75" fill="#e0a458"/>
-<circle cx="470.0" cy="263.6" r="3.75" fill="#e0a458"/>
-<path d="M64.0 450.8 L199.3 450.8 L334.7 450.8 L470.0 450.8" fill="none" stroke="#8a8884" stroke-width="2.25" stroke-dasharray="6 4"/>
+<circle cx="165.5" cy="263.6" r="3.75" fill="#e0a458"/>
+<circle cx="267.0" cy="263.6" r="3.75" fill="#e0a458"/>
+<circle cx="368.5" cy="263.6" r="3.75" fill="#e0a458"/>
+<circle cx="470.0" cy="233.6" r="3.75" fill="#e0a458"/>
+<path d="M64.0 450.8 L165.5 450.8 L267.0 450.8 L368.5 450.8 L470.0 470.0" fill="none" stroke="#8a8884" stroke-width="2.25" stroke-dasharray="6 4"/>
 <circle cx="64.0" cy="450.8" r="3.75" fill="#8a8884"/>
-<circle cx="199.3" cy="450.8" r="3.75" fill="#8a8884"/>
-<circle cx="334.7" cy="450.8" r="3.75" fill="#8a8884"/>
-<circle cx="470.0" cy="450.8" r="3.75" fill="#8a8884"/>
-<text x="500" y="143.6" font-size="12.5" font-weight="600" fill="#1d1d1b">89.1%<tspan font-size="11.5" fill="#6b6a66"> (±0.0)</tspan></text>
-<text x="594" y="143.6" font-size="12" fill="#1e6fd9">Wikipedia edits</text>
-<text x="500" y="230.4" font-size="12.5" font-weight="600" fill="#1d1d1b">67.4%<tspan font-size="11.5" fill="#6b6a66"> (±0.0)</tspan></text>
-<text x="594" y="230.4" font-size="12" fill="#b45309">Mistakes caught (JFLEG)</text>
-<text x="500" y="247.4" font-size="12.5" font-weight="600" fill="#1d1d1b">63.2%<tspan font-size="11.5" fill="#6b6a66"> (±0.0)</tspan></text>
-<text x="594" y="247.4" font-size="12" fill="#3b8ed0">Tweets (LexNorm2015)</text>
-<text x="500" y="267.6" font-size="12.5" font-weight="600" fill="#1d1d1b">58.1%<tspan font-size="11.5" fill="#6b6a66"> (±0.0)</tspan></text>
-<text x="594" y="267.6" font-size="12" fill="#e0a458">Helpful fixes (JFLEG)</text>
-<text x="500" y="305.6" font-size="12.5" font-weight="600" fill="#1d1d1b">48.6%<tspan font-size="11.5" fill="#6b6a66"> (±0.0)</tspan></text>
-<text x="594" y="305.6" font-size="12" fill="#2f9e9a">Typing test slips (Aalto)</text>
-<text x="500" y="332.4" font-size="12.5" font-weight="600" fill="#1d1d1b">41.9%<tspan font-size="11.5" fill="#6b6a66"> (±0.0)</tspan></text>
-<text x="594" y="332.4" font-size="12" fill="#2f7d5b">Children and students (Birkbeck)</text>
-<text x="500" y="387.6" font-size="12.5" font-weight="600" fill="#1d1d1b">28.1%<tspan font-size="11.5" fill="#6b6a66"> (±0.0)</tspan></text>
-<text x="594" y="387.6" font-size="12" fill="#7a9a3a">Children's writing (Holbrook)</text>
-<text x="500" y="454.8" font-size="12.5" font-weight="600" fill="#1d1d1b">11.3%<tspan font-size="11.5" fill="#6b6a66"> (±0.0)</tspan></text>
-<text x="594" y="454.8" font-size="12" fill="#8a8884">False alarms (JFLEG)</text>
+<circle cx="165.5" cy="450.8" r="3.75" fill="#8a8884"/>
+<circle cx="267.0" cy="450.8" r="3.75" fill="#8a8884"/>
+<circle cx="368.5" cy="450.8" r="3.75" fill="#8a8884"/>
+<circle cx="470.0" cy="470.0" r="3.75" fill="#8a8884"/>
+<text x="500" y="137.2" font-size="12.5" font-weight="600" fill="#1d1d1b">90.7%<tspan font-size="11.5" fill="#2f7d5b"> (+1.6)</tspan></text>
+<text x="594" y="137.2" font-size="12" fill="#1e6fd9">Wikipedia edits</text>
+<text x="500" y="237.6" font-size="12.5" font-weight="600" fill="#1d1d1b">65.6%<tspan font-size="11.5" fill="#2f7d5b"> (+7.5)</tspan></text>
+<text x="594" y="237.6" font-size="12" fill="#e0a458">Helpful fixes (JFLEG)</text>
+<path d="M478 237.6 H484 L494 250.6" fill="none" stroke="#3b8ed0" stroke-width="1" opacity="0.5"/>
+<text x="500" y="254.6" font-size="12.5" font-weight="600" fill="#1d1d1b">64.6%<tspan font-size="11.5" fill="#2f7d5b"> (+1.4)</tspan></text>
+<text x="594" y="254.6" font-size="12" fill="#3b8ed0">Tweets (LexNorm2015)</text>
+<path d="M478 237.6 H484 L494 267.6" fill="none" stroke="#b45309" stroke-width="1" opacity="0.5"/>
+<text x="500" y="271.6" font-size="12.5" font-weight="600" fill="#1d1d1b">64.6%<tspan font-size="11.5" fill="#b42318"> (−2.8)</tspan></text>
+<text x="594" y="271.6" font-size="12" fill="#b45309">Mistakes caught (JFLEG)</text>
+<text x="500" y="292.8" font-size="12.5" font-weight="600" fill="#1d1d1b">51.8%<tspan font-size="11.5" fill="#2f7d5b"> (+3.2)</tspan></text>
+<text x="594" y="292.8" font-size="12" fill="#2f9e9a">Typing test slips (Aalto)</text>
+<text x="500" y="320.8" font-size="12.5" font-weight="600" fill="#1d1d1b">44.8%<tspan font-size="11.5" fill="#2f7d5b"> (+2.9)</tspan></text>
+<text x="594" y="320.8" font-size="12" fill="#2f7d5b">Children and students (Birkbeck)</text>
+<text x="500" y="379.6" font-size="12.5" font-weight="600" fill="#1d1d1b">30.1%<tspan font-size="11.5" fill="#2f7d5b"> (+2.0)</tspan></text>
+<text x="594" y="379.6" font-size="12" fill="#7a9a3a">Children's writing (Holbrook)</text>
+<text x="500" y="474.0" font-size="12.5" font-weight="600" fill="#1d1d1b">6.5%<tspan font-size="11.5" fill="#2f7d5b"> (−4.8)</tspan></text>
+<text x="594" y="474.0" font-size="12" fill="#8a8884">False alarms (JFLEG)</text>
 <line x1="24" y1="554" x2="776" y2="554" stroke="#e4e2dc"/>
 <text x="24" y="576" font-size="12" fill="#6b6a66">In brackets: the change from the previous release, green when better, red when worse. Dashed line: lower is better.</text>
 <text x="24" y="593" font-size="12" fill="#6b6a66">Generated automatically for every release except small bug fixes.</text>
