@@ -16,10 +16,10 @@ jobs:
     timeout-minutes: 30
     steps:
       # The chart is saved to main, so the README shows it, even when a tag started the run.
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
         with:
           ref: main
-      - uses: actions/setup-node@v5
+      - uses: actions/setup-node@v7
         with:
           node-version: 22
           cache: npm
@@ -38,7 +38,7 @@ jobs:
           echo "version=$version" >> "$GITHUB_OUTPUT"
       - name: Restore LanguageTool
         id: languagetool
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: ${{ runner.temp }}/benchmarks/languagetool
           key: languagetool-${{ steps.latest.outputs.version }}
@@ -50,7 +50,7 @@ jobs:
           rm "$RUNNER_TEMP/languagetool.zip"
       - name: Measure resource use
         run: node scripts/resource-chart.mjs "$RUNNER_TEMP/benchmarks/languagetool" "$RUNNER_TEMP/resources.json"
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: resource-report
           path: ${{ runner.temp }}/resources.json
