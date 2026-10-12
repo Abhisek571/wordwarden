@@ -1,9 +1,11 @@
 name: Release
 
 # Push a version tag (for example v0.1.0) to build the store packages and attach them to a release.
+# Run it by hand to build and check everything without publishing.
 on:
   push:
     tags: ['v*']
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -78,7 +80,9 @@ jobs:
           name: libreoffice
           path: .output
       # The notes are this version's section of CHANGELOG.md, followed by GitHub's list of changes.
+      # A manual run builds and checks everything but publishes nothing.
       - name: Create the release
+        if: github.ref_type == 'tag'
         run: |
           version="${GITHUB_REF_NAME#v}"
           awk -v heading="## $version " 'index($0, heading) == 1 { found = 1; next } found && /^## / { exit } found' CHANGELOG.md > notes.md
