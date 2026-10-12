@@ -1,0 +1,20 @@
+# Monthly update pull requests, grouped so each month brings at most one for packages and one for
+# workflow actions. A harper.js update can change the accuracy numbers; run the Accuracy workflow on its
+# branch before merging.
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: monthly
+    groups:
+      packages:
+        patterns: ['*']
+    open-pull-requests-limit: 2
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly
+    groups:
+      actions:
+        patterns: ['*']

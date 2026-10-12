@@ -1,0 +1,40 @@
+name: Bug report
+description: Something does not work, or a suggestion is wrong.
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting it. Please don't paste private text: a short made-up sentence that shows the
+        problem is enough.
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened?
+      description: What you did, what you expected, and what Wordwarden did instead.
+      placeholder: I typed "Their going home" in a Gmail reply and got no underline.
+    validations:
+      required: true
+  - type: dropdown
+    id: where
+    attributes:
+      label: Where?
+      options:
+        - Firefox
+        - Chrome, Edge, Brave or another Chromium browser
+        - LibreOffice
+    validations:
+      required: true
+  - type: input
+    id: site
+    attributes:
+      label: Website or editor
+      description: For example Gmail, Reddit's post editor, a plain text box on some site, or Writer.
+  - type: textarea
+    id: log
+    attributes:
+      label: Diagnostic log
+      description: |
+        In the browser: Wordwarden's Settings → Report issue → Generate diagnostic log → Copy log, then paste it
+        here. It holds browser and extension details only, never your writing.
+      render: text

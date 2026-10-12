@@ -77,7 +77,15 @@ jobs:
         with:
           name: libreoffice
           path: .output
+      # The notes are this version's section of CHANGELOG.md, followed by GitHub's list of changes.
       - name: Create the release
-        run: gh release create "$GITHUB_REF_NAME" .output/*.zip .output/*.oxt --title "$GITHUB_REF_NAME" --generate-notes
+        run: |
+          version="${GITHUB_REF_NAME#v}"
+          awk -v heading="## $version " 'index($0, heading) == 1 { found = 1; next } found && /^## / { exit } found' CHANGELOG.md > notes.md
+          if [ -s notes.md ]; then
+            gh release create "$GITHUB_REF_NAME" .output/*.zip .output/*.oxt --title "$GITHUB_REF_NAME" --notes-file notes.md --generate-notes
+          else
+            gh release create "$GITHUB_REF_NAME" .output/*.zip .output/*.oxt --title "$GITHUB_REF_NAME" --generate-notes
+          fi
         env:
           GH_TOKEN: ${{ github.token }}

@@ -1,5 +1,10 @@
 # Wordwarden
 
+[![Tests](https://github.com/Abhisek571/wordwarden/actions/workflows/ci.yml/badge.svg)](https://github.com/Abhisek571/wordwarden/actions/workflows/ci.yml)
+[![Firefox Add-ons](https://img.shields.io/amo/v/wordwarden-spell-grammar?label=Firefox%20Add-ons)](https://addons.mozilla.org/en-GB/firefox/addon/wordwarden-spell-grammar/)
+[![Users](https://img.shields.io/amo/users/wordwarden-spell-grammar)](https://addons.mozilla.org/en-GB/firefox/addon/wordwarden-spell-grammar/)
+[![Licence: GPL v3](https://img.shields.io/badge/licence-GPL%20v3-blue)](LICENSE)
+
 Wordwarden is a free, privacy-first browser extension for one-click English
 spelling and grammar corrections. Text stays on the device, and all checks use
 only assets packaged with the extension.
@@ -58,8 +63,10 @@ its memory. The chart is redrawn automatically for each bigger release. Method:
 ## Reporting a problem
 
 Open Wordwarden's settings, choose **Report issue**, then **Generate diagnostic log** and
-**Copy log**. **Open GitHub Issue** opens a new issue; paste the log into it. The log holds
-browser and extension details only, never your writing, and nothing is sent automatically.
+**Copy log**. **Open GitHub Issue** opens a new issue; pick **Bug report** and paste the log into it. The
+log holds browser and extension details only, never your writing, and nothing is sent automatically.
+Security or privacy problems: see [SECURITY.md](SECURITY.md). What changed in each release:
+[CHANGELOG.md](CHANGELOG.md).
 
 ## Development
 

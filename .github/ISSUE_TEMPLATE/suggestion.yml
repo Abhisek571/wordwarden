@@ -1,0 +1,11 @@
+name: Idea or request
+description: A feature, a word or rule Wordwarden should know, or anything else.
+labels: [enhancement]
+body:
+  - type: textarea
+    id: idea
+    attributes:
+      label: What would you like?
+      description: If it is about a word or a grammar rule, an example sentence helps most.
+    validations:
+      required: true
