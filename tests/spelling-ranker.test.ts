@@ -1,3 +1,4 @@
+import { readFile } from 'node:fs/promises';
 import { describe, expect, it } from 'vitest';
 import american from 'dictionary-en';
 import australian from 'dictionary-en-au';
@@ -5,10 +6,16 @@ import canadian from 'dictionary-en-ca';
 import british from 'dictionary-en-gb';
 import subtlex from 'subtlex-word-frequencies';
 import type { EnglishDialect } from '#/core/types';
+import { DELETION, DOUBLE_DROP, SUBSTITUTION } from '#/engines/edit-costs';
+import { phoneticKey } from '#/engines/phonetic-key';
 import {
   createSpellingRankerFromData,
   rankIssueReplacements,
 } from '#/engines/spelling-ranker';
+import { parseWordPairs } from '#/engines/word-pairs';
+
+const LETTERS = 'abcdefghijklmnopqrstuvwxyz';
+const weight = (typed: string, meant: string): number => SUBSTITUTION[LETTERS.indexOf(typed)]?.[LETTERS.indexOf(meant)] ?? 0;
 
 const decoder = new TextDecoder();
 const frequencies = Object.freeze([
@@ -176,5 +183,101 @@ describe('local spelling ranker with bundled frequencies', () => {
 
   it('does not offer short capitalized fragments for a lowercase typo', () => {
     expect(ranker.rank('teh', ['ten', 'Th', 'tea'])).not.toContain('Th');
+  });
+
+  it.each([
+    ['becos', 'because'],
+    ['skool', 'school'],
+    ['nite', 'night'],
+    ['frends', 'friends'],
+    ['aterny', 'attorney'],
+  ])('ranks the word that sounds right first: %s', (token, expected) => {
+    expect(ranker.rank(token, [])[0]).toBe(expected);
+  });
+
+  it('keeps a one-letter slip ahead of a word that merely sounds alike', () => {
+    expect(ranker.rank('quater', [])[0]).toBe('quarter');
+    expect(ranker.rank('woul', [])[0]).toBe('would');
+    expect(ranker.rank("don;t", [])[0]).toBe("don't");
+  });
+
+  it('prefers the word whose dropped double letter is a common slip', () => {
+    expect(ranker.rank('leter', [])[0]).toBe('letter');
+    expect(ranker.rank('comittee', [])[0]).toBe('committee');
+  });
+});
+
+describe('learned slip costs', () => {
+  it('learned that e and a, c and s are confused and z and a are not', () => {
+    expect(weight('e', 'a')).toBeGreaterThanOrEqual(20);
+    expect(weight('a', 'e')).toBeGreaterThanOrEqual(20);
+    expect(weight('c', 's')).toBeGreaterThanOrEqual(20);
+    expect(weight('z', 'a')).toBeLessThanOrEqual(-20);
+    expect(weight('q', 'w')).toBeLessThanOrEqual(-20);
+    expect(DOUBLE_DROP[LETTERS.indexOf('l')]).toBeGreaterThan(DELETION[LETTERS.indexOf('l')] ?? 0);
+  });
+
+  it('ranks the likelier letter slip first among equally common words', () => {
+    const ranker = createSpellingRankerFromData(
+      { aff: 'SET UTF-8', dic: '1\nhello' },
+      [{ word: 'pip', count: 1000 }, { word: 'zip', count: 1000 }, { word: 'bat', count: 1000 }, { word: 'sat', count: 1000 }],
+      [],
+    );
+    // "s" is often typed for "z" and rarely for "p"; "z" is rarely typed for "b".
+    expect(ranker.rank('sip', ['pip', 'zip'])[0]).toBe('zip');
+    expect(ranker.rank('zat', ['bat', 'sat'])[0]).toBe('sat');
+  });
+});
+
+describe('local spelling ranker with word-pair context', async () => {
+  const pairs = parseWordPairs(new Uint8Array(await readFile('public/spelling/pairs.bin')));
+  const ranker = createSpellingRankerFromData(dictionaryText(american), subtlex, Object.freeze([]), pairs);
+
+  it('lets the words either side pick between equally close fixes', () => {
+    expect(ranker.rank('fom', [], { previous: 'the', next: 'of' })[0]).toBe('form');
+    expect(ranker.rank('fom', [], { previous: 'came', next: 'the' })[0]).toBe('from');
+    expect(ranker.rank('chese', [], { previous: 'eat', next: 'and' })[0]).toBe('cheese');
+    expect(ranker.rank('chese', [], { previous: 'of', next: 'days' })[0]).toBe('these');
+  });
+
+  it('ranks as before without neighbours', () => {
+    expect(ranker.rank('teh', ['ten', 'Th', 'tea'])[0]).toBe('the');
+    expect(ranker.rank('becos', [])[0]).toBe('because');
+  });
+
+  it('passes the context through for spelling issues only', () => {
+    expect(rankIssueReplacements('spelling', 'fom', [], ranker, { previous: 'came', next: 'the' })[0]).toBe('from');
+    expect(rankIssueReplacements('grammar', 'is', ['are', 'were'], ranker, { previous: 'they' })).toEqual(['are', 'were']);
+  });
+});
+
+describe('phonetic key', () => {
+  it.each([
+    ['phone', 'fone'],
+    ['because', 'becos'],
+    ['school', 'skool'],
+    ['night', 'nite'],
+    ['when', 'wen'],
+    ['said', 'sed'],
+    ['know', 'no'],
+    ['wrong', 'rong'],
+    ['nation', 'nashun'],
+    ['accident', 'axident'],
+    ['thumb', 'thum'],
+    ['letter', 'leter'],
+  ])('gives %s and %s the same key', (word, misspelling) => {
+    expect(phoneticKey(misspelling)).toBe(phoneticKey(word));
+  });
+
+  it('keeps words that sound different apart', () => {
+    expect(phoneticKey('the')).not.toBe(phoneticKey('tea'));
+    expect(phoneticKey('words')).not.toBe(phoneticKey('wars'));
+    expect(phoneticKey('cat')).not.toBe(phoneticKey('cash'));
+  });
+
+  it('ignores case and punctuation and keeps a leading vowel', () => {
+    expect(phoneticKey("Don't")).toBe('TNT');
+    expect(phoneticKey('about')).toBe('ABT');
+    expect(phoneticKey('')).toBe('');
   });
 });

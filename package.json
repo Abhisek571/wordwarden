@@ -1,6 +1,6 @@
 {
   "name": "wordwarden",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "private": true,
   "type": "module",
   "description": "Privacy-first local spelling and grammar browser extension.",
@@ -19,6 +19,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:e2e": "playwright test",
+    "test:firefox": "node tests/firefox-smoke.mjs",
     "evaluate:datasets": "vitest run -c vitest.evaluation.config.ts --disableConsoleIntercept",
     "evaluate:benchmarks": "vitest run -c vitest.benchmark.config.ts --disableConsoleIntercept",
     "lint:firefox": "node scripts/lint-firefox.mjs"

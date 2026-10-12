@@ -656,6 +656,9 @@ export function createTypeCheckOverlay(actions: OverlayActions): TypeCheckOverla
     badgeElement.dataset.state = state;
     if (state === 'issues') badgeElement.dataset.kinds = issueKinds;
     else delete badgeElement.dataset.kinds;
+    // Mirrored on the host, outside the closed shadow root, so browser tests can read the state.
+    host.dataset.state = state;
+    host.dataset.issues = String(state === 'issues' ? count : 0);
     badgeElement.textContent = state === 'issues' ? (count > 9 ? '9+' : String(count)) : '';
     if (state === 'clear') badgeElement.append(icon('check'));
     badgeElement.setAttribute('aria-label', `Wordwarden: ${label}`);

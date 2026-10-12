@@ -2,10 +2,20 @@ import nspell from 'nspell';
 import { browser } from 'wxt/browser';
 import type { EnglishDialect, IssueCategory } from '#/core/types';
 import { isPopularVocabularyWord } from '#/core/popular-vocabulary';
+import { DELETION, DOUBLE_DROP, INSERTION, SUBSTITUTION, SWAP } from '#/engines/edit-costs';
+import { phoneticKey } from '#/engines/phonetic-key';
+import { EMPTY_WORD_PAIRS, parseWordPairs, type WordPairs } from '#/engines/word-pairs';
+
+/** The words either side of a misspelling, lower-cased, when only spaces separate them from it. */
+export type WordContext = Readonly<{
+  previous?: string;
+  next?: string;
+}>;
 
 export type SpellingRanker = Readonly<{
-  rank(token: string, harperCandidates: readonly string[]): readonly string[];
+  rank(token: string, harperCandidates: readonly string[], context?: WordContext): readonly string[];
   hasPrefixCompletion(token: string): boolean;
+  wordPairs: WordPairs;
 }>;
 
 export function rankIssueReplacements(
@@ -13,8 +23,9 @@ export function rankIssueReplacements(
   token: string,
   harperCandidates: readonly string[],
   spellingRanker: SpellingRanker,
+  context: WordContext = Object.freeze({}),
 ): readonly string[] {
-  if (category === 'spelling') return spellingRanker.rank(token, harperCandidates);
+  if (category === 'spelling') return spellingRanker.rank(token, harperCandidates, context);
   return Object.freeze([...harperCandidates]);
 }
 
@@ -86,6 +97,7 @@ function frequencyIndex(entries: readonly FrequencyEntry[]): Readonly<{
   counts: ReadonlyMap<string, number>;
   displayWords: ReadonlyMap<string, string>;
   sortedWords: readonly string[];
+  soundGroups: ReadonlyMap<string, readonly string[]>;
 }> {
   const counts = new Map<string, number>();
   const displayWords = new Map<string, string>();
@@ -96,11 +108,28 @@ function frequencyIndex(entries: readonly FrequencyEntry[]): Readonly<{
     }
     counts.set(normalizedWord, entry.count);
   }
+  // Words that sound alike, most common first, so "becos" can find "because" three edits away.
+  const soundGroups = new Map<string, string[]>();
+  for (const [word] of [...counts].sort((left, right) => right[1] - left[1])) {
+    const key = phoneticKey(word);
+    if (key.length === 0) continue;
+    const group = soundGroups.get(key);
+    if (group === undefined) soundGroups.set(key, [word]);
+    else group.push(word);
+  }
   return Object.freeze({
     counts,
     displayWords,
     sortedWords: Object.freeze([...counts.keys()].sort()),
+    soundGroups,
   });
+}
+
+const SOUND_CANDIDATE_LIMIT = 20;
+
+// How far a word that sounds right may be in spelling: "nite" is three edits from "night".
+function soundEditLimit(token: string): number {
+  return token.length <= 3 ? 1 : 3;
 }
 
 function lowerBound(values: readonly string[], target: string): number {
@@ -245,10 +274,134 @@ function structuralMatch(token: string, replacement: string): boolean {
   return replacement.replace(/[\s'-]/gu, '') === token.replace(/[\s'-]/gu, '');
 }
 
+// "nite" and "night" share a first vowel; "not" does not, so it was not spelt by ear.
+function firstVowel(word: string): string {
+  return /[aeiouy]/u.exec(word)?.[0] ?? '';
+}
+
+// "-ing", "-ed" and "-ly" are heard; a final "s" may just be how "becos" was spelt.
+function spokenEnding(word: string): string | null {
+  const ending = inflectionEnding(word);
+  return ending === 's' || ending === 'es' ? null : ending;
+}
+
+// Spelling by ear drops letters ("nite"), so the word meant is rarely shorter than the misspelling,
+// and it keeps the grammatical ending: "alcoholical" is "alcoholic", not "alcoholically".
+function soundsLike(token: string, tokenKey: string, candidate: string): boolean {
+  return candidate.length >= token.length &&
+    phoneticKey(candidate) === tokenKey &&
+    firstVowel(candidate) === firstVowel(token) &&
+    spokenEnding(candidate) === spokenEnding(token);
+}
+
+const LETTER_A = 'a'.charCodeAt(0);
+
+function letterIndex(letter: string | undefined): number {
+  return letter === undefined ? -1 : letter.charCodeAt(0) - LETTER_A;
+}
+
+// The learned weight (10 × log2 of how likely, against a typical slip of its kind) of the slips that
+// turn the candidate into the token, lined up as in the edit distance above; 0 when either has a
+// character that is not a plain letter, so nothing is read for it.
+function slipWeight(token: string, candidate: string): number {
+  if (!/^[a-z]+$/u.test(token) || !/^[a-z]+$/u.test(candidate)) return 0;
+  const rows = token.length + 1;
+  const columns = candidate.length + 1;
+  const cost: number[][] = Array.from({ length: rows }, (_, row) => {
+    const line = new Array<number>(columns).fill(0);
+    line[0] = row;
+    return line;
+  });
+  for (let column = 0; column < columns; column += 1) (cost[0] ?? [])[column] = column;
+  const at = (row: number, column: number): number => cost[row]?.[column] ?? 0;
+  const swapped = (row: number, column: number): boolean => row > 1 && column > 1 &&
+    token[row - 1] === candidate[column - 2] && token[row - 2] === candidate[column - 1] &&
+    token[row - 1] !== token[row - 2];
+  for (let row = 1; row < rows; row += 1) {
+    for (let column = 1; column < columns; column += 1) {
+      let best = Math.min(
+        at(row - 1, column) + 1,
+        at(row, column - 1) + 1,
+        at(row - 1, column - 1) + (token[row - 1] === candidate[column - 1] ? 0 : 1),
+      );
+      if (swapped(row, column)) best = Math.min(best, at(row - 2, column - 2) + 1);
+      (cost[row] ?? [])[column] = best;
+    }
+  }
+  let weight = 0;
+  let row = token.length;
+  let column = candidate.length;
+  while (row > 0 || column > 0) {
+    const here = at(row, column);
+    if (swapped(row, column) && here === at(row - 2, column - 2) + 1) {
+      weight += SWAP[letterIndex(candidate[column - 2])] ?? 0;
+      row -= 2;
+      column -= 2;
+    } else if (row > 0 && column > 0 && token[row - 1] === candidate[column - 1] && here === at(row - 1, column - 1)) {
+      row -= 1;
+      column -= 1;
+    } else if (row > 0 && column > 0 && here === at(row - 1, column - 1) + 1) {
+      weight += SUBSTITUTION[letterIndex(token[row - 1])]?.[letterIndex(candidate[column - 1])] ?? 0;
+      row -= 1;
+      column -= 1;
+    } else if (column > 0 && here === at(row, column - 1) + 1) {
+      const letter = candidate[column - 1];
+      const doubled = candidate[column - 2] === letter || candidate[column] === letter;
+      weight += (doubled ? DOUBLE_DROP : DELETION)[letterIndex(letter)] ?? 0;
+      column -= 1;
+    } else {
+      weight += INSERTION[letterIndex(token[row - 1])] ?? 0;
+      row -= 1;
+    }
+  }
+  return weight;
+}
+
+const CONTEXT_FLOOR = 0.01;
+const CONTEXT_CEILING = 100;
+
+// How much of a word's use in news text is next to this neighbour: "of the" is 238,000 of the 2.35M uses
+// of "the", so "the" after "of" is ×10, while "from" hardly ever follows "the", so it is ×0.01 (the floor).
+// A word the pair data does not know gets ×1: there is no evidence either way.
+function neighbourFit(pairs: WordPairs, word: string, pairCount: number): number {
+  const total = pairs.wordCount(word);
+  if (total === 0) return 1;
+  return Math.min(CONTEXT_CEILING, Math.max(CONTEXT_FLOOR, (100 * (pairCount + 1)) / (total + 100)));
+}
+
+function contextFit(pairs: WordPairs, word: string, context: WordContext): number {
+  const before = context.previous === undefined ? 1 : neighbourFit(pairs, word, pairs.pairCount(context.previous, word));
+  const after = context.next === undefined ? 1 : neighbourFit(pairs, word, pairs.pairCount(word, context.next));
+  return before * after;
+}
+
+type Support = Readonly<{
+  commonTypo: boolean;
+  keySlip: boolean;
+  endingMatch: boolean;
+  byEar: boolean;
+  frequency: number;
+  slip: number;
+  context: number;
+}>;
+
+// How well a candidate the same distance away fits the misspelling: a left-out or swapped letter is
+// worth a hundredfold in frequency ("workd" is "worked", not "world"), a slipped finger or a kept ending
+// tenfold, and a word that sounds right twofold ("nite" is "night", not "unite" or "nice"). A word
+// missing from the frequency list still outranks one that is merely frequent when its shape fits better.
+// On top of that, the particular letters slipped count ("e" for "a" is common, "z" for "a" is not), and
+// so do the words either side ("the form of", not "the from of").
+function support(item: Support): number {
+  return (item.frequency + (item.commonTypo ? 1 : 0) + (item.endingMatch ? 0.5 : 0)) *
+    (item.commonTypo ? 100 : 1) * (item.keySlip ? 10 : 1) * (item.endingMatch ? 10 : 1) * (item.byEar ? 2 : 1) *
+    2 ** (item.slip / 10) * item.context;
+}
+
 export function createSpellingRankerFromData(
   dictionary: DictionaryText,
   entries: readonly FrequencyEntry[],
   personalWords: readonly string[],
+  wordPairs: WordPairs = EMPTY_WORD_PAIRS,
 ): SpellingRanker {
   const checker = nspell(dictionary.aff, dictionary.dic);
   const personalCandidates = Object.freeze([...personalWords]);
@@ -266,7 +419,11 @@ export function createSpellingRankerFromData(
   }
   const frequencies = frequencyIndex(entries);
 
-  function rank(token: string, harperCandidates: readonly string[]): readonly string[] {
+  function rank(
+    token: string,
+    harperCandidates: readonly string[],
+    context: WordContext = Object.freeze({}),
+  ): readonly string[] {
     const normalizedToken = token.toLocaleLowerCase('en');
     const ending = inflectionEnding(normalizedToken);
     const prefixCandidates: string[] = [];
@@ -288,6 +445,18 @@ export function createSpellingRankerFromData(
     const nearPersonal = personalCandidates.filter(
       (word) => editDistance(normalizedToken, word.toLocaleLowerCase('en')) <= personalLimit,
     );
+    // Words spelt by ear ("fone", "becos") are often too far from the right word for the edits above.
+    // Only plain letters can be read aloud: "don;t" sounds nothing like "donate".
+    const spokenToken = /^[a-z]+$/u.test(normalizedToken);
+    const tokenKey = phoneticKey(normalizedToken);
+    const soundLimit = soundEditLimit(normalizedToken);
+    const soundCandidates = (spokenToken ? frequencies.soundGroups.get(tokenKey) ?? [] : [])
+      .slice(0, SOUND_CANDIDATE_LIMIT)
+      .filter((word) => (
+        soundsLike(normalizedToken, tokenKey, word) &&
+        editDistance(normalizedToken, word) <= soundLimit &&
+        checker.correct(word)
+      ));
     const candidates = [
       ...(irregularPast === undefined ? [] : [irregularPast]),
       ...nearPersonal,
@@ -295,6 +464,7 @@ export function createSpellingRankerFromData(
       ...checker.suggest(normalizedToken),
       ...harperCandidates,
       ...editCandidates.map((edit) => frequencies.displayWords.get(edit) ?? edit),
+      ...soundCandidates.map((word) => frequencies.displayWords.get(word) ?? word),
     ];
     const unique = new Map<string, string>();
     for (const candidate of candidates) {
@@ -308,25 +478,38 @@ export function createSpellingRankerFromData(
     const ranked = [...unique.values()]
       .map((candidate) => {
         const normalizedCandidate = candidate.toLocaleLowerCase('en');
-        return Object.freeze({
-          candidate,
-          structural: structuralMatch(normalizedToken, normalizedCandidate),
-          distance: editDistance(normalizedToken, normalizedCandidate),
-          irregular: normalizedCandidate === irregularPast,
+        const distance = editDistance(normalizedToken, normalizedCandidate);
+        // Two or more edits that keep the sound ("nite" for "night") were spelt by ear, not mistyped.
+        const byEar = spokenToken && distance >= 2 && soundsLike(normalizedToken, tokenKey, normalizedCandidate);
+        const fit = Object.freeze({
           commonTypo: isCommonTypoOf(normalizedToken, normalizedCandidate),
           keySlip: isNeighbourKeySlip(normalizedToken, normalizedCandidate),
           endingMatch: ending !== null && normalizedCandidate.endsWith(ending),
+          byEar,
           frequency: frequencies.counts.get(normalizedCandidate) ?? 0,
+          // Which letters slipped only tells mistypings apart; a word spelt by ear is judged by its sound.
+          slip: distance <= 2 && !byEar ? slipWeight(normalizedToken, normalizedCandidate) : 0,
+          context: contextFit(wordPairs, normalizedCandidate, context),
+        });
+        return Object.freeze({
+          candidate,
+          structural: structuralMatch(normalizedToken, normalizedCandidate),
+          distance,
+          // A word spelt by ear counts as one typo away, however far off the letters are.
+          rankDistance: byEar ? 1 : distance,
+          irregular: normalizedCandidate === irregularPast,
+          commonTypo: fit.commonTypo,
+          keySlip: fit.keySlip,
+          frequency: fit.frequency,
+          support: support(fit),
         });
       })
       .sort(
         (left, right) =>
           Number(right.irregular) - Number(left.irregular) ||
           Number(right.structural) - Number(left.structural) ||
-          left.distance - right.distance ||
-          Number(right.commonTypo) - Number(left.commonTypo) ||
-          Number(right.endingMatch) - Number(left.endingMatch) ||
-          right.frequency - left.frequency ||
+          left.rankDistance - right.rankDistance ||
+          right.support - left.support ||
           left.candidate.localeCompare(right.candidate, 'en'),
       );
     const shown = ranked.slice(0, 3);
@@ -361,7 +544,7 @@ export function createSpellingRankerFromData(
     return completionCount >= 0 && (tokenCount === 0 || completionCount * 10 >= tokenCount);
   }
 
-  return Object.freeze({ rank, hasPrefixCompletion });
+  return Object.freeze({ rank, hasPrefixCompletion, wordPairs });
 }
 
 async function fetchText(path: string): Promise<string> {
@@ -373,6 +556,17 @@ async function fetchText(path: string): Promise<string> {
     );
   }
   return response.text();
+}
+
+async function fetchWordPairs(): Promise<WordPairs> {
+  const path = 'spelling/pairs.bin';
+  const response = await fetch(extensionUrl(path));
+  if (!response.ok) {
+    throw new Error(
+      `Could not load bundled spelling asset ${path}: HTTP ${response.status} ${response.statusText}`,
+    );
+  }
+  return parseWordPairs(new Uint8Array(await response.arrayBuffer()));
 }
 
 async function fetchFrequencies(): Promise<readonly FrequencyEntry[]> {
@@ -392,10 +586,11 @@ export async function createSpellingRanker(
   personalWords: readonly string[],
 ): Promise<SpellingRanker> {
   const stem = DICTIONARY_STEMS[dialect];
-  const [aff, dic, entries] = await Promise.all([
+  const [aff, dic, entries, wordPairs] = await Promise.all([
     fetchText(`spelling/${stem}.aff`),
     fetchText(`spelling/${stem}.dic`),
     fetchFrequencies(),
+    fetchWordPairs(),
   ]);
-  return createSpellingRankerFromData(Object.freeze({ aff, dic }), entries, personalWords);
+  return createSpellingRankerFromData(Object.freeze({ aff, dic }), entries, personalWords, wordPairs);
 }

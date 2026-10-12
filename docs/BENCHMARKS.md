@@ -9,13 +9,16 @@ bundled into the extension.
 | Grammar regression set | `npm test` (`tests/grammar-evaluation.test.ts`) | `tests/fixtures/grammar-cases.ts` | ≥ 65/66 fixed, 0 false alarms |
 | Synthetic regression sets | `npm run evaluate:datasets` | `E:/downlode/*.csv` (`TYPECHECK_EVALUATION_DATASET_DIR`) | locked thresholds |
 | Real-world benchmarks | `npm run evaluate:benchmarks` | `E:/CODING/Wordwarden/benchmarks` (`WORDWARDEN_BENCHMARK_DIR`) | report; compare before/after |
+| Browser tests | `npm run test:e2e` (Chromium), `npm run test:firefox` (real Firefox) | `tests/fixtures/editor.html` | must pass |
 | Real sites | manual | Gmail, GitHub, Reddit, Twitch in Chrome and Firefox | checklist below |
 
 ## Real-world datasets
 
 Download into `WORDWARDEN_BENCHMARK_DIR` (default `E:/CODING/Wordwarden/benchmarks`). Missing files are skipped.
 The weekly Accuracy workflow on GitHub downloads the same files from their original sites on each run and
-redraws `docs/accuracy.svg`; none of the data is committed.
+redraws `docs/accuracy.svg`; none of the data is committed. It also adds the release's numbers to
+`docs/accuracy-history.json` and redraws `docs/accuracy-history.svg`, the line chart across releases
+(`node scripts/accuracy-history.mjs report.json`).
 
 | Folder / file | Source | What it measures | Licence |
 |---|---|---|---|
@@ -90,6 +93,36 @@ LanguageTool, for bigger releases or by hand.
 - [ ] Badge shows checking → count / tick; clicking it opens the first suggestion.
 - [ ] Suggestion card near the bottom of the window opens above the word.
 - [ ] Turn the site off in the popup: underlines disappear without a reload.
+
+## Changes — 2026-10-12
+
+Five accuracy changes, measured together by the Accuracy workflow (the chart in the README is the
+"after"; the 2026-10-11 table below is the "before"). Local spot checks are noted where they were run.
+
+- **Per-rule precision table.** The JFLEG part of the benchmark now reports, for each rule, its flags,
+  helpful fixes and flags on clean text, with examples. Rules were chosen from the dev set only.
+- **Grammar rules muted or narrowed.** Twelve Harper rules that fired mostly on clean text and almost
+  never helped are off (`MUTED_HARPER_RULES` in `harper-engine.ts`). `CompoundSubjectAgreement` needs a
+  personal pronoun on one side, `SingularSubjectHave` skips modals, adverbs and relatives after the
+  determiner, and `IntroductoryComma` keeps only sentence-initial "however". Local dev-set check, grammar
+  rules only: fixes that help 51.9% → 66.5%, clean sentences flagged 12.1% → 7.6%, recall 63.0% → 60.0%.
+- **Phonetic ranking.** `phonetic-key.ts` gives each word a sound key; words that sound like the
+  misspelling join the candidates and rank as if one edit away. The tie-break rules became one numeric
+  score (frequency times slip-type weights). Local holdout check, correct word first: Birkbeck 41.9% →
+  44.0%, typing slips 48.6% → 51.2%, tweets 63.2% → 66.4%, Wikipedia 89.1% → 89.4%, Holbrook 28.1% →
+  28.0%; top three up on all five; detection unchanged.
+- **Learned edit costs.** `scripts/edit-costs.mjs` counts which slips actually happen in the tune halves
+  of Birkbeck, Wikipedia and LexNorm and writes `src/engines/edit-costs.ts` (a↔e and c↔s cheap, a→z
+  dear). The ranker weighs each candidate's edits with it. Not measured locally.
+- **Word pairs in context.** `scripts/context-table.mjs` packs word-pair counts from the Leipzig Corpora
+  Collection (CC BY 4.0, two 1M-sentence English news corpora, pairs seen at least 6 times) into
+  `public/spelling/pairs.bin` (1.5 MB). Candidates that fit the words either side rank higher ("a letter
+  form my friend" → from), and a `ConfusedWord` rule flags a real word from a confusion set when the pairs
+  around it strongly favour the alternative. On 3,016 clean JFLEG dev sentences the rule gave 0 flags; it
+  also found 0 on learner dev text, so it is precision-only for now.
+- **More words.** SCOWL size 70 words that appear at least 3 times in the Leipzig corpora are bundled as
+  `public/spelling/extra-*.txt` (about 4,300 per dialect, `scripts/extra-words.mjs`), so words such as
+  "storyline" and "accelerometer" are no longer flagged. Not measured locally.
 
 ## Results — 2026-10-11
 

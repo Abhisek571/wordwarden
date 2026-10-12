@@ -37,12 +37,17 @@ const updateSettings = vi.fn();
 
 vi.mock('#/ui/settings-update', () => ({ updateSettings }));
 
+// Waits until the popup has either loaded its settings or reported that it could not.
 async function renderPopup(): Promise<void> {
   document.body.innerHTML = '<div id="root"></div>';
   await import('../entrypoints/popup/main');
   await act(async () => {
     await Promise.resolve();
     await Promise.resolve();
+  });
+  await vi.waitFor(() => {
+    const text = document.body.textContent ?? '';
+    expect(text.includes('Corrections') || text.includes('Background unavailable')).toBe(true);
   });
 }
 
@@ -89,7 +94,7 @@ describe('popup UI', () => {
       await Promise.resolve();
     });
 
-    expect(document.body.textContent).toContain('Saving…');
+    await vi.waitFor(() => expect(document.body.textContent).toContain('Saving…'));
     expect(globalToggle?.disabled).toBe(true);
     expect(siteToggle?.disabled).toBe(true);
     expect(updateSettings).toHaveBeenLastCalledWith(settings, expect.objectContaining({ enabled: false }));
@@ -156,8 +161,9 @@ describe('popup UI', () => {
       await Promise.resolve();
     });
 
-    const alert = document.querySelector('[role="alert"]');
-    expect(alert?.textContent).toContain('Storage is unavailable');
+    await vi.waitFor(() => {
+      expect(document.querySelector('[role="alert"]')?.textContent).toContain('Storage is unavailable');
+    });
     expect(globalToggle?.disabled).toBe(false);
   });
 

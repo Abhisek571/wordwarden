@@ -25,6 +25,11 @@ const ENGINE_DATA = {
   'spelling/en-ca.dic': 'node_modules/dictionary-en-ca/index.dic',
   'spelling/en-gb.aff': 'node_modules/dictionary-en-gb/index.aff',
   'spelling/en-gb.dic': 'node_modules/dictionary-en-gb/index.dic',
+  'spelling/extra-en.txt': 'public/spelling/extra-en.txt',
+  'spelling/extra-en-au.txt': 'public/spelling/extra-en-au.txt',
+  'spelling/extra-en-ca.txt': 'public/spelling/extra-en-ca.txt',
+  'spelling/extra-en-gb.txt': 'public/spelling/extra-en-gb.txt',
+  'spelling/pairs.bin': 'public/spelling/pairs.bin',
   'spelling/frequencies.json': 'node_modules/subtlex-word-frequencies/index.json',
 };
 

@@ -1,16 +1,18 @@
 // Measures the memory and CPU the built Chromium extension and a LanguageTool server use for the same text, then
 // draws docs/resources.svg. Needs `npm run build` and Playwright's Chromium first.
-// Usage: node scripts/resource-chart.mjs <LanguageTool folder> [report.json]
+// Usage: node scripts/resource-chart.mjs <LanguageTool folder> [report.json] [out.svg]
+// Given a saved report instead of the folder, it only redraws the chart from it.
 import { execFileSync, spawn } from 'node:child_process';
 import { existsSync, readdirSync, readFileSync, statSync, writeFileSync } from 'node:fs';
 import os from 'node:os';
 import { join, resolve } from 'node:path';
 import { chromium } from '@playwright/test';
 
-const [languageToolArg, reportPath] = process.argv.slice(2);
-if (languageToolArg === undefined) throw new TypeError('Expected the LanguageTool folder.');
+const [languageToolArg, reportPath, outArg] = process.argv.slice(2);
+if (languageToolArg === undefined) throw new TypeError('Expected the LanguageTool folder or a saved report.');
+const redrawOnly = languageToolArg.endsWith('.json');
 // The download unpacks to LanguageTool-<version>/ inside the given folder.
-const languageToolDir = [languageToolArg, ...readdirSync(languageToolArg).map((name) => join(languageToolArg, name))]
+const languageToolDir = redrawOnly ? null : [languageToolArg, ...readdirSync(languageToolArg).map((name) => join(languageToolArg, name))]
   .find((path) => existsSync(join(path, 'languagetool-server.jar')));
 if (languageToolDir === undefined) throw new Error(`No languagetool-server.jar in ${languageToolArg}.`);
 const extensionDir = resolve('.output/chrome-mv3');
@@ -161,30 +163,37 @@ async function measureLanguageTool() {
   }
 }
 
-const oneTab = await measureTabs(1);
-const manyTabs = await measureTabs(MANY_TABS);
-const extensionChecks = await measureExtensionChecks();
-const languageTool = await measureLanguageTool();
-const report = {
-  measuredAt: new Date().toISOString(),
-  machine: { platform: process.platform, cpus: os.cpus().length },
-  words: WORDS,
-  wordwarden: { oneTabMb: oneTab.addedMb, manyTabsMb: manyTabs.addedMb, manyTabs: MANY_TABS, startCpu: oneTab.startCpu, ...extensionChecks, diskMb: folderMb(extensionDir) },
-  languageTool: { ...languageTool, diskMb: folderMb(languageToolDir) },
-};
-if (reportPath !== undefined) writeFileSync(reportPath, `${JSON.stringify(report, null, 2)}\n`);
-console.log(JSON.stringify(report, null, 2));
+async function measure() {
+  const oneTab = await measureTabs(1);
+  const manyTabs = await measureTabs(MANY_TABS);
+  const extensionChecks = await measureExtensionChecks();
+  const languageTool = await measureLanguageTool();
+  return {
+    measuredAt: new Date().toISOString(),
+    machine: { platform: process.platform, cpus: os.cpus().length },
+    words: WORDS,
+    wordwarden: { oneTabMb: oneTab.addedMb, manyTabsMb: manyTabs.addedMb, manyTabs: MANY_TABS, startCpu: oneTab.startCpu, ...extensionChecks, diskMb: folderMb(extensionDir) },
+    languageTool: { ...languageTool, diskMb: folderMb(languageToolDir) },
+  };
+}
+const report = redrawOnly ? JSON.parse(readFileSync(languageToolArg, 'utf8')) : await measure();
+if (!redrawOnly) {
+  if (reportPath) writeFileSync(reportPath, `${JSON.stringify(report, null, 2)}\n`);
+  console.log(JSON.stringify(report, null, 2));
+}
 
-// The chart: one pair of bars per measure, each scaled to its own larger value. Shorter is better.
+// The chart: one pair of bars per measure, each scaled to its own larger value, with how many times
+// smaller or faster Wordwarden is. Shorter is better. The memory and CPU rows come first; the check
+// time, where the two are closest, last.
 const ww = report.wordwarden;
 const lt = report.languageTool;
 const rows = [
-  ['Memory while checking, 1 tab', ww.oneTabMb, lt.memoryMb, 'MB'],
-  [`Memory while checking, ${MANY_TABS} tabs`, ww.manyTabsMb, lt.memoryMb, 'MB'],
-  ['CPU time to start', ww.startCpu, lt.startCpu, 's'],
-  [`Time to check ${WORDS} words`, ww.checkMs, lt.checkMs, 'ms'],
-  ['CPU time per check', ww.checkCpuMs, lt.checkCpuMs, 'ms'],
-  ['Size on disk', ww.diskMb, lt.diskMb, 'MB', ' + Java'],
+  ['Memory while checking, 1 tab', ww.oneTabMb, lt.memoryMb, 'MB', 'less'],
+  [`Memory while checking, ${ww.manyTabs} tabs`, ww.manyTabsMb, lt.memoryMb, 'MB', 'less'],
+  ['CPU time to start', ww.startCpu, lt.startCpu, 's', 'less'],
+  ['CPU time per check', ww.checkCpuMs, lt.checkCpuMs, 'ms', 'less'],
+  ['Size on disk', ww.diskMb, lt.diskMb, 'MB', 'smaller', ' + Java'],
+  [`Time to check ${report.words} words`, ww.checkMs, lt.checkMs, 'ms', 'faster'],
 ];
 const BLUE = '#1e6fd9';
 const GREY = '#9a9893';
@@ -197,10 +206,12 @@ const barHeight = 16;
 const number = (value) => value.toLocaleString('en-GB', { maximumFractionDigits: value < 10 ? 1 : 0 });
 const parts = [];
 let y = 104;
-for (const [title, wwValue, ltValue, unit, ltNote = ''] of rows) {
+for (const [title, wwValue, ltValue, unit, better, ltNote = ''] of rows) {
   const largest = Math.max(wwValue, ltValue);
+  const ratio = ltValue / wwValue;
+  const times = ratio >= 1.05 ? ` <tspan font-weight="400" fill="${MUTED}">${number(ratio)}× ${better}</tspan>` : '';
   parts.push(`<text x="${left - 14}" y="${y + barHeight + 6}" font-size="14" font-weight="600" fill="${INK}" text-anchor="end">${title}</text>`);
-  [[wwValue, BLUE, ''], [ltValue, GREY, ltNote]].forEach(([value, color, note], index) => {
+  [[wwValue, BLUE, times], [ltValue, GREY, ltNote]].forEach(([value, color, note], index) => {
     const top = y + index * (barHeight + 4);
     const width = Math.max(3, (value / largest) * (right - left));
     parts.push(`<rect x="${left}" y="${top}" width="${width.toFixed(1)}" height="${barHeight}" rx="2" fill="${color}"/>`);
@@ -227,4 +238,4 @@ ${parts.join('\n')}
 <text x="24" y="${footer + 54}" font-size="12" fill="${MUTED}">Generated automatically for every release except small bug fixes.</text>
 </svg>
 `;
-writeFileSync('docs/resources.svg', svg);
+writeFileSync(outArg ?? 'docs/resources.svg', svg);

@@ -1,25 +1,13 @@
 // @vitest-environment node
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import american from 'dictionary-en';
-import frequencies from 'subtlex-word-frequencies';
-import { binaryInlined } from 'harper.js/binaryInlined';
-import { createHarperEngine, type HarperEngine } from '#/engines/harper-engine';
-import { createSpellingRankerFromData } from '#/engines/spelling-ranker';
+import type { HarperEngine } from '#/engines/harper-engine';
 import { CORRECT_SENTENCES, GRAMMAR_MISTAKES } from './fixtures/grammar-cases';
+import { createProductionEngine } from './helpers/production-engine';
 
-const decoder = new TextDecoder();
 let engine: HarperEngine;
 
 beforeAll(async () => {
-  engine = createHarperEngine(Object.freeze({
-    wasmUrl: binaryInlined.url.toString(),
-    createSpellingRanker: async (_dialect, personalWords) => createSpellingRankerFromData(
-      Object.freeze({ aff: decoder.decode(american.aff), dic: decoder.decode(american.dic) }),
-      frequencies,
-      personalWords,
-    ),
-  }));
-  await engine.setup('american', Object.freeze([]));
+  engine = await createProductionEngine('american');
 }, 60_000);
 
 afterAll(async () => {

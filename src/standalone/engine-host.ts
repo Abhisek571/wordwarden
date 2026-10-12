@@ -11,8 +11,9 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { createInterface } from 'node:readline';
 import type { EnglishDialect, WritingIssue } from '#/core/types';
-import { createHarperEngine, type HarperEngine } from '#/engines/harper-engine';
+import { createHarperEngine, extraWordsPath, parseExtraWords, type HarperEngine } from '#/engines/harper-engine';
 import { createSpellingRankerFromData } from '#/engines/spelling-ranker';
+import { parseWordPairs, type WordPairs } from '#/engines/word-pairs';
 
 const DIALECTS: readonly EnglishDialect[] = ['american', 'british', 'australian', 'canadian'];
 const DICTIONARY_STEMS: Readonly<Record<EnglishDialect, string>> = {
@@ -22,6 +23,7 @@ const DICTIONARY_STEMS: Readonly<Record<EnglishDialect, string>> = {
 const dataDir = process.argv[2] ?? join(__dirname, 'data');
 const wasmUrl = `data:application/wasm;base64,${readFileSync(join(dataDir, 'harper_wasm_bg.wasm')).toString('base64')}`;
 let frequencies: unknown;
+let wordPairs: WordPairs | undefined;
 
 const engines = new Map<EnglishDialect, Promise<HarperEngine>>();
 let personalWords: readonly string[] = [];
@@ -35,6 +37,7 @@ function engineFor(dialect: EnglishDialect): Promise<HarperEngine> {
         wasmUrl,
         createSpellingRanker: async (_dialect, words) => {
           frequencies ??= JSON.parse(readFileSync(join(dataDir, 'spelling', 'frequencies.json'), 'utf8'));
+          wordPairs ??= parseWordPairs(new Uint8Array(readFileSync(join(dataDir, 'spelling', 'pairs.bin'))));
           return createSpellingRankerFromData(
             {
               aff: readFileSync(join(dataDir, 'spelling', `${stem}.aff`), 'utf8'),
@@ -42,8 +45,10 @@ function engineFor(dialect: EnglishDialect): Promise<HarperEngine> {
             },
             frequencies as Parameters<typeof createSpellingRankerFromData>[1],
             words,
+            wordPairs,
           );
         },
+        loadExtraWords: async () => parseExtraWords(readFileSync(join(dataDir, extraWordsPath(dialect)), 'utf8')),
       });
       await next.setup(dialect, personalWords);
       return next;

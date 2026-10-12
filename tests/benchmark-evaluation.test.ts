@@ -23,6 +23,12 @@ type SpellingPair = Readonly<{ misspelling: string; targets: readonly string[]; 
 type Counts = { total: number; detected: number; topOne: number; topThree: number };
 type Report = Record<string, unknown>;
 type Checker = Readonly<{ lint(text: string): Promise<readonly WritingIssue[]> }>;
+/** One rule's JFLEG tally: flags on learner text, how many of those fixes helped, flags on clean text. */
+type RuleCounts = {
+  kind: string; flags: number; helpful: number; cleanFlags: number;
+  unhelpfulExamples: string[]; cleanExamples: string[];
+};
+const RULE_EXAMPLES = 5;
 /**
  * One checker under test. Wordwarden's results go at the top of the report; LanguageTool's go under
  * `languagetool` and use only the holdout halves, to keep its slower run short.
@@ -60,6 +66,26 @@ function splitFor(key: string): Split {
 
 function issueSummary(issue: WritingIssue): string {
   return `${issue.originalText}→${issue.replacements[0] ?? '∅'} (${issue.ruleId})`;
+}
+
+function ruleCounts(byRule: Map<string, RuleCounts>, issue: WritingIssue): RuleCounts {
+  const counts = byRule.get(issue.ruleId) ?? {
+    kind: issue.category, flags: 0, helpful: 0, cleanFlags: 0, unhelpfulExamples: [], cleanExamples: [],
+  };
+  byRule.set(issue.ruleId, counts);
+  return counts;
+}
+
+/** Per-rule table, worst fix precision first, so the rules doing the damage are easy to spot. */
+function ruleTable(label: string, byRule: Map<string, RuleCounts>): string {
+  const rows = [...byRule]
+    .sort((a, b) => percent(a[1].helpful, a[1].flags) - percent(b[1].helpful, b[1].flags) || b[1].flags - a[1].flags)
+    .map(([rule, counts]) => [
+      rule.padEnd(34), counts.kind.padEnd(14), String(counts.flags).padStart(6), String(counts.helpful).padStart(8),
+      `${percent(counts.helpful, counts.flags)}%`.padStart(9), String(counts.cleanFlags).padStart(6),
+    ].join(' '));
+  const header = `${'rule'.padEnd(34)} ${'kind'.padEnd(14)}  flags  helpful  fixPrec%  clean`;
+  return [`JFLEG ${label} by rule`, header, ...rows].join('\n');
 }
 
 /** Mitton's format: "$target" lines, each followed by its misspellings. */
@@ -167,6 +193,7 @@ async function evaluateJfleg(suite: Suite, split: 'dev' | 'test', label: Split):
   let flaggedCleanSentences = 0;
   let cleanFlags = 0;
   const cleanByRule = new Map<string, number>();
+  const byRule = new Map<string, RuleCounts>();
   const falseAlarms: string[] = [];
   for (const reference of references) {
     for (const sentence of reference) {
@@ -175,7 +202,12 @@ async function evaluateJfleg(suite: Suite, split: 'dev' | 'test', label: Split):
       if (issues.length === 0) continue;
       flaggedCleanSentences += 1;
       cleanFlags += issues.length;
-      for (const issue of issues) cleanByRule.set(issue.ruleId, (cleanByRule.get(issue.ruleId) ?? 0) + 1);
+      for (const issue of issues) {
+        cleanByRule.set(issue.ruleId, (cleanByRule.get(issue.ruleId) ?? 0) + 1);
+        const counts = ruleCounts(byRule, issue);
+        counts.cleanFlags += 1;
+        if (counts.cleanExamples.length < RULE_EXAMPLES) counts.cleanExamples.push(`${sentence} [${issueSummary(issue)}]`);
+      }
       if (falseAlarms.length < FAILURE_EXAMPLES) falseAlarms.push(`${sentence} [${issues.map(issueSummary).join(', ')}]`);
     }
   }
@@ -198,14 +230,23 @@ async function evaluateJfleg(suite: Suite, split: 'dev' | 'test', label: Split):
       const fix = issue.replacements[0];
       if (fix === undefined) continue;
       flags += 1;
+      const counts = ruleCounts(byRule, issue);
+      counts.flags += 1;
       const edited = `${source.slice(0, issue.range.start)}${fix}${source.slice(issue.range.end)}`;
       const after = Math.min(...refs.map((ref) => tokenDistance(words(edited), words(ref))));
-      if (after < baseline) helpfulFixes += 1;
-      else if (unhelpful.length < FAILURE_EXAMPLES) unhelpful.push(`${source} [${issueSummary(issue)}]`);
+      if (after < baseline) {
+        helpfulFixes += 1;
+        counts.helpful += 1;
+      } else {
+        if (unhelpful.length < FAILURE_EXAMPLES) unhelpful.push(`${source} [${issueSummary(issue)}]`);
+        if (counts.unhelpfulExamples.length < RULE_EXAMPLES) counts.unhelpfulExamples.push(`${source} [${issueSummary(issue)}]`);
+      }
     }
   }
 
+  console.log(ruleTable(label, byRule));
   suite.out[`jfleg-${label}`] = {
+    rules: Object.fromEntries([...byRule].map(([rule, counts]) => [rule, { ...counts, fixPrecisionPct: percent(counts.helpful, counts.flags) }])),
     cleanText: {
       sentences: cleanSentences,
       flaggedSentences: flaggedCleanSentences,

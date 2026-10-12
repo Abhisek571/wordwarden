@@ -16,6 +16,7 @@ import {
   createSpellingRanker,
   rankIssueReplacements,
   type SpellingRanker,
+  type WordContext,
 } from '#/engines/spelling-ranker';
 
 export type HarperEngine = Readonly<{
@@ -34,7 +35,32 @@ export type HarperEngineRuntime = Readonly<{
     dialect: EnglishDialect,
     dictionary: readonly string[],
   ) => Promise<SpellingRanker>;
+  loadExtraWords?: (dialect: EnglishDialect) => Promise<readonly string[]>;
 }>;
+
+const EXTRA_WORD_STEMS: Readonly<Record<EnglishDialect, string>> = Object.freeze({
+  american: 'en', australian: 'en-au', canadian: 'en-ca', british: 'en-gb',
+});
+
+/** The bundled list of less common words (SCOWL size 70) that the dialect's dictionary leaves out. */
+export function extraWordsPath(dialect: EnglishDialect): string {
+  return `spelling/extra-${EXTRA_WORD_STEMS[dialect]}.txt`;
+}
+
+export function parseExtraWords(text: string): readonly string[] {
+  return Object.freeze(text.split(/\r?\n/u).filter((word) => word.length > 0));
+}
+
+async function fetchExtraWords(dialect: EnglishDialect): Promise<readonly string[]> {
+  const path = extraWordsPath(dialect);
+  const response = await fetch((browser.runtime.getURL as (assetPath: string) => string)(path));
+  if (!response.ok) {
+    throw new Error(
+      `Could not load bundled spelling asset ${path}: HTTP ${response.status} ${response.statusText}`,
+    );
+  }
+  return parseExtraWords(await response.text());
+}
 
 function harperDialect(dialect: EnglishDialect): Dialect {
   if (dialect === 'british') return Dialect.British;
@@ -69,6 +95,24 @@ function isSupportedPunctuationReplacement(original: string, replacement: string
 // Local rules that replace an overlapping Harper suggestion, e.g. "to loose weight" → "lose", not "too loose".
 const SUPERSEDING_RULES = new Set(['LoseNotLoose']);
 
+// Harper rules turned off: on the JFLEG tune set their fixes almost never matched a human correction and
+// they mostly fired on corrected text (style preferences like the Oxford comma, "very good" → "excellent",
+// "non-stop" → "nonstop", "petrol" → "gas", or guesses like "most urban" → "urbanest").
+const MUTED_HARPER_RULES: Readonly<Record<string, boolean>> = Object.freeze({
+  AvoidAndAlso: false,
+  CompoundNouns: false,
+  DisjointPrefixes: false,
+  Excellent: false,
+  MassNouns: false,
+  MissingPreposition: false,
+  MissingTo: false,
+  ModalBeAdjective: false,
+  MoreAdjective: false,
+  OxfordComma: false,
+  Regionalisms: false,
+  WouldNeverHave: false,
+});
+
 // Harper can return "AN" for "A apple"; a single capital means sentence case, not shouting.
 function matchShoutedCase(original: string, replacement: string): string {
   const shouted = replacement.length > 1 &&
@@ -98,6 +142,17 @@ function fillerSpan(ruleId: string, source: string, start: number, end: number):
   return Object.freeze({ start, end: takesComma ? end + 1 : end });
 }
 
+// The words either side of a misspelling, when only spaces separate them: a comma or full stop breaks the pair.
+function wordContext(source: string, start: number, end: number): WordContext {
+  const previous = /([\p{L}'’]+)\s+$/u.exec(source.slice(0, start))?.[1];
+  const next = /^\s+([\p{L}'’]+)/u.exec(source.slice(end))?.[1];
+  const normalize = (word: string): string => word.toLocaleLowerCase('en').replaceAll('’', "'");
+  return Object.freeze({
+    ...(previous === undefined ? {} : { previous: normalize(previous) }),
+    ...(next === undefined ? {} : { next: normalize(next) }),
+  });
+}
+
 function normalizeLint(
   ruleId: string,
   lint: Lint,
@@ -119,6 +174,7 @@ function normalizeLint(
     source.slice(span.start, span.end),
     harperReplacements,
     spellingRanker,
+    wordContext(source, span.start, span.end),
   );
   const original = source.slice(span.start, span.end);
   const replacements = category === 'punctuation'
@@ -152,16 +208,20 @@ export function createHarperEngine(runtime: HarperEngineRuntime = Object.freeze(
     const nextLinter = new LocalLinter({ binary, dialect: harperDialect(dialect) });
     const recognitionVocabulary = mergePopularVocabulary(dictionary);
     let nextRanker: SpellingRanker;
+    let extraWords: readonly string[];
     try {
-      [nextRanker] = await Promise.all([
+      [nextRanker, extraWords] = await Promise.all([
         (runtime.createSpellingRanker ?? createSpellingRanker)(dialect, recognitionVocabulary),
+        (runtime.loadExtraWords ?? fetchExtraWords)(dialect),
         nextLinter.setup(),
       ]);
     } catch (error) {
       await nextLinter.dispose();
       throw error;
     }
-    await nextLinter.importWords([...recognitionVocabulary]);
+    // The extra words only stop false alarms; they are too rare to be worth offering as corrections.
+    await nextLinter.importWords([...recognitionVocabulary, ...extraWords]);
+    await nextLinter.setLintConfig(MUTED_HARPER_RULES);
     linter = nextLinter;
     spellingRanker = nextRanker;
   }
@@ -192,6 +252,7 @@ export function createHarperEngine(runtime: HarperEngineRuntime = Object.freeze(
       supportedIssues,
       text,
       activeSpellingRanker.hasPrefixCompletion,
+      activeSpellingRanker.wordPairs,
     );
     const superseding = supplemented.filter((issue) => SUPERSEDING_RULES.has(issue.ruleId));
     return resolveOverlappingIssues(

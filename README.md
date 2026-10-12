@@ -42,6 +42,8 @@ Wordwarden catches most everyday typos but still misses many grammar and fluency
 typing slips that make another real word ("form" for "from"). Test sets, method and credits:
 [docs/BENCHMARKS.md](docs/BENCHMARKS.md).
 
+![Accuracy over releases](docs/accuracy-history.svg)
+
 ## Performance
 
 ![Resource use chart](docs/resources.svg)
@@ -77,6 +79,7 @@ npm test
 npm run build
 npm run build:firefox
 npm run lint:firefox
+npm run test:firefox   # needs Firefox installed
 npm run test:e2e
 ```
 

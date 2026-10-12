@@ -1,5 +1,7 @@
 import { issueHash } from '#/core/hash';
 import type { IssueCategory, WritingIssue } from '#/core/types';
+import { findConfusedWords } from '#/engines/confused-words';
+import { EMPTY_WORD_PAIRS, type WordPairs } from '#/engines/word-pairs';
 
 const COMPOUND_SUBJECT_VERBS = Object.freeze(
   new Map([
@@ -55,6 +57,15 @@ const NON_SINGULAR_NOUNS = new Set([
 ]);
 const IMPERATIVE_VERBS = new Set(['tell', 'say', 'go']);
 const CLAUSE_SUBJECTS = new Set(['he', 'she', 'it', 'i', 'we', 'they', 'you']);
+// "the world have", "that already have", "this will have": the word after "the" is not the subject.
+const NOT_A_SUBJECT = new Set([
+  'all', 'already', 'also', 'always', 'both', 'can', 'could', 'may', 'might', 'must', 'never',
+  'often', 'should', 'still', 'that', 'which', 'who', 'will', 'would',
+]);
+const PREPOSITIONS = new Set([
+  'about', 'across', 'around', 'at', 'by', 'during', 'for', 'from', 'in', 'into', 'of', 'on',
+  'over', 'through', 'to', 'with',
+]);
 
 const SUBJECT_PRONOUNS = Object.freeze(new Map([['him', 'He'], ['her', 'She'], ['them', 'They']]));
 
@@ -232,8 +243,15 @@ function isPastNarrative(context: string): boolean {
 export function lintSupplementalGrammar(
   text: string,
   hasPrefixCompletion: (token: string) => boolean = () => false,
+  wordPairs: WordPairs = EMPTY_WORD_PAIRS,
 ): readonly WritingIssue[] {
   const issues: WritingIssue[] = [];
+
+  for (const confused of findConfusedWords(text, wordPairs)) {
+    addIssue(issues, text, 'ConfusedWord', confused.start, confused.end,
+      `“${confused.original}” does not fit the words around it; did you mean “${confused.replacement}”?`,
+      [confused.replacement]);
+  }
 
   for (const match of text.matchAll(
     /\bme and ((?:(?:my|our|the|a|an)\s+)?[\p{L}]+)\b(?=\s+(?:am|is|are|was|were|has|have|do|does)\b)/giu,
@@ -284,8 +302,9 @@ export function lintSupplementalGrammar(
       'Use an apostrophe in this contraction.', [preserveCase(original, replacement)], 'punctuation');
   }
 
-  // Only at the start of a sentence; mid-sentence ("can therefore adapt") needs no comma.
-  for (const match of text.matchAll(/(?<=^|[.!?;]\s+)(?:however|therefore|instead|meanwhile)\s+(?=[\p{Ll}])/giu)) {
+  // Only "however" at the start of a sentence; mid-sentence ("can therefore adapt") needs no comma, and
+  // "Therefore people will…" without one is accepted by human editors.
+  for (const match of text.matchAll(/(?<=^|[.!?;]\s+)however\s+(?=[\p{Ll}])/giu)) {
     if (match.index === undefined) continue;
     const original = match[0].trimEnd();
     addIssue(issues, text, 'IntroductoryComma', match.index, match.index + original.length,
@@ -315,8 +334,10 @@ export function lintSupplementalGrammar(
     }
   }
 
+  // One side must be a personal pronoun: "concepts and ideas is" is a gerund-phrase subject, and "tired and
+  // the night is" joins two clauses.
   for (const match of text.matchAll(
-    /\b(?:me|i|you|he|she|it|we|they|[\p{L}]+)\s+and\s+(?:(?:my|our|the|a|an)\s+)?[\p{L}]+\s+(was|is|has|does)\b/giu,
+    /\b(?:(?:me|i|you|he|she|we|they)\s+and\s+(?:(?:my|our|the|a|an)\s+)?[\p{L}]+|[\p{L}]+\s+and\s+(?:me|i|you|he|she|we|they))\s+(was|is|has|does)\b/giu,
   )) {
     const verb = match[1];
     if (verb === undefined) continue;
@@ -407,10 +428,14 @@ export function lintSupplementalGrammar(
       noun === undefined ||
       verb === undefined ||
       noun.toLocaleLowerCase('en').endsWith('s') ||
-      NON_SINGULAR_NOUNS.has(noun.toLocaleLowerCase('en'))
+      NON_SINGULAR_NOUNS.has(noun.toLocaleLowerCase('en')) ||
+      NOT_A_SUBJECT.has(noun.toLocaleLowerCase('en'))
     ) {
       continue;
     }
+    // "companies around the world have": the noun is inside a phrase that describes the real subject.
+    const before = previousWord(text, match.index ?? 0);
+    if (before !== undefined && PREPOSITIONS.has(before)) continue;
     const range = verbRange(match, verb);
     const followingText = text.slice(range.end);
     const pastPerfect = /^\s+already\s+[\p{L}]+(?:ed|en)\b[^.!?]*\bbefore\b/iu.test(
@@ -569,9 +594,10 @@ export function supplementGrammarIssues(
   primaryIssues: readonly WritingIssue[],
   text: string,
   hasPrefixCompletion?: (token: string) => boolean,
+  wordPairs?: WordPairs,
 ): readonly WritingIssue[] {
   const issues = [...primaryIssues];
-  for (const issue of lintSupplementalGrammar(text, hasPrefixCompletion)) {
+  for (const issue of lintSupplementalGrammar(text, hasPrefixCompletion, wordPairs)) {
     const duplicate = issues.some(
       (candidate) =>
         candidate.category !== 'style' &&

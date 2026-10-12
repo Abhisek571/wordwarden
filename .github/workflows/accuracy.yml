@@ -7,6 +7,10 @@ on:
   push:
     tags: ['v*.*.0']
   workflow_dispatch:
+    inputs:
+      branch:
+        description: Branch to measure and save the chart to
+        default: main
 
 permissions:
   contents: write
@@ -16,10 +20,11 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 90
     steps:
-      # The chart is saved to main, so the README shows it, even when a tag started the run.
+      # The chart is saved to main, so the README shows it, even when a tag started the run. A manual
+      # run can name another branch to measure that branch before it is merged.
       - uses: actions/checkout@v5
         with:
-          ref: main
+          ref: ${{ inputs.branch || 'main' }}
       - uses: actions/setup-node@v5
         with:
           node-version: 22
@@ -85,18 +90,19 @@ jobs:
           WORDWARDEN_BENCHMARK_DIR: ${{ runner.temp }}/benchmarks
           WORDWARDEN_BENCHMARK_REPORT: ${{ runner.temp }}/report.json
       - run: node scripts/accuracy-chart.mjs "$RUNNER_TEMP/report.json"
+      - run: node scripts/accuracy-history.mjs "$RUNNER_TEMP/report.json"
       - uses: actions/upload-artifact@v4
         with:
           name: benchmark-report
           path: ${{ runner.temp }}/report.json
           retention-days: 30
       # The Resources workflow may push its chart at the same time, so take its commit first.
-      - name: Commit the updated chart
+      - name: Commit the updated charts
         run: |
-          git diff --quiet docs/accuracy.svg && exit 0
+          git diff --quiet docs/accuracy.svg docs/accuracy-history.svg docs/accuracy-history.json && exit 0
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add docs/accuracy.svg
-          git commit -m "Update accuracy chart"
+          git add docs/accuracy.svg docs/accuracy-history.svg docs/accuracy-history.json
+          git commit -m "Update accuracy charts"
           git pull --rebase
           git push

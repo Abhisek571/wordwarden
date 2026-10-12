@@ -55,6 +55,22 @@ describe('supplemental grammar rules', () => {
     expect(lintSupplementalGrammar('Someone tell us!')).toEqual([]);
   });
 
+  it('leaves joined clauses, gerund-phrase subjects, and modifiers before "have" alone', () => {
+    const clean = [
+      'Understanding concepts and ideas is a more important way of studying.',
+      'I was tired and the night is meant for sleeping.',
+      'Many companies around the world have introduced new practices.',
+      'Members that already have the certification will return.',
+      'This will have a great effect on him.',
+      'Therefore people will be able to live with nature.',
+    ];
+    for (const text of clean) expect(lintSupplementalGrammar(text), text).toEqual([]);
+    expect(lintSupplementalGrammar('Me and my friend was late.').map((finding) => finding.replacements[0]))
+      .toEqual(['My friend and I', 'were']);
+    expect(lintSupplementalGrammar('However the shop have closed.').map((finding) => finding.ruleId))
+      .toEqual(['IntroductoryComma', 'SingularSubjectHave']);
+  });
+
   it('detects agreement after a spelling correction creates a valid contraction', () => {
     const text = "We doesn't know.";
     const issues = lintSupplementalGrammar(text);

@@ -7,6 +7,7 @@ import { binaryInlined } from 'harper.js/binaryInlined';
 import { createHarperEngine, type HarperEngine } from '#/engines/harper-engine';
 import { createSpellingRankerFromData } from '#/engines/spelling-ranker';
 import type { WritingIssue } from '#/core/types';
+import { readBundledExtraWords } from './helpers/production-engine';
 
 type Row = Readonly<Record<string, string>>;
 type SpellingError = Readonly<{ wrong: string; correct: string; type: string }>;
@@ -108,6 +109,7 @@ async function createProductionEngine(): Promise<HarperEngine> {
       frequencies,
       personalWords,
     ),
+    loadExtraWords: readBundledExtraWords,
   }));
   await engine.setup('american', Object.freeze([]));
   return engine;

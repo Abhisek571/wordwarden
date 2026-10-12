@@ -10,6 +10,7 @@ import type { EnglishDialect, WritingIssue } from '#/core/types';
 import { POPULAR_VOCABULARY } from '#/core/popular-vocabulary';
 import { createHarperEngine, type HarperEngine } from '#/engines/harper-engine';
 import { createSpellingRankerFromData } from '#/engines/spelling-ranker';
+import { readBundledExtraWords } from './helpers/production-engine';
 
 const decoder = new TextDecoder();
 const dictionaries = Object.freeze({
@@ -42,6 +43,7 @@ async function createRuntimeEngine(dialect: EnglishDialect): Promise<HarperEngin
       frequencies,
       words,
     ),
+    loadExtraWords: readBundledExtraWords,
   }));
   await engine.setup(dialect, Object.freeze([]));
   return engine;

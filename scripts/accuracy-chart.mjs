@@ -1,49 +1,57 @@
 // Draws docs/accuracy.svg from a benchmark report written by `npm run evaluate:benchmarks`
-// with WORDWARDEN_BENCHMARK_REPORT set. Usage: node scripts/accuracy-chart.mjs report.json
+// with WORDWARDEN_BENCHMARK_REPORT set. Usage: node scripts/accuracy-chart.mjs report.json [out.svg]
 import { readFileSync, writeFileSync } from 'node:fs';
 
-const [reportPath] = process.argv.slice(2);
+const [reportPath, outArg] = process.argv.slice(2);
 if (reportPath === undefined) throw new TypeError('Expected the path of a benchmark report.');
 const report = JSON.parse(readFileSync(reportPath, 'utf8'));
+const other = report.languagetool;
 
-// Spelling sets share three bars. Holbrook has no tune/holdout split, so all of it is shown.
+const BLUE = '#1e6fd9';
+const GREY = '#9a9893';
+// Spelling sets share three bars, plus LanguageTool's "correct word first" when the report has it.
+// Holbrook has no tune/holdout split, so all of it is shown.
 const SPELLING = [
-  ['Typing test slips (Aalto)', report.aalto?.holdout],
-  ['Tweets (LexNorm2015)', report.twitter?.holdout],
-  ['Wikipedia misspellings', report.wikipedia?.holdout],
-  ['Birkbeck (children, students)', report.birkbeck?.holdout],
-  ['Children\'s writing (Holbrook)', report.holbrook?.taggedErrors],
+  ['Typing test slips', report.aalto?.holdout, other?.aalto?.holdout],
+  ['Tweets', report.twitter?.holdout, other?.twitter?.holdout],
+  ['Wikipedia edits', report.wikipedia?.holdout, other?.wikipedia?.holdout],
+  ['Children and students', report.birkbeck?.holdout, other?.birkbeck?.holdout],
+  ['Children\'s writing', report.holbrook?.taggedErrors, other?.holbrook?.taggedErrors],
 ].filter(([, rates]) => typeof rates?.detectedPct === 'number');
 const SPELLING_BARS = [
   ['detectedPct', 'Caught', '#2f7d5b'],
-  ['topOnePct', 'Correct word first', '#1e6fd9'],
+  ['topOnePct', 'Correct word first', BLUE],
   ['topThreePct', 'Correct word in top three', '#8fb3e8'],
 ];
 const jfleg = report['jfleg-holdout'];
+const jflegOther = other?.['jfleg-holdout'];
+// [label, value, colour, LanguageTool's value for the same measure, note after the value]
 const GRAMMAR = jfleg?.learnerText === undefined ? [] : [
   ['Sentences with mistakes that get flagged', jfleg.learnerText.sentenceRecallPct, '#b45309'],
-  ['Fixes that move the text closer to a human correction', jfleg.learnerText.fixPrecisionPct, '#e0a458'],
-  ['Correct sentences wrongly flagged (lower is better)', jfleg.cleanText.flaggedSentencesPct, '#9a9893'],
+  ['Fixes that move the text closer to a human correction', jfleg.learnerText.fixPrecisionPct, '#e0a458', jflegOther?.learnerText?.fixPrecisionPct],
+  ['Correct sentences wrongly flagged', jfleg.cleanText.flaggedSentencesPct, '#8a8884', jflegOther?.cleanText?.flaggedSentencesPct, 'lower is better'],
 ];
 if (SPELLING.length === 0) throw new Error('The report has no spelling results to draw.');
+const hasOther = SPELLING.some(([, , theirs]) => typeof theirs?.topOnePct === 'number')
+  || GRAMMAR.some(([, , , theirs]) => typeof theirs === 'number');
 
 const ink = '#1d1d1b';
 const muted = '#6b6a66';
 const hair = '#e4e2dc';
 const ground = '#fbfaf7';
 const width = 800;
-const left = 272;
+const left = 240;
 const plotWidth = width - left - 64;
 const barHeight = 14;
 const barGap = 4;
 const groupGap = 24;
-const groupHeight = SPELLING_BARS.length * barHeight + (SPELLING_BARS.length - 1) * barGap;
 const parts = [];
 const gridParts = [];
 const x = (percent) => left + (percent / 100) * plotWidth;
-const bar = (y, value, color) => {
+const bar = (y, value, color, note = '') => {
   parts.push(`<rect x="${left}" y="${y}" width="${x(value) - left}" height="${barHeight}" rx="2" fill="${color}"/>`);
-  parts.push(`<text x="${x(value) + 6}" y="${y + barHeight - 3}" font-size="11.5" font-weight="600" fill="${ink}">${value.toFixed(1)}%</text>`);
+  parts.push(`<text x="${x(value) + 6}" y="${y + barHeight - 3}" font-size="11.5" font-weight="600" fill="${ink}">${value.toFixed(1)}%${note ? `<tspan font-weight="400" fill="${muted}"> ${note}</tspan>` : ''}</text>`);
+  return y + barHeight + barGap;
 };
 const grid = (top, bottom) => {
   for (const percent of [0, 25, 50, 75, 100]) {
@@ -60,68 +68,50 @@ const legend = (y, items) => {
   }
   return y;
 };
+const rowLabel = (top, bottom, label) => {
+  parts.push(`<text x="${left - 14}" y="${(top + bottom) / 2 + 5}" font-size="14" font-weight="600" fill="${ink}" text-anchor="end">${label}</text>`);
+};
+const otherLegend = hasOther ? [['LanguageTool, same measure', GREY]] : [];
 
 let y = 92;
 parts.push(`<text x="24" y="38" font-size="20" font-weight="700" fill="${ink}">Accuracy</text>`);
-parts.push(`<text x="24" y="60" font-size="13" fill="${muted}">Held-out test data, not used for tuning</text>`);
+parts.push(`<text x="24" y="60" font-size="13" fill="${muted}">Held-out test data, not used for tuning. Grey bars: LanguageTool, latest version at the time of this release, default setup.</text>`);
 parts.push(`<text x="24" y="${y}" font-size="14" font-weight="700" fill="${ink}">Spelling</text>`);
 y += 18;
 const spellingTop = y;
-for (const [label, rates] of SPELLING) {
-  parts.push(`<text x="${left - 14}" y="${y + groupHeight / 2 + 5}" font-size="14" font-weight="600" fill="${ink}" text-anchor="end">${label}</text>`);
-  SPELLING_BARS.forEach(([field, , color], index) => bar(y + index * (barHeight + barGap), Number(rates[field]), color));
-  y += groupHeight + groupGap;
+for (const [label, rates, theirs] of SPELLING) {
+  const top = y;
+  for (const [field, , color] of SPELLING_BARS) {
+    y = bar(y, Number(rates[field]), color);
+    // LanguageTool's bar sits right under the one it compares with.
+    if (field === 'topOnePct' && typeof theirs?.topOnePct === 'number') y = bar(y, Number(theirs.topOnePct), GREY);
+  }
+  rowLabel(top, y - barGap, label);
+  y += groupGap - barGap;
 }
-grid(spellingTop - 8, y - groupGap + 8);
-y = legend(y + 42, SPELLING_BARS.map(([, label, color]) => [label, color]));
+grid(spellingTop - 8, y - groupGap + barGap + 8);
+y = legend(y + 42, [...SPELLING_BARS.map(([, label, color]) => [label, color]), ...otherLegend]);
 
 if (GRAMMAR.length > 0) {
   y += 26;
   parts.push(`<text x="24" y="${y}" font-size="14" font-weight="700" fill="${ink}">Grammar</text>`);
   y += 18;
   const grammarTop = y;
-  parts.push(`<text x="${left - 14}" y="${y + groupHeight / 2 + 5}" font-size="14" font-weight="600" fill="${ink}" text-anchor="end">Learner essays (JFLEG)</text>`);
-  GRAMMAR.forEach(([, value, color], index) => bar(y + index * (barHeight + barGap), Number(value), color));
-  y += groupHeight;
-  grid(grammarTop - 8, y + 8);
-  y = legend(y + 50, GRAMMAR.map(([label, , color]) => [label, color]));
-}
-
-// Side by side with LanguageTool (default setup, run on the same machine), when the report has it.
-const other = report.languagetool;
-const pairs = [
-  ['Typing test slips (Aalto)', report.aalto?.holdout?.topOnePct, other?.aalto?.holdout?.topOnePct],
-  ['Tweets (LexNorm2015)', report.twitter?.holdout?.topOnePct, other?.twitter?.holdout?.topOnePct],
-  ['Wikipedia misspellings', report.wikipedia?.holdout?.topOnePct, other?.wikipedia?.holdout?.topOnePct],
-  ['Birkbeck (children, students)', report.birkbeck?.holdout?.topOnePct, other?.birkbeck?.holdout?.topOnePct],
-  ['Children\'s writing (Holbrook)', report.holbrook?.taggedErrors?.topOnePct, other?.holbrook?.taggedErrors?.topOnePct],
-  ['JFLEG: fixes that help', jfleg?.learnerText?.fixPrecisionPct, other?.['jfleg-holdout']?.learnerText?.fixPrecisionPct],
-  ['JFLEG: correct text flagged', jfleg?.cleanText?.flaggedSentencesPct, other?.['jfleg-holdout']?.cleanText?.flaggedSentencesPct],
-].filter(([, ours, theirs]) => typeof ours === 'number' && typeof theirs === 'number');
-if (pairs.length > 0) {
-  const pairHeight = 2 * barHeight + barGap;
-  y += 40;
-  parts.push(`<text x="24" y="${y}" font-size="14" font-weight="700" fill="${ink}">Compared with LanguageTool</text>`);
-  y += 20;
-  parts.push(`<text x="24" y="${y}" font-size="12" fill="${muted}">Spelling: correct word first. Lower is better for correct text flagged. LanguageTool: latest release, default setup.</text>`);
-  y += 22;
-  const compareTop = y;
-  for (const [label, ours, theirs] of pairs) {
-    parts.push(`<text x="${left - 14}" y="${y + pairHeight / 2 + 5}" font-size="14" font-weight="600" fill="${ink}" text-anchor="end">${label}</text>`);
-    bar(y, Number(ours), '#1e6fd9');
-    bar(y + barHeight + barGap, Number(theirs), '#9a9893');
-    y += pairHeight + 18;
+  for (const [, value, color, theirs, note] of GRAMMAR) {
+    y = bar(y, Number(value), color, note);
+    if (typeof theirs === 'number') y = bar(y, Number(theirs), GREY);
   }
-  grid(compareTop - 8, y - 18 + 8);
-  y = legend(y + 32, [['Wordwarden', '#1e6fd9'], ['LanguageTool', '#9a9893']]);
+  rowLabel(grammarTop, y - barGap, 'Learner essays');
+  grid(grammarTop - 8, y - barGap + 8);
+  y = legend(y + 46, [...GRAMMAR.map(([label, , color]) => [label, color]), ...otherLegend]);
 }
 
 y += 14;
 parts.push(`<line x1="24" y1="${y}" x2="${width - 24}" y2="${y}" stroke="${hair}"/>`);
 y += 22;
-parts.push(`<text x="24" y="${y}" font-size="12" fill="${muted}">Measured when this release came out, against the latest LanguageTool from languagetool.org at that time.</text>`);
+parts.push(`<text x="24" y="${y}" font-size="12" fill="${muted}">Test sets: the Aalto typing test, LexNorm2015 tweets, Wikipedia edit history, the Birkbeck spelling lists, Holbrook's children's writing</text>`);
 y += 18;
-parts.push(`<text x="24" y="${y}" font-size="12" fill="${muted}">Generated automatically for every release except small bug fixes.</text>`);
+parts.push(`<text x="24" y="${y}" font-size="12" fill="${muted}">and JFLEG learner essays. Details and credits in docs/BENCHMARKS.md. Generated automatically for every release except small bug fixes.</text>`);
 const height = y + 18;
 parts.unshift(
   `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" font-family="Segoe UI, system-ui, -apple-system, sans-serif" role="img" aria-label="Accuracy chart">`,
@@ -129,5 +119,5 @@ parts.unshift(
   ...gridParts,
 );
 parts.push('</svg>');
-writeFileSync(new URL('../docs/accuracy.svg', import.meta.url), `${parts.join('\n')}\n`);
-console.log(`Wrote docs/accuracy.svg (${SPELLING.length} spelling sets, ${GRAMMAR.length > 0 ? 1 : 0} grammar set).`);
+writeFileSync(outArg ?? new URL('../docs/accuracy.svg', import.meta.url), `${parts.join('\n')}\n`);
+console.log(`Wrote ${outArg ?? 'docs/accuracy.svg'} (${SPELLING.length} spelling sets, ${GRAMMAR.length > 0 ? 1 : 0} grammar set).`);
