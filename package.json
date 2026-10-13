@@ -1,6 +1,6 @@
 {
   "name": "wordwarden",
-  "version": "1.5.1",
+  "version": "1.5.2",
   "private": true,
   "type": "module",
   "description": "Privacy-first local spelling and grammar browser extension.",

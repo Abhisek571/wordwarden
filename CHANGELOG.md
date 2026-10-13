@@ -3,6 +3,11 @@
 Each release's section is also its release notes on GitHub. Accuracy and resource numbers are in the
 README charts; method in [docs/BENCHMARKS.md](docs/BENCHMARKS.md).
 
+## 1.5.2 — 2026-10-13
+
+- A text box that already had focus when a page finished loading is now checked straight away, instead of
+  only after the next keystroke.
+
 ## 1.5.1 — 2026-10-13
 
 - **Fixes now work in Twitch chat.** A picked suggestion used to land at the end of the message ("sdasad")
