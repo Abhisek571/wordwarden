@@ -80,8 +80,19 @@ test('loads without touching sensitive fields', async () => {
   ).toHaveCount(1);
 });
 
+test('checks a field that already had focus when the extension started', async () => {
+  if (context === null) throw new Error('Extension browser context did not start.');
+  const page = await context.newPage();
+  const cdp = await context.newCDPSession(page);
+  await cdp.send('DOM.enable');
+  await page.goto('http://127.0.0.1:4173/?autofocus');
+  await expect
+    .poll(async () => (await shadowNodes(cdp, 'issue-mark')).length, { timeout: 10_000 })
+    .toBeGreaterThan(0);
+  await page.close();
+});
+
 test('surfaces individual grammar issues in the reported sentence', async () => {
-  test.setTimeout(60_000);
   if (context === null) throw new Error('Extension browser context did not start.');
   const extensionId = loadedExtensionId();
   const page = await context.newPage();
@@ -92,9 +103,8 @@ test('surfaces individual grammar issues in the reported sentence', async () => 
     'Me and my friend was going to the shops yesterday but we doesnt know where it is so we was walking around for nearly two hour and then someone tell us that the shop have already closed before we got there.',
   );
 
-  // The first check also starts the checker, which can take over 10 seconds on GitHub's test machines.
   await expect
-    .poll(async () => (await shadowNodes(cdp, 'issue-mark')).length, { timeout: 30_000 })
+    .poll(async () => (await shadowNodes(cdp, 'issue-mark')).length, { timeout: 10_000 })
     .toBe(7);
   const marks = await shadowNodes(cdp, 'issue-mark');
   expect(marks.filter((node) => attributes(node).class === 'mark grammar')).toHaveLength(6);

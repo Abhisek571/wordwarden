@@ -13,7 +13,7 @@ import type { EditorAdapter, EditorSnapshot, WritingIssue } from '#/core/types';
 import { caretOffset, createEditorAdapter } from '#/editors/editor-adapter';
 import { isCapitalsWord } from '#/core/popular-vocabulary';
 import { createTypingMeter, typedCharacterCount } from '#/core/typing-stats';
-import { editorFromEvent } from '#/editors/editor-detection';
+import { closestSupportedEditor, editorFromEvent, type SupportedEditor } from '#/editors/editor-detection';
 import { updateSettings } from '#/ui/settings-update';
 import { createTypeCheckOverlay, type TypeCheckOverlay } from '#/ui/overlay';
 
@@ -350,7 +350,10 @@ export async function startTypeCheck(context: Readonly<{
 
     function activate(event: Event): void {
       const editor = editorFromEvent(event);
-      if (editor === null) return;
+      if (editor !== null) activateEditor(editor);
+    }
+
+    function activateEditor(editor: SupportedEditor): void {
       if (activeAdapter?.element !== editor) {
         activeAdapter = createEditorAdapter(editor);
         revision = 0;
@@ -432,6 +435,10 @@ export async function startTypeCheck(context: Readonly<{
     document.addEventListener('scroll', reposition, true);
     window.addEventListener('resize', reposition);
     document.addEventListener('visibilitychange', onPageHidden);
+    // A field that had focus before these listeners existed (a slow start, or a page that focuses a field as it
+    // loads) gets no focus event; check it now.
+    const focused = document.activeElement === null ? null : closestSupportedEditor(document.activeElement);
+    if (focused !== null) activateEditor(focused);
 
     const onStorageChanged: Parameters<typeof browser.storage.onChanged.addListener>[0] = (
       changes,
