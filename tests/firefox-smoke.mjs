@@ -38,7 +38,8 @@ let socket = null;
 let nextId = 1;
 const pending = new Map();
 async function connect() {
-  for (let attempt = 0; attempt < 100; attempt += 1) {
+  // Firefox can take a while to start on a busy test machine; wait up to a minute.
+  for (let attempt = 0; attempt < 300; attempt += 1) {
     try {
       const ws = new WebSocket(`ws://127.0.0.1:${port}/session`);
       await new Promise((ok, fail) => {
