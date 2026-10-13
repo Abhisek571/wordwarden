@@ -159,6 +159,8 @@ function nextTask(): Promise<void> {
 }
 
 const SELECT_ATTEMPTS = 3;
+const REDRAW_WAIT_MS = 300;
+const REDRAW_POLL_MS = 25;
 
 function selectionMatches(selection: Selection, element: HTMLElement, range: TextRange): boolean {
   const expected = rangeForOffsets(element, range);
@@ -201,10 +203,14 @@ async function applyContentEditable(
   if (!selected) return declined;
   const applied = element.ownerDocument.execCommand('insertText', false, replacement);
   if (!applied) return declined;
-  // Some editors redraw the field after the input event; check what they ended up with.
-  await nextTask();
+  // Some editors redraw the field after the input event, Twitch's a moment later; check what they ended up with.
   const expected = before.slice(0, range.start) + replacement + before.slice(range.end);
-  const after = buildTextModel(element).text;
+  await nextTask();
+  let after = buildTextModel(element).text;
+  for (let waited = 0; comparable(after) !== comparable(expected) && waited < REDRAW_WAIT_MS; waited += REDRAW_POLL_MS) {
+    await new Promise((resolve) => window.setTimeout(resolve, REDRAW_POLL_MS));
+    after = buildTextModel(element).text;
+  }
   if (comparable(after) !== comparable(expected)) {
     // The editor put the text somewhere else. Undo it rather than leave a mangled sentence, but only when
     // something changed: an undo with nothing inserted would remove the writer's own last edit.

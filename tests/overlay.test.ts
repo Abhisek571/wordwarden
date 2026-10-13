@@ -484,6 +484,24 @@ describe('status badge', () => {
     return { overlay, shadow };
   }
 
+  it('hides a message by itself after a few seconds', () => {
+    vi.useFakeTimers();
+    try {
+      const { overlay, shadow } = openOverlay();
+      const status = (): HTMLElement | null => shadow.querySelector('[data-testid="status"]');
+      overlay.showStatus('Could not apply this suggestion safely.');
+      expect(status()?.textContent).toBe('Could not apply this suggestion safely.');
+      vi.advanceTimersByTime(3_000);
+      overlay.showStatus('The text changed.');
+      vi.advanceTimersByTime(3_000);
+      expect(status()?.textContent).toBe('The text changed.');
+      vi.advanceTimersByTime(1_000);
+      expect(status()).toBeNull();
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
   it('shows checking, clear, and issue-count states inside the editor corner', () => {
     const { overlay, shadow } = openOverlay();
     const editorRect = new DOMRect(100, 100, 300, 120);

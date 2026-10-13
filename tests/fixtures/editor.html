@@ -48,5 +48,20 @@
         });
       });
     </script>
+    <!-- Behaves like Twitch's chat box: it draws each change a moment after it happens, not straight away. -->
+    <div id="delayed" contenteditable="true">Say hi sda</div>
+    <script>
+      const delayed = document.getElementById('delayed');
+      let drawn = delayed.textContent;
+      delayed.addEventListener('input', () => {
+        const typed = delayed.textContent;
+        delayed.textContent = drawn;
+        setTimeout(() => {
+          drawn = typed;
+          delayed.textContent = typed;
+          document.getSelection().collapse(delayed.firstChild, typed.length);
+        }, 30);
+      });
+    </script>
   </body>
 </html>

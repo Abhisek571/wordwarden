@@ -188,6 +188,8 @@ const VIEWPORT_MARGIN = 12;
 const GRAMMAR_MARK_INLINE_PADDING = 4;
 const GRAMMAR_MARK_BLOCK_PADDING = 4;
 const HOVER_OPEN_DELAY_MS = 180;
+// Messages hide themselves after this long, so they never sit over the page.
+const STATUS_SHOW_MS = 4_000;
 const HOVER_CLOSE_DELAY_MS = 220;
 
 const SVG_NS = 'http://www.w3.org/2000/svg';
@@ -282,6 +284,7 @@ export function createTypeCheckOverlay(actions: OverlayActions): TypeCheckOverla
   let fixEffect: FixEffect = 'waves';
   let popoverElement: HTMLElement | null = null;
   let statusElement: HTMLElement | null = null;
+  let statusTimer = 0;
   let badgeElement: HTMLButtonElement | null = null;
   let firstIssue: Readonly<{ issue: WritingIssue; rect: DOMRect }> | null = null;
   let issueKinds: 'spelling' | 'grammar' | 'both' = 'spelling';
@@ -683,9 +686,12 @@ export function createTypeCheckOverlay(actions: OverlayActions): TypeCheckOverla
       layer.append(statusElement);
     }
     statusElement.textContent = message;
+    window.clearTimeout(statusTimer);
+    statusTimer = window.setTimeout(hideStatus, STATUS_SHOW_MS);
   }
 
   function hideStatus(): void {
+    window.clearTimeout(statusTimer);
     statusElement?.remove();
     statusElement = null;
   }
@@ -718,7 +724,7 @@ export function createTypeCheckOverlay(actions: OverlayActions): TypeCheckOverla
   function destroy(): void {
     document.removeEventListener('pointermove', onPointerMove, { capture: true });
     clear();
-    statusElement = null;
+    hideStatus();
     badgeElement = null;
     host.remove();
   }

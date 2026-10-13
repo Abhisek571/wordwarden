@@ -242,6 +242,31 @@ test('replaces the word in an editor that restores its cursor when it gets focus
   await page.close();
 });
 
+test('reports success in an editor that draws the fix a moment later', async () => {
+  if (context === null) throw new Error('Extension browser context did not start.');
+  const page = await context.newPage();
+  const cdp = await context.newCDPSession(page);
+  await cdp.send('DOM.enable');
+  await page.goto('http://127.0.0.1:4173');
+  const editor = page.locator('#delayed');
+  await editor.click();
+  await page.keyboard.press('End');
+  const findMark = async () => (await shadowNodes(cdp, 'issue-mark'))
+    .find((node) => attributes(node)['aria-label']?.includes('sda'));
+  await expect.poll(async () => (await findMark()) !== undefined, { timeout: 10_000 }).toBe(true);
+  const mark = await findMark();
+  if (!mark) throw new Error('Missing marker for "sda".');
+  await clickShadowNode(page, cdp, mark);
+  await expect.poll(async () => (await shadowNodes(cdp, 'apply-suggestion')).length).toBeGreaterThan(0);
+  const [button] = await shadowNodes(cdp, 'apply-suggestion');
+  if (!button) throw new Error('Missing replacement.');
+  await clickShadowNode(page, cdp, button);
+  await expect(editor).toHaveText(/^Say hi (?!sda$)[a-z]{3,4}$/u);
+  await page.waitForTimeout(300);
+  expect(await shadowNodes(cdp, 'status')).toHaveLength(0);
+  await page.close();
+});
+
 test('shows an issue count badge in the field and a tick once the text is clean', async () => {
   if (context === null) throw new Error('Extension browser context did not start.');
   const page = await context.newPage();

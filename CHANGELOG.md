@@ -3,6 +3,14 @@
 Each release's section is also its release notes on GitHub. Accuracy and resource numbers are in the
 README charts; method in [docs/BENCHMARKS.md](docs/BENCHMARKS.md).
 
+## 1.5.1 — 2026-10-13
+
+- **Fixes now work in Twitch chat.** A picked suggestion used to land at the end of the message ("sdasad")
+  instead of replacing the word, because Twitch puts its old cursor back when the chat box gets focus.
+- No more "Could not apply this suggestion safely" after a fix that worked, in editors that redraw a moment
+  later, such as Twitch chat.
+- Messages such as "The text changed" now disappear after a few seconds instead of staying on the page.
+
 ## 1.5.0 — 2026-10-12
 
 - **Better spelling suggestions.** The correct word comes first more often, especially for sound-alike
