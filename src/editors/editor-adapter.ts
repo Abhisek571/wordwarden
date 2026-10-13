@@ -158,6 +158,18 @@ function nextTask(): Promise<void> {
   return new Promise((resolve) => window.setTimeout(resolve, 0));
 }
 
+const SELECT_ATTEMPTS = 3;
+
+function selectionMatches(selection: Selection, element: HTMLElement, range: TextRange): boolean {
+  const expected = rangeForOffsets(element, range);
+  if (expected === null || selection.rangeCount !== 1) return false;
+  const actual = selection.getRangeAt(0);
+  // The same spot can be written as different nodes and offsets, so compare the text and check the two overlap.
+  return actual.toString() === expected.toString() &&
+    actual.compareBoundaryPoints(Range.END_TO_START, expected) <= 0 &&
+    actual.compareBoundaryPoints(Range.START_TO_END, expected) >= 0;
+}
+
 // Editors may swap ordinary spaces for no-break spaces while redrawing.
 function comparable(text: string): string {
   return text.replace(/ /gu, ' ');
@@ -171,15 +183,22 @@ async function applyContentEditable(
 ): Promise<ApplyResult> {
   const declined = Object.freeze({ applied: false, revision });
   const before = buildTextModel(element).text;
-  const domRange = rangeForOffsets(element, range);
-  if (domRange === null) return declined;
   const selection = element.ownerDocument.getSelection();
   if (selection === null) return declined;
   element.focus();
-  selection.removeAllRanges();
-  selection.addRange(domRange);
-  await selectionSettled(element.ownerDocument);
-  if (buildTextModel(element).text !== before) return declined;
+  // Editors such as Twitch's put their old cursor back a moment after getting focus, over the word just selected.
+  // Select the word again until it stays selected.
+  let selected = false;
+  for (let attempt = 0; attempt < SELECT_ATTEMPTS && !selected; attempt += 1) {
+    const domRange = rangeForOffsets(element, range);
+    if (domRange === null) return declined;
+    selection.removeAllRanges();
+    selection.addRange(domRange);
+    await selectionSettled(element.ownerDocument);
+    if (buildTextModel(element).text !== before) return declined;
+    selected = selectionMatches(selection, element, range);
+  }
+  if (!selected) return declined;
   const applied = element.ownerDocument.execCommand('insertText', false, replacement);
   if (!applied) return declined;
   // Some editors redraw the field after the input event; check what they ended up with.

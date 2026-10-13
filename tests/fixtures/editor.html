@@ -29,5 +29,24 @@
         known = { start: caret, end: caret };
       });
     </script>
+    <!-- Behaves like Twitch's chat box: when it gets focus back, it puts the cursor back where it was before. -->
+    <div id="restoring" contenteditable="true">Say hi sda</div>
+    <script>
+      const restoring = document.getElementById('restoring');
+      let saved = null;
+      restoring.addEventListener('blur', () => {
+        const selection = document.getSelection();
+        saved = selection.rangeCount > 0 ? selection.getRangeAt(0).cloneRange() : null;
+      });
+      restoring.addEventListener('focus', () => {
+        // Twitch does this when it redraws, a moment after the focus event.
+        queueMicrotask(() => {
+          if (saved === null) return;
+          const selection = document.getSelection();
+          selection.removeAllRanges();
+          selection.addRange(saved);
+        });
+      });
+    </script>
   </body>
 </html>

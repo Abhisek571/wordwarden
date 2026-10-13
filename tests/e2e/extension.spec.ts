@@ -214,6 +214,34 @@ test('replaces the word, not the cursor position, in an editor that tracks its o
   await page.close();
 });
 
+test('replaces the word in an editor that restores its cursor when it gets focus back', async () => {
+  if (context === null) throw new Error('Extension browser context did not start.');
+  const page = await context.newPage();
+  const cdp = await context.newCDPSession(page);
+  await cdp.send('DOM.enable');
+  await page.goto('http://127.0.0.1:4173');
+  const editor = page.locator('#restoring');
+  await editor.click();
+  await page.keyboard.press('End');
+  const findMark = async () => (await shadowNodes(cdp, 'issue-mark'))
+    .find((node) => attributes(node)['aria-label']?.includes('sda'));
+  await expect.poll(async () => (await findMark()) !== undefined, { timeout: 10_000 }).toBe(true);
+  const [button] = await (async () => {
+    const mark = await findMark();
+    if (!mark) throw new Error('Missing marker for "sda".');
+    await clickShadowNode(page, cdp, mark);
+    await expect.poll(async () => (await shadowNodes(cdp, 'apply-suggestion')).length).toBeGreaterThan(0);
+    return shadowNodes(cdp, 'apply-suggestion');
+  })();
+  if (!button) throw new Error('Missing replacement.');
+  // Clicking the card takes focus from the field, as it does on Twitch.
+  await page.evaluate(() => (document.activeElement as HTMLElement | null)?.blur());
+  await clickShadowNode(page, cdp, button);
+  // The suggestions for "sda" are three or four letters; a fix put in the wrong place leaves more.
+  await expect(editor).toHaveText(/^Say hi (?!sda$)[a-z]{3,4}$/u);
+  await page.close();
+});
+
 test('shows an issue count badge in the field and a tick once the text is clean', async () => {
   if (context === null) throw new Error('Extension browser context did not start.');
   const page = await context.newPage();
