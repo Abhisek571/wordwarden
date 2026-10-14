@@ -1,0 +1,21 @@
+{
+  "version": "1.5.0",
+  "date": "2026-10-12",
+  "words": 492,
+  "tabs": 20,
+  "wordwarden": {
+    "oneTabMb": 255,
+    "manyTabsMb": 515,
+    "startCpuS": 4,
+    "checkCpuMs": 297,
+    "checkMs": 214,
+    "diskMb": 23
+  },
+  "languageTool": {
+    "memoryMb": 847,
+    "startCpuS": 19.5,
+    "checkCpuMs": 628,
+    "checkMs": 294,
+    "diskMb": 386
+  }
+}

@@ -50,6 +50,8 @@ jobs:
           rm "$RUNNER_TEMP/languagetool.zip"
       - name: Measure resource use
         run: node scripts/resource-chart.mjs "$RUNNER_TEMP/benchmarks/languagetool" "$RUNNER_TEMP/resources.json"
+      # The numbers the website shows.
+      - run: node scripts/website-numbers.mjs resources "$RUNNER_TEMP/resources.json"
       - uses: actions/upload-artifact@v7
         with:
           name: resource-report
@@ -58,10 +60,10 @@ jobs:
       # The Accuracy workflow may push its chart at the same time, so take its commit first.
       - name: Commit the updated chart
         run: |
-          git diff --quiet docs/resources.svg && exit 0
+          git diff --quiet docs/resources.svg docs/resources-latest.json && exit 0
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add docs/resources.svg
+          git add docs/resources.svg docs/resources-latest.json
           git commit -m "Update resource chart"
           git pull --rebase
           git push

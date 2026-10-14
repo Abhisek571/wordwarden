@@ -1,0 +1,51 @@
+{
+  "version": "1.5.0",
+  "date": "2026-10-12",
+  "languageToolVersion": "6.6",
+  "spelling": {
+    "aalto": {
+      "caught": 68,
+      "topOne": 51.8,
+      "topThree": 58.2,
+      "languageTool": 50.2
+    },
+    "twitter": {
+      "caught": 88.8,
+      "topOne": 64.6,
+      "topThree": 73.1,
+      "languageTool": 59.4
+    },
+    "wikipedia": {
+      "caught": 98.8,
+      "topOne": 90.7,
+      "topThree": 96,
+      "languageTool": 84.8
+    },
+    "birkbeck": {
+      "caught": 91.5,
+      "topOne": 44.8,
+      "topThree": 52.1,
+      "languageTool": 37.3
+    },
+    "holbrook": {
+      "caught": 59.7,
+      "topOne": 30.1,
+      "topThree": 36.5,
+      "languageTool": 25.3
+    }
+  },
+  "grammar": {
+    "fixes": {
+      "wordwarden": 65.6,
+      "languageTool": 60.2
+    },
+    "falseAlarms": {
+      "wordwarden": 6.5,
+      "languageTool": 12.8
+    },
+    "recall": {
+      "wordwarden": 64.6,
+      "languageTool": 72.7
+    }
+  }
+}

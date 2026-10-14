@@ -91,6 +91,8 @@ jobs:
           WORDWARDEN_BENCHMARK_REPORT: ${{ runner.temp }}/report.json
       - run: node scripts/accuracy-chart.mjs "$RUNNER_TEMP/report.json"
       - run: node scripts/accuracy-history.mjs "$RUNNER_TEMP/report.json"
+      # The numbers the website shows.
+      - run: node scripts/website-numbers.mjs accuracy "$RUNNER_TEMP/report.json"
       - uses: actions/upload-artifact@v7
         with:
           name: benchmark-report
@@ -99,10 +101,10 @@ jobs:
       # The Resources workflow may push its chart at the same time, so take its commit first.
       - name: Commit the updated charts
         run: |
-          git diff --quiet docs/accuracy.svg docs/accuracy-history.svg docs/accuracy-history.json && exit 0
+          git diff --quiet docs/accuracy.svg docs/accuracy-history.svg docs/accuracy-history.json docs/accuracy-latest.json && exit 0
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add docs/accuracy.svg docs/accuracy-history.svg docs/accuracy-history.json
+          git add docs/accuracy.svg docs/accuracy-history.svg docs/accuracy-history.json docs/accuracy-latest.json
           git commit -m "Update accuracy charts"
           git pull --rebase
           git push

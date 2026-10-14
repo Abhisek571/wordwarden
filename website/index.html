@@ -1,0 +1,1188 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wordwarden — spelling and grammar, checked on your device</title>
+<meta name="description" content="Free spelling and grammar checks for Firefox, Chromium browsers and LibreOffice. Everything runs on your device; nothing you write is sent anywhere.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='14' fill='%23fff' stroke='%231d2433' stroke-width='2'/%3E%3Ccircle cx='16' cy='16' r='10' fill='none' stroke='%231d2433' stroke-width='3'/%3E%3C/svg%3E">
+<style>
+:root {
+  --ink: #1d2433; --ink-2: #4f5768; --paper: #ffffff; --ground: #f4f5f7; --hair: #dde0e6;
+  --keyline: rgb(29 36 51 / .28); --wash: #eceef2;
+  --spelling: #d32f2f; --grammar: #e08a00; --grammar-ink: #9a5b00; --style: #1e6fd9;
+  --clear: #2f7d5b; --clear-wash: #e6f3ec;
+  --rival: #1e6fd9; --line-rest: rgb(29 36 51 / .22);
+  --m-caught: #b7bcc7; --m-first: #1d2433; --m-three: #4f5768;
+  --lift: 0 2px 6px rgb(17 22 33 / .12);
+  --face: "Segoe UI Variable Text", "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+  --display: "Segoe UI Variable Display", "Segoe UI Variable Text", "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+  --ease: cubic-bezier(.16, 1, .3, 1);
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --ink: #eceef3; --ink-2: #a7aebb; --paper: #1b202b; --ground: #12161e; --hair: #333b4a;
+    --keyline: rgb(236 238 243 / .3); --wash: #252b38;
+    --spelling: #ff6b6b; --grammar: #ffb340; --grammar-ink: #ffb340; --style: #79a8ff;
+    --clear: #4cc38a; --clear-wash: #15291f;
+    --rival: #79a8ff; --line-rest: rgb(236 238 243 / .2);
+    --m-caught: #4a5366; --m-first: #eceef3; --m-three: #a7aebb;
+    --lift: 0 2px 8px rgb(0 0 0 / .45);
+    color-scheme: dark;
+  }
+}
+*, *::before, *::after { box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 72px; }
+body { margin: 0; background: var(--ground); color: var(--ink); font: 400 16px/1.55 var(--face); -webkit-font-smoothing: antialiased; }
+::selection { background: color-mix(in srgb, var(--ink) 14%, transparent); color: var(--ink); }
+:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; border-radius: 2px; }
+html { scrollbar-color: var(--hair) var(--ground); }
+a { color: inherit; text-underline-offset: 3px; text-decoration-thickness: 1px; }
+a:hover { text-decoration-thickness: 2px; }
+h1, h2, h3 { margin: 0; text-wrap: balance; }
+p { margin: 0; text-wrap: pretty; }
+.num { font-variant-numeric: tabular-nums; }
+.wrap { width: min(1200px, 100% - 48px); margin-inline: auto; }
+@media (max-width: 600px) { .wrap { width: calc(100% - 32px); } }
+
+/* Postmark ring: 1px border plus inset surface/colour pair. */
+.ring { display: inline-block; border-radius: 50%; border: 1px solid var(--ring, var(--ink)); box-shadow: inset 0 0 0 2px var(--ring-surface, var(--paper)), inset 0 0 0 3px var(--ring, var(--ink)); flex: none; }
+
+/* Top bar */
+.bar { position: sticky; top: 0; z-index: 20; background: color-mix(in srgb, var(--ground) 92%, transparent); backdrop-filter: saturate(1.2) blur(8px); border-bottom: 1px solid var(--hair); }
+.bar .wrap { display: flex; align-items: center; gap: 28px; height: 60px; }
+.brand { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 17px; letter-spacing: -0.02em; text-decoration: none; }
+.brand .ring { width: 22px; height: 22px; --ring-surface: var(--ground); }
+.bar nav { display: flex; gap: 22px; margin-left: auto; }
+.bar nav a { font-size: 14px; font-weight: 600; color: var(--ink-2); text-decoration: none; }
+.bar nav a:hover { color: var(--ink); }
+@media (max-width: 860px) { .bar nav { display: none; } .bar .btn { margin-left: auto; } }
+
+.btn { display: inline-flex; align-items: center; gap: 8px; min-height: 40px; padding: 8px 16px; border-radius: 4px; font: 600 15px/1.2 var(--face); text-decoration: none; border: 1px solid var(--ink); background: var(--ink); color: var(--paper); cursor: pointer; transition: background .12s ease-out; }
+.btn:hover { background: color-mix(in srgb, var(--ink) 86%, var(--paper)); text-decoration: none; }
+.btn.small { min-height: 34px; padding: 6px 12px; font-size: 14px; }
+.btn.ghost { background: transparent; color: var(--ink); border-color: var(--hair); }
+.btn.ghost:hover { border-color: var(--ink-2); background: var(--paper); }
+.btn svg { width: 16px; height: 16px; }
+.ico { fill: none; stroke: currentColor; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; }
+
+/* Opening */
+.open { padding: 56px 0 28px; }
+.open .wrap { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 48px; align-items: start; }
+@media (max-width: 980px) { .open .wrap { grid-template-columns: 1fr; gap: 36px; } }
+.pitch h1 { font: 700 clamp(40px, 5.4vw, 66px)/1.0 var(--display); letter-spacing: -0.035em; }
+.pitch h1 span { display: block; color: var(--ink-2); }
+.pitch .lede { margin-top: 22px; font-size: 18px; line-height: 1.55; color: var(--ink-2); max-width: 46ch; }
+.pitch .lede strong { color: var(--ink); font-weight: 600; }
+.privacy { display: flex; align-items: center; gap: 10px; margin-top: 26px; padding: 11px 0; border-block: 1px solid var(--hair); font-size: 14px; font-weight: 650; color: var(--ink); }
+.privacy .ring { width: 14px; height: 14px; --ring: var(--clear); --ring-surface: var(--ground); }
+.cta { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px; margin-top: 26px; }
+.cta .alt { font-size: 14px; color: var(--ink-2); }
+.cta .alt a { font-weight: 600; color: var(--ink); }
+
+/* Demo word in the lede */
+.demo { position: relative; display: inline-block; }
+.demo-word { font: inherit; color: var(--ink); background: none; border: 0; padding: 0 1px; cursor: pointer; text-decoration: underline 2px solid var(--spelling); text-underline-offset: 4px; border-radius: 3px; }
+.demo-word[aria-expanded="true"] { text-decoration-color: transparent; background: color-mix(in srgb, var(--spelling) 15%, transparent); }
+.demo-word.fixed { text-decoration-color: transparent; cursor: default; color: var(--ink); font-weight: 600; }
+.frank { position: absolute; left: 50%; top: 50%; width: 64px; height: 26px; translate: -50% -50%; pointer-events: none; opacity: 0; }
+.frank path { stroke: var(--clear); stroke-width: 1.5; fill: none; stroke-linecap: round; }
+.frank.go { animation: frank .7s var(--ease) forwards; }
+@keyframes frank { 0% { opacity: 0; transform: translateX(-6px); } 25% { opacity: 1; transform: none; } 100% { opacity: 0; transform: none; } }
+.card { position: absolute; z-index: 10; left: 0; top: calc(100% + 7px); width: 280px; background: var(--paper); border: 1px solid var(--keyline); border-radius: 6px; box-shadow: var(--lift); padding: 12px 16px 14px; font-size: 13px; line-height: 1.45; color: var(--ink); }
+.card[hidden] { display: none; }
+.card-head { display: flex; align-items: center; gap: 8px; font-weight: 650; color: var(--spelling); }
+.card-head .ring { width: 12px; height: 12px; --ring: var(--spelling); }
+.card-fix { margin: 10px 0 12px; font-size: 20px; line-height: 1.25; letter-spacing: -0.01em; }
+.card-fix s { color: var(--ink-2); text-decoration: line-through 2px var(--spelling); }
+.card-fix b { font-weight: 700; }
+.card .btn { width: 100%; justify-content: flex-start; font-size: 14px; min-height: 36px; }
+.card-why { margin-top: 10px; color: var(--ink-2); }
+
+/* Chart shell */
+.chart-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 10px 20px; }
+.chart-head h2, .chart-head h3 { font: 700 20px/1.2 var(--face); letter-spacing: -0.02em; }
+.chart-sub { margin-top: 6px; font-size: 13px; color: var(--ink-2); max-width: 70ch; }
+.seg { display: inline-flex; border: 1px solid var(--hair); border-radius: 4px; padding: 2px; background: var(--paper); }
+.seg button { font: 600 13px/1 var(--face); color: var(--ink-2); background: none; border: 0; border-radius: 3px; padding: 7px 11px; cursor: pointer; }
+.seg button[aria-pressed="true"] { background: var(--ink); color: var(--paper); }
+.seg button:not([aria-pressed="true"]):hover { color: var(--ink); background: var(--wash); }
+.plot { position: relative; margin-top: 18px; }
+.plot .tip { max-width: 100%; }
+.plot svg { display: block; width: 100%; overflow: visible; }
+.plot text { font-family: var(--face); }
+.axis { fill: var(--ink-2); font-size: 12px; }
+.stamp-text { fill: var(--ink); font-size: 10.5px; font-weight: 700; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+.axis-stamp { cursor: pointer; }
+.gridline { stroke: var(--hair); stroke-width: 1; shape-rendering: crispEdges; }
+.tip { position: absolute; z-index: 5; pointer-events: none; min-width: 190px; background: var(--paper); border: 1px solid var(--keyline); border-radius: 6px; box-shadow: var(--lift); padding: 10px 12px; font-size: 13px; line-height: 1.4; opacity: 0; transition: opacity .1s ease-out; }
+.tip.on { opacity: 1; }
+.tip .t { font-weight: 700; margin-bottom: 6px; }
+.tip .row { display: grid; grid-template-columns: 14px 1fr auto; align-items: center; gap: 8px; }
+.tip .row + .row { margin-top: 3px; }
+.tip .key { height: 2px; border-radius: 1px; background: var(--ink); }
+.tip .v { font-weight: 700; font-variant-numeric: tabular-nums; text-align: right; }
+.tip .n { color: var(--ink-2); }
+.tip .foot { margin-top: 8px; padding-top: 6px; border-top: 1px solid var(--hair); color: var(--ink-2); font-size: 12px; }
+.note { margin-top: 12px; font-size: 12.5px; color: var(--ink-2); max-width: 80ch; }
+details.table { margin-top: 10px; font-size: 13px; }
+details.table summary { cursor: pointer; color: var(--ink-2); font-weight: 600; width: max-content; list-style: none; display: inline-flex; align-items: center; gap: 6px; }
+details.table summary::-webkit-details-marker { display: none; }
+details.table summary::before { content: ""; width: 16px; height: 16px; background: currentColor; -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='black' stroke-width='1.75' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 4l4 4-4 4'/%3E%3C/svg%3E") center / contain no-repeat; mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='black' stroke-width='1.75' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 4l4 4-4 4'/%3E%3C/svg%3E") center / contain no-repeat; transition: transform .15s var(--ease); }
+details.table[open] summary::before { transform: rotate(90deg); }
+details.table summary:hover { color: var(--ink); }
+details.table table + table { margin-top: 18px; }
+details.table table { margin-top: 10px; border-collapse: collapse; font-variant-numeric: tabular-nums; width: 100%; max-width: 760px; }
+details.table th, details.table td { text-align: right; padding: 6px 10px; border-bottom: 1px solid var(--hair); white-space: nowrap; }
+details.table th:first-child, details.table td:first-child { text-align: left; white-space: normal; }
+details.table th { font-weight: 650; color: var(--ink-2); }
+.table-scroll { overflow-x: auto; }
+
+/* History chart in the opening */
+.history { background: var(--paper); border: 1px solid var(--hair); border-radius: 6px; padding: 22px 22px 18px; }
+.history .layout { display: grid; grid-template-columns: minmax(0, 1fr) 236px; gap: 4px; margin-top: 18px; }
+.history .plot { margin-top: 0; }
+@media (max-width: 640px) { .history { padding: 18px 14px 14px; } .history .layout { grid-template-columns: 1fr; } }
+.labels { list-style: none; margin: 0; padding: 0; position: relative; }
+.labels li { position: absolute; left: 0; right: 0; transform: translateY(-50%); transition: top .25s var(--ease); }
+.labels button { all: unset; box-sizing: border-box; display: block; width: 100%; cursor: pointer; padding: 2px 6px 2px 10px; border-radius: 4px; font-size: 13px; line-height: 1.3; color: var(--ink-2); }
+.labels button:hover, .labels button.hot { background: var(--wash); color: var(--ink); }
+.labels button:focus-visible { outline: 2px solid var(--ink); outline-offset: 0; }
+.labels .val { font-weight: 700; color: var(--ink); font-variant-numeric: tabular-nums; }
+.labels .chg { font-variant-numeric: tabular-nums; }
+.labels .set { color: var(--ink-2); }
+@media (max-width: 640px) {
+  .labels { position: static; display: grid; gap: 2px; margin-top: 10px; }
+  .labels li { position: static; transform: none; }
+}
+
+/* Postmark strip */
+.releases { padding: 36px 0 8px; }
+.strip { position: relative; display: flex; justify-content: space-between; gap: 12px; margin-top: 18px; padding: 8px 2px 14px; overflow-x: auto; scroll-snap-type: x proximity; scrollbar-width: thin; }
+.strip::before { content: ""; position: absolute; left: 40px; right: 40px; top: 54px; height: 1px; background: var(--hair); }
+.stamp { all: unset; position: relative; flex: none; width: 92px; display: grid; justify-items: center; gap: 8px; cursor: pointer; scroll-snap-align: start; border-radius: 6px; padding: 4px 0 6px; }
+.stamp:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+.stamp .disc { position: relative; display: grid; place-items: center; width: 92px; height: 92px; border-radius: 50%; background: var(--ground); --ring: var(--ink); border: 1px solid var(--ring); box-shadow: inset 0 0 0 3px var(--ground), inset 0 0 0 4px var(--ring); font: 700 17px/1 var(--face); letter-spacing: -0.02em; color: var(--ink); font-variant-numeric: tabular-nums; transition: transform .2s var(--ease), background .15s ease-out; }
+.stamp .disc .tick { position: absolute; bottom: 14px; width: 5px; height: 5px; border-radius: 50%; background: var(--ink-2); }
+.stamp .date { font-size: 12.5px; color: var(--ink-2); font-variant-numeric: tabular-nums; }
+.stamp:hover .disc { transform: rotate(-6deg); }
+.stamp[aria-selected="true"] .disc { background: var(--ink); color: var(--paper); --ring: var(--ink); box-shadow: inset 0 0 0 3px var(--ink), inset 0 0 0 4px var(--paper); }
+.stamp[aria-selected="true"] .disc .tick { background: var(--paper); }
+.stamp[aria-selected="true"] .date { color: var(--ink); font-weight: 650; }
+.letter { display: grid; grid-template-columns: 200px minmax(0, 1fr) 260px; gap: 32px; margin-top: 10px; padding: 24px 0 30px; border-top: 1px solid var(--ink); }
+@media (max-width: 900px) { .letter { grid-template-columns: 1fr; gap: 14px; } }
+.letter h3 { font: 700 30px/1.05 var(--display); letter-spacing: -0.03em; font-variant-numeric: tabular-nums; }
+.letter .when { margin-top: 6px; font-size: 13px; color: var(--ink-2); }
+.letter ul { margin: 0; padding: 0; list-style: none; }
+.letter li { position: relative; padding: 0 0 10px 18px; max-width: 70ch; }
+.letter li::before { content: ""; position: absolute; left: 0; top: .62em; width: 7px; height: 7px; border-radius: 50%; border: 1px solid var(--ink-2); }
+.letter li strong { font-weight: 650; }
+.letter .measured { font-size: 13px; color: var(--ink-2); border-left: 1px solid var(--hair); padding-left: 20px; }
+@media (max-width: 900px) { .letter .measured { border-left: 0; padding-left: 0; } }
+.letter .measured b { display: block; color: var(--ink); font-size: 13px; margin-bottom: 4px; }
+.letter .measured dl { margin: 8px 0 0; display: grid; grid-template-columns: 1fr auto; gap: 3px 12px; }
+.also { margin-top: 8px; padding-top: 12px; border-top: 1px solid var(--hair); max-width: 70ch; }
+.also-title { font-size: 12px; font-weight: 650; color: var(--ink-2); }
+.also dl { margin: 6px 0 0; display: grid; grid-template-columns: max-content 1fr; gap: 4px 14px; font-size: 14px; }
+.also dt { font-weight: 650; font-variant-numeric: tabular-nums; }
+.also dd { margin: 0; color: var(--ink-2); }
+.letter .measured dd { margin: 0; text-align: right; font-weight: 700; color: var(--ink); font-variant-numeric: tabular-nums; }
+
+/* Sections */
+section.band { padding: 64px 0; border-top: 1px solid var(--hair); }
+section.band.paper { background: var(--paper); }
+.band-head { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 48px; align-items: end; }
+@media (max-width: 980px) { .band-head { grid-template-columns: 1fr; gap: 12px; } }
+.mark { display: inline-flex; align-items: center; gap: 8px; margin-bottom: 14px; font-size: 13px; font-weight: 650; color: var(--ink-2); text-decoration: none; }
+.mark:hover { color: var(--ink); text-decoration: underline; }
+.mark .ring { width: 14px; height: 14px; --ring-surface: var(--paper); }
+#performance .mark .ring { --ring-surface: var(--ground); }
+.band-head h2 { font: 700 clamp(30px, 3.6vw, 44px)/1.05 var(--display); letter-spacing: -0.03em; }
+.band-head p { color: var(--ink-2); max-width: 62ch; }
+.pair { margin-top: 36px; }
+.pair-legend { display: flex; flex-wrap: wrap; gap: 6px 20px; font-size: 13px; color: var(--ink-2); }
+.pair-legend span { display: inline-flex; align-items: center; gap: 8px; }
+.pair-legend i { width: 14px; height: 10px; border-radius: 2px; background: var(--ink); }
+.pair-legend i.rival { background: var(--rival); }
+.pair-legend i[data-m] { background: var(--bar); }
+.rows { margin-top: 18px; }
+.rowx { display: grid; grid-template-columns: 230px minmax(0, 1fr) 120px; gap: 18px; align-items: center; padding: 12px 0; border-top: 1px solid var(--hair); }
+.rowx:last-child { border-bottom: 1px solid var(--hair); }
+@media (max-width: 760px) { .rowx { grid-template-columns: 1fr auto; } .rowx .track { grid-column: 1 / -1; grid-row: 2; } }
+.rowx .name { font-size: 14px; font-weight: 650; line-height: 1.3; }
+.rowx .name small { display: block; font-weight: 400; color: var(--ink-2); font-size: 12.5px; }
+.rowx .gain { text-align: right; font-weight: 700; font-variant-numeric: tabular-nums; font-size: 15px; }
+.rowx .gain small { display: block; font-weight: 400; font-size: 12px; color: var(--ink-2); }
+.track { display: grid; gap: 3px; }
+.barline { position: relative; display: flex; align-items: center; gap: 8px; height: 18px; cursor: default; }
+.barline .b { height: 14px; border-radius: 0 4px 4px 0; background: var(--bar, var(--ink)); transform-origin: left; transition: transform .7s var(--ease), filter .12s; }
+.barline.rival .b { background: var(--rival); }
+.barline .lbl { font-size: 12.5px; font-weight: 650; font-variant-numeric: tabular-nums; white-space: nowrap; color: var(--ink); }
+.barline.rival .lbl { color: var(--ink-2); font-weight: 500; }
+.barline:hover .b, .barline:focus-visible .b { opacity: .75; }
+.barline:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+
+/* Install */
+.install-list { margin-top: 36px; border-top: 1px solid var(--ink); }
+.inst { display: grid; grid-template-columns: 240px minmax(0, 1fr) auto; gap: 24px; align-items: center; padding: 22px 0; border-bottom: 1px solid var(--hair); }
+@media (max-width: 760px) { .inst { grid-template-columns: 1fr; gap: 10px; } }
+.inst h3 { font: 700 20px/1.2 var(--face); letter-spacing: -0.02em; }
+.inst p { color: var(--ink-2); font-size: 14.5px; max-width: 64ch; }
+.inst p code { font: 13px/1 ui-monospace, "Cascadia Mono", Consolas, monospace; background: var(--wash); padding: 2px 5px; border-radius: 3px; color: var(--ink); }
+
+footer { padding: 36px 0 48px; border-top: 1px solid var(--hair); font-size: 13px; color: var(--ink-2); }
+footer .wrap { display: flex; flex-wrap: wrap; gap: 10px 28px; align-items: center; }
+footer .brand { font-size: 15px; color: var(--ink); }
+footer .brand .ring { width: 18px; height: 18px; --ring-surface: var(--ground); }
+footer nav { display: flex; flex-wrap: wrap; gap: 8px 20px; margin-left: auto; }
+
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+/* One grid for every section: a 480px rail for headings and names, the content column after it. */
+:root { --col: 480px; --gap: 48px; }
+.open { padding: 64px 0 48px; }
+.open .wrap, .band-head { grid-template-columns: var(--col) minmax(0, 1fr); gap: var(--gap); }
+.band-head { align-items: end; }
+.head-note { margin-top: 14px; color: var(--ink-2); max-width: 46ch; }
+section.band { padding: 56px 0; }
+.pair, .install-list, .letter { margin-top: 24px; }
+.history { background: none; border: 0; border-top: 1px solid var(--ink); border-radius: 0; padding: 20px 0 0; }
+.group-head { display: grid; grid-template-columns: var(--col) minmax(0, 1fr); gap: 8px var(--gap); align-items: baseline; margin-top: 40px; padding-bottom: 14px; }
+.group-head:first-child { margin-top: 0; }
+.group-head h3 { font: 700 18px/1.25 var(--face); letter-spacing: -0.015em; }
+.group-head .muted { font-weight: 400; color: var(--ink-2); }
+.rows { margin-top: 0; }
+.rowx, .split .rowx { grid-template-columns: calc(var(--col) + var(--gap) - 24px) minmax(0, 1fr) 120px; column-gap: 24px; row-gap: 8px; padding: 10px 0; }
+.inst { grid-template-columns: calc(var(--col) + var(--gap) - 24px) minmax(0, 1fr) auto; column-gap: 24px; }
+.letter { grid-template-columns: var(--col) minmax(0, 1fr); gap: var(--gap); padding: 28px 0 0; }
+.letter .measured { border-left: 0; padding-left: 0; margin-top: 22px; max-width: 320px; }
+.strip { justify-content: flex-start; gap: 18px; width: max-content; max-width: 100%; margin-top: 0; padding-bottom: 6px; }
+.strip::before { left: 46px; right: 46px; }
+
+/* Jumping words */
+.hop { padding: 8px 0 40px; }
+.hop-line { display: flex; flex-wrap: wrap; gap: 10px 26px; font: 650 clamp(22px, 2.4vw, 32px)/1.2 var(--display); letter-spacing: -0.02em; color: var(--ink-2); }
+.hw { all: unset; position: relative; display: inline-block; cursor: pointer; transform-origin: 50% 100%; padding: 0 2px 4px; border-radius: 3px; text-decoration: underline 2px solid var(--u, var(--spelling)); text-underline-offset: 6px; }
+.hw.grammar { --u: var(--grammar); }
+.hw.fixed { color: var(--ink); text-decoration-color: transparent; }
+.hw:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+.hw .frank { width: 70%; min-width: 48px; }
+.hop-note { margin-top: 14px; font-size: 12.5px; color: var(--ink-2); }
+
+@media (max-width: 980px) {
+  :root { --col: 210px; --gap: 32px; }
+  .open .wrap, .band-head, .letter { grid-template-columns: 1fr; }
+  .group-head { grid-template-columns: 1fr; }
+}
+@media (max-width: 760px) {
+  .rowx, .split .rowx { grid-template-columns: 1fr auto; }
+  .inst { grid-template-columns: 1fr; }
+}
+@media (max-width: 600px) {
+  section.band { padding: 48px 0; }
+  .open { padding: 40px 0 36px; }
+  .strip { width: 100%; justify-content: space-between; gap: 6px; }
+  .strip::before { top: 33px; left: 25px; right: 25px; }
+  .stamp { width: 50px; }
+  .stamp .disc { width: 50px; height: 50px; font-size: 11.5px; box-shadow: inset 0 0 0 2px var(--ground), inset 0 0 0 3px var(--ring); }
+  .stamp[aria-selected="true"] .disc { box-shadow: inset 0 0 0 2px var(--ink), inset 0 0 0 3px var(--paper); }
+  .stamp .disc .tick { bottom: 6px; width: 4px; height: 4px; }
+  .stamp .date { font-size: 11px; }
+  .labels { grid-template-columns: 1fr 1fr; }
+  .hop-line { gap: 8px 16px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+  .frank { display: none; }
+}
+</style>
+</head>
+<body>
+<header class="bar">
+  <div class="wrap">
+    <a class="brand" href="#top"><span class="ring" aria-hidden="true"></span>Wordwarden</a>
+    <nav aria-label="Sections">
+      <a href="#releases">Releases</a>
+      <a href="#accuracy">Accuracy</a>
+      <a href="#performance">Performance</a>
+      <a href="#install">Install</a>
+      <a href="https://github.com/Abhisek571/wordwarden">Source</a>
+    </nav>
+    <a class="btn small" href="https://addons.mozilla.org/en-GB/firefox/addon/wordwarden-spell-grammar/">Get it for Firefox</a>
+  </div>
+</header>
+
+<main id="top">
+  <section class="open">
+    <div class="wrap">
+      <div class="pitch">
+        <h1>Checked here.<span>Never sent.</span></h1>
+        <p class="lede">Wordwarden underlines spelling and grammar mistakes as you type, in any text box, and fixes them in one click. It all runs on your
+          <span class="demo"><button class="demo-word" type="button" aria-expanded="false" aria-controls="demo-card" aria-label="compter, spelling mistake. Show the fix">compter</button><svg class="frank" viewBox="0 0 64 26" aria-hidden="true"><path d="M2 6c6-4 10 4 16 0s10-4 16 0 10 4 16 0 10-4 12-2"/><path d="M2 13c6-4 10 4 16 0s10-4 16 0 10 4 16 0 10-4 12-2"/><path d="M2 20c6-4 10 4 16 0s10-4 16 0 10 4 16 0 10-4 12-2"/></svg><span class="card" id="demo-card" role="dialog" aria-label="Suggestion" hidden><span class="card-head"><span class="ring" aria-hidden="true"></span>Spelling</span><span class="card-fix" style="display:block"><s>compter</s> → <b>computer</b></span><button class="btn" type="button" data-fix>Change to “computer”</button><span class="card-why" style="display:block">Nothing changes until you pick a fix. This is the card you get on any website.</span></span></span>.
+          <strong>Free, with no account.</strong></p>
+        <p class="privacy"><span class="ring" aria-hidden="true"></span>Every check runs in your browser, offline. No servers, no tracking.</p>
+        <div class="cta">
+          <a class="btn" href="https://addons.mozilla.org/en-GB/firefox/addon/wordwarden-spell-grammar/">Get it for Firefox
+            <svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a>
+          <span class="alt">Also for <a href="#install">Chrome, Edge and Brave</a> and <a href="#install">LibreOffice</a></span>
+        </div>
+      </div>
+
+      <div class="history" id="history">
+        <div class="chart-head">
+          <div>
+            <h2>Accuracy, release by release</h2>
+            <p class="chart-sub" id="history-sub"></p>
+          </div>
+          <div class="seg" role="group" aria-label="Measure">
+            <button type="button" data-measure="spelling" aria-pressed="true">Spelling</button>
+            <button type="button" data-measure="grammar" aria-pressed="false">Grammar</button>
+          </div>
+        </div>
+        <div class="layout">
+          <div class="plot" id="history-plot"><div class="tip" id="history-tip" role="status"></div></div>
+          <ul class="labels" id="history-labels"></ul>
+        </div>
+        <p class="note">Brackets show the change from the release before. Held-out test data, never used for tuning.</p>
+        <details class="table"><summary>Show as a table</summary><div class="table-scroll" id="history-table"></div></details>
+      </div>
+    </div>
+  </section>
+
+  <section class="hop" aria-label="Common misspellings, fixed one by one">
+    <div class="wrap"><p class="hop-line" id="hop"></p></div>
+  </section>
+
+  <section class="band releases" id="releases" aria-labelledby="releases-title">
+    <div class="wrap">
+      <div class="band-head">
+        <div>
+          <h2 id="releases-title">Every release, postmarked</h2>
+          <p class="head-note">Each bigger release and the newest. Pick a stamp to read what changed; a dot means its accuracy was measured.</p>
+        </div>
+        <div class="strip" id="strip" role="tablist" aria-label="Releases"></div>
+      </div>
+      <article class="letter" id="letter" role="tabpanel" aria-live="polite"></article>
+    </div>
+  </section>
+
+  <section class="band paper" id="accuracy" aria-labelledby="acc-title">
+    <div class="wrap">
+      <div class="band-head">
+        <div><a class="mark" href="#releases" data-measured="accuracy"><span class="ring" aria-hidden="true"></span><span></span></a>
+        <h2 id="acc-title">Against LanguageTool, on the same tests</h2></div>
+        <p>The newest release next to LanguageTool's latest version at the time of that release, in its default setup, on five spelling sets and a set of learner essays. Hover a bar for the details.</p>
+      </div>
+      <div class="pair">
+        <div class="group-head">
+          <h3>Spelling</h3>
+          <div class="pair-legend">
+            <span><i data-m style="--bar: var(--m-caught)"></i>Caught</span>
+            <span><i data-m style="--bar: var(--m-three)"></i>Correct word in top three</span>
+            <span><i data-m style="--bar: var(--m-first)"></i>Correct word first</span>
+            <span><i class="rival"></i><span data-lt>LanguageTool</span>, correct word first</span>
+          </div>
+        </div>
+        <div class="rows" id="spell-rows"></div>
+        <div class="group-head">
+          <h3>Grammar <span class="muted">learner essays</span></h3>
+          <div class="pair-legend"><span><i></i>Wordwarden</span><span><i class="rival"></i><span data-lt>LanguageTool</span></span></div>
+        </div>
+        <div class="rows" id="grammar-rows"></div>
+        <p class="note" id="spell-note"></p>
+        <details class="table"><summary>Show as a table</summary><div class="table-scroll" id="acc-table"></div></details>
+      </div>
+    </div>
+  </section>
+
+  <section class="band" id="performance" aria-labelledby="perf-title">
+    <div class="wrap">
+      <div class="band-head">
+        <div><a class="mark" href="#releases" data-measured="resources"><span class="ring" aria-hidden="true"></span><span></span></a>
+        <h2 id="perf-title">Light enough to forget it’s there</h2></div>
+        <p>All your tabs share one checker, it uses no CPU while you are not typing, and there is nothing to install besides the extension. Measured against your own LanguageTool server, checking the same text on the same machine.</p>
+      </div>
+      <div class="pair">
+        <div class="group-head">
+          <h3>Resource use</h3>
+          <div class="pair-legend"><span><i></i>Wordwarden</span><span><i class="rival"></i>LanguageTool server</span></div>
+        </div>
+        <div class="rows" id="perf-rows"></div>
+        <p class="note">GitHub’s Linux machine, 2 cores. Memory is private memory. Each row has its own scale; LanguageTool is the full bar, and its own browser extension is not counted.</p>
+        <details class="table"><summary>Show as a table</summary><div class="table-scroll" id="perf-table"></div></details>
+      </div>
+    </div>
+  </section>
+
+  <section class="band paper" id="install" aria-labelledby="install-title">
+    <div class="wrap">
+      <div class="band-head">
+        <h2 id="install-title">Install it</h2>
+        <p>Free for good: no account, no premium tier. Every version has US, UK, Canadian or Australian English, your own dictionary, and per-site on and off.</p>
+      </div>
+      <div class="install-list">
+        <div class="inst">
+          <h3>Firefox</h3>
+          <p>From Firefox Add-ons. It updates itself.</p>
+          <a class="btn" href="https://addons.mozilla.org/en-GB/firefox/addon/wordwarden-spell-grammar/">Get it for Firefox</a>
+        </div>
+        <div class="inst">
+          <h3>Chrome, Edge, Brave</h3>
+          <p>On its way to the Chrome Web Store. Until then, download the <code>chrome</code> zip, unzip it, open <code>chrome://extensions</code>, turn on Developer mode and choose Load unpacked. This copy does not update itself.</p>
+          <a class="btn ghost" href="https://github.com/Abhisek571/wordwarden/releases/latest">Download from GitHub</a>
+        </div>
+        <div class="inst">
+          <h3>LibreOffice</h3>
+          <p>The same spelling and grammar engine for Writer. Download the file for Windows, macOS or Linux and double-click it, then restart LibreOffice.</p>
+          <a class="btn ghost" href="https://github.com/Abhisek571/wordwarden/releases/latest">Download from GitHub</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span class="brand"><span class="ring" aria-hidden="true"></span>Wordwarden</span>
+    <span>Free and open source under the GNU GPL v3.</span>
+    <nav aria-label="Links">
+      <a href="https://github.com/Abhisek571/wordwarden">Source code</a>
+      <a href="https://github.com/Abhisek571/wordwarden/blob/main/docs/PRIVACY.md">Privacy</a>
+      <a href="https://github.com/Abhisek571/wordwarden/blob/main/docs/BENCHMARKS.md">How we measure</a>
+      <a href="https://github.com/Abhisek571/wordwarden/blob/main/CHANGELOG.md">Changelog</a>
+    </nav>
+  </div>
+</footer>
+
+<script>
+'use strict';
+// ---------- Data ----------
+/* SITE DATA: written by scripts/build-website.mjs */
+const SITE = {
+ "releases": [
+  [
+   "1.1.0",
+   "2026-10-11",
+   [
+    "Accuracy chart in the README, redrawn for each bigger release."
+   ],
+   [
+    [
+     "1.0.1",
+     "First public release."
+    ]
+   ]
+  ],
+  [
+   "1.2.0",
+   "2026-10-11",
+   [
+    "Clearer diagnostic log for bug reports.",
+    "The accuracy chart compares Wordwarden with LanguageTool."
+   ],
+   [
+    [
+     "1.2.1",
+     "Export and import moved to Advanced in Settings, and now include all settings. Settings show the licence, the version and a link to the source code."
+    ]
+   ]
+  ],
+  [
+   "1.3.0",
+   "2026-10-11",
+   [
+    "New LibreOffice add-on with the same spelling and grammar engine, for Windows, macOS and Linux.",
+    "Applying a suggestion in rich text editors replaces the right word."
+   ],
+   [
+    [
+     "1.3.1",
+     "Release fix for building the LibreOffice add-on."
+    ],
+    [
+     "1.3.2",
+     "Release fix: the LibreOffice add-ons are attached to the release again."
+    ],
+    [
+     "1.3.3",
+     "Licensed under the GNU General Public License v3.0 only."
+    ],
+    [
+     "1.3.4",
+     "The Firefox package builds from the sources zip, which has no .gitignore."
+    ],
+    [
+     "1.3.5",
+     "First version of the shared checker for all tabs."
+    ]
+   ]
+  ],
+  [
+   "1.4.0",
+   "2026-10-11",
+   [
+    "All tabs share one checker instead of starting their own, so many open tabs use far less memory and later tabs show underlines sooner.",
+    "New resource chart comparing memory, CPU and size with a LanguageTool server."
+   ],
+   []
+  ],
+  [
+   "1.5.0",
+   "2026-10-12",
+   [
+    "**Better spelling suggestions.** The correct word comes first more often, especially for sound-alike spellings (\"becos\", \"frends\") and typing slips. Suggestions now take the words around a mistake into account, and rank slips by how often people actually make them.",
+    "**Fewer false alarms.** Twelve grammar checks that mostly flagged correct text are off, and three are narrower. About half as many correct sentences get an underline, and grammar fixes are right more often.",
+    "**More words known.** About 4,300 more everyday words, such as \"storyline\" and \"accelerometer\", are no longer flagged, in the browser and in LibreOffice.",
+    "Real-word slips such as \"form\" for \"from\" are flagged when the words around them make it clear.",
+    "A test in real Firefox now runs on every change."
+   ],
+   [
+    [
+     "1.5.1",
+     "Fixes now work in Twitch chat. A picked suggestion used to land at the end of the message (\"sdasad\") instead of replacing the word, because Twitch puts its old cursor back when the chat box gets focus. No more \"Could not apply this suggestion safely\" after a fix that worked, in editors that redraw a moment later, such as Twitch chat. Messages such as \"The text changed\" now disappear after a few seconds instead of staying on the page."
+    ]
+   ]
+  ],
+  [
+   "1.5.2",
+   "2026-10-13",
+   [
+    "A text box that already had focus when a page finished loading is now checked straight away, instead of only after the next keystroke."
+   ],
+   []
+  ]
+ ],
+ "history": [
+  {
+   "version": "v1.1.0",
+   "date": "2026-10-11",
+   "wordwarden": {
+    "aalto": 48.6,
+    "twitter": 63.2,
+    "wikipedia": 89.1,
+    "birkbeck": 41.9,
+    "holbrook": 28.1,
+    "recall": 67.4,
+    "fixes": 58.1,
+    "falseAlarms": 11.3
+   }
+  },
+  {
+   "version": "v1.2.0",
+   "date": "2026-10-11",
+   "wordwarden": {
+    "aalto": 48.6,
+    "twitter": 63.2,
+    "wikipedia": 89.1,
+    "birkbeck": 41.9,
+    "holbrook": 28.1,
+    "recall": 67.4,
+    "fixes": 58.1,
+    "falseAlarms": 11.3
+   }
+  },
+  {
+   "version": "v1.3.0",
+   "date": "2026-10-11",
+   "wordwarden": {
+    "aalto": 48.6,
+    "twitter": 63.2,
+    "wikipedia": 89.1,
+    "birkbeck": 41.9,
+    "holbrook": 28.1,
+    "recall": 67.4,
+    "fixes": 58.1,
+    "falseAlarms": 11.3
+   }
+  },
+  {
+   "version": "v1.4.0",
+   "date": "2026-10-11",
+   "wordwarden": {
+    "aalto": 48.6,
+    "twitter": 63.2,
+    "wikipedia": 89.1,
+    "birkbeck": 41.9,
+    "holbrook": 28.1,
+    "recall": 67.4,
+    "fixes": 58.1,
+    "falseAlarms": 11.3
+   }
+  },
+  {
+   "version": "v1.5.0",
+   "date": "2026-10-12",
+   "wordwarden": {
+    "wikipedia": 90.7,
+    "twitter": 64.6,
+    "aalto": 51.8,
+    "birkbeck": 44.8,
+    "holbrook": 30.1,
+    "recall": 64.6,
+    "fixes": 65.6,
+    "falseAlarms": 6.5
+   }
+  }
+ ],
+ "accuracy": {
+  "version": "1.5.0",
+  "date": "2026-10-12",
+  "languageToolVersion": "6.6",
+  "spelling": {
+   "aalto": {
+    "caught": 68,
+    "topOne": 51.8,
+    "topThree": 58.2,
+    "languageTool": 50.2
+   },
+   "twitter": {
+    "caught": 88.8,
+    "topOne": 64.6,
+    "topThree": 73.1,
+    "languageTool": 59.4
+   },
+   "wikipedia": {
+    "caught": 98.8,
+    "topOne": 90.7,
+    "topThree": 96,
+    "languageTool": 84.8
+   },
+   "birkbeck": {
+    "caught": 91.5,
+    "topOne": 44.8,
+    "topThree": 52.1,
+    "languageTool": 37.3
+   },
+   "holbrook": {
+    "caught": 59.7,
+    "topOne": 30.1,
+    "topThree": 36.5,
+    "languageTool": 25.3
+   }
+  },
+  "grammar": {
+   "fixes": {
+    "wordwarden": 65.6,
+    "languageTool": 60.2
+   },
+   "falseAlarms": {
+    "wordwarden": 6.5,
+    "languageTool": 12.8
+   },
+   "recall": {
+    "wordwarden": 64.6,
+    "languageTool": 72.7
+   }
+  }
+ },
+ "resources": {
+  "version": "1.5.0",
+  "date": "2026-10-12",
+  "words": 492,
+  "tabs": 20,
+  "wordwarden": {
+   "oneTabMb": 255,
+   "manyTabsMb": 515,
+   "startCpuS": 4,
+   "checkCpuMs": 297,
+   "checkMs": 214,
+   "diskMb": 23
+  },
+  "languageTool": {
+   "memoryMb": 847,
+   "startCpuS": 19.5,
+   "checkCpuMs": 628,
+   "checkMs": 294,
+   "diskMb": 386
+  }
+ }
+};
+/* END SITE DATA */
+const HISTORY = SITE.history.map((row) => ({ v: row.version.replace(/^v/u, ''), date: row.date, w: row.wordwarden }));
+// Releases at the start that share one measurement (identical numbers) are drawn as one.
+const SHARED_END = (() => {
+  const same = (a, b) => JSON.stringify(a.w) === JSON.stringify(b.w);
+  let end = 0;
+  while (end + 1 < HISTORY.length && same(HISTORY[end + 1], HISTORY[0])) end += 1;
+  return end;
+})();
+const MEASURES = {
+  spelling: {
+    sub: 'How often the correct word is the first suggestion.',
+    series: [
+      ['wikipedia', 'Wikipedia edits', 'Wikipedia'],
+      ['twitter', 'Tweets', 'LexNorm2015'],
+      ['aalto', 'Typing slips', 'Aalto'],
+      ['birkbeck', 'Students', 'Birkbeck'],
+      ['holbrook', 'Children’s writing', 'Holbrook'],
+    ],
+  },
+  grammar: {
+    sub: 'Learner essays (JFLEG). For false alarms, lower is better.',
+    series: [
+      ['fixes', 'Helpful fixes', 'JFLEG'],
+      ['recall', 'Mistakes caught', 'JFLEG'],
+      ['falseAlarms', 'False alarms', 'JFLEG', true],
+    ],
+  },
+};
+const SPELLING_SETS = [
+  ['aalto', 'Typing slips', 'Aalto typing test'],
+  ['twitter', 'Tweets', 'LexNorm2015'],
+  ['wikipedia', 'Wikipedia edits', 'Wikipedia edit history'],
+  ['birkbeck', 'Students', 'Birkbeck spelling lists'],
+  ['holbrook', 'Children\u2019s writing', 'Holbrook'],
+];
+const VS = {
+  spelling: SPELLING_SETS.map(([key, name, set]) => {
+    const r = SITE.accuracy.spelling[key];
+    return [name, set, { caught: r.caught, topOne: r.topOne, topThree: r.topThree }, r.languageTool];
+  }),
+  grammar: [
+    ['Helpful fixes', 'Fixes that move the text closer to a human correction', 'fixes', false],
+    ['False alarms', 'Correct sentences wrongly flagged; lower is better', 'falseAlarms', true],
+    ['Mistakes caught', 'Sentences with mistakes that get flagged', 'recall', false],
+  ].map(([name, desc, key, lowerBetter]) => [name, desc, SITE.accuracy.grammar[key].wordwarden, SITE.accuracy.grammar[key].languageTool, lowerBetter]),
+};
+const RES = SITE.resources;
+const PERF = [
+  ['Memory, 1 tab', 'While checking', RES.wordwarden.oneTabMb, RES.languageTool.memoryMb, 'MB', 'less'],
+  [`Memory, ${RES.tabs} tabs`, 'All tabs share one checker', RES.wordwarden.manyTabsMb, RES.languageTool.memoryMb, 'MB', 'less'],
+  ['CPU time to start', 'Summed over all cores', RES.wordwarden.startCpuS, RES.languageTool.startCpuS, 's', 'less'],
+  ['CPU time per check', 'Summed over all cores', RES.wordwarden.checkCpuMs, RES.languageTool.checkCpuMs, 'ms', 'less'],
+  [`Time to check ${RES.words} words`, 'Median of 30 checks', RES.wordwarden.checkMs, RES.languageTool.checkMs, 'ms', 'faster'],
+  ['Size on disk', 'LanguageTool also needs Java', RES.wordwarden.diskMb, RES.languageTool.diskMb, 'MB', 'smaller'],
+];
+// The strip shows each bigger release plus the newest; fix releases fold into the release they followed.
+const RELEASES = SITE.releases;
+
+// ---------- Helpers ----------
+const NS = 'http://www.w3.org/2000/svg';
+const el = (tag, attrs = {}, parent) => {
+  const node = tag.startsWith('svg:') ? document.createElementNS(NS, tag.slice(4)) : document.createElement(tag);
+  for (const [k, v] of Object.entries(attrs)) {
+    if (k === 'text') node.textContent = v;
+    else if (k === 'class') node.setAttribute('class', v);
+    else node.setAttribute(k, v);
+  }
+  if (parent) parent.append(node);
+  return node;
+};
+const css = (name) => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const fmtDate = (iso) => new Date(iso + 'T12:00:00').toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+const pct = (n) => `${n.toFixed(1)}%`;
+const signed = (n) => (n > 0 ? '+' : n < 0 ? '−' : '±') + Math.abs(n).toFixed(1);
+// Renders **bold** runs as <strong> without innerHTML.
+function richText(parent, text) {
+  text.split(/(\*\*[^*]+\*\*)/).forEach((part) => {
+    if (part.startsWith('**')) el('strong', { text: part.slice(2, -2) }, parent);
+    else if (part) parent.append(document.createTextNode(part));
+  });
+}
+function table(container, head, rows, keep) {
+  if (!keep) container.replaceChildren();
+  const t = el('table', {}, container);
+  const tr = el('tr', {}, el('thead', {}, t));
+  head.forEach((h) => el('th', { text: h, scope: 'col' }, tr));
+  const body = el('tbody', {}, t);
+  rows.forEach((r) => { const row = el('tr', {}, body); r.forEach((c) => el('td', { text: c }, row)); });
+}
+
+// ---------- Demo word ----------
+(() => {
+  const word = document.querySelector('.demo-word');
+  const card = document.getElementById('demo-card');
+  const frank = document.querySelector('.frank');
+  const open = (on) => { card.hidden = !on; word.setAttribute('aria-expanded', String(on)); };
+  word.addEventListener('click', () => { if (!word.classList.contains('fixed')) open(card.hidden); });
+  card.querySelector('[data-fix]').addEventListener('click', () => {
+    open(false);
+    word.textContent = 'computer';
+    word.classList.add('fixed');
+    word.setAttribute('aria-label', 'computer, fixed');
+    word.removeAttribute('aria-controls');
+    frank.classList.remove('go'); void frank.getBoundingClientRect(); frank.classList.add('go');
+    word.focus();
+  });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !card.hidden) { open(false); word.focus(); } });
+  document.addEventListener('pointerdown', (e) => { if (!card.hidden && !e.target.closest('.demo')) open(false); });
+})();
+
+// ---------- Accuracy over releases ----------
+const historyState = { measure: 'spelling', focus: null, hot: null, drawn: false };
+function drawHistory() {
+  const box = document.getElementById('history-plot');
+  const tip = document.getElementById('history-tip');
+  const labels = document.getElementById('history-labels');
+  const { series, sub } = MEASURES[historyState.measure];
+  document.getElementById('history-sub').textContent = sub;
+  box.querySelector('svg')?.remove();
+  const W = Math.max(280, box.clientWidth);
+  const H = W < 480 ? 300 : 400;
+  const m = { t: 14, r: 22, b: 76, l: 44 };
+  const values = series.flatMap(([k]) => HISTORY.map((r) => r.w[k]));
+  const lo = Math.max(0, Math.floor((Math.min(...values) - 8) / 10) * 10);
+  const hi = Math.min(100, Math.ceil((Math.max(...values) + 6) / 10) * 10);
+  const x = (i) => m.l + (i / (HISTORY.length - 1)) * (W - m.l - m.r);
+  const y = (v) => m.t + (1 - (v - lo) / (hi - lo)) * (H - m.t - m.b);
+  const svg = el('svg:svg', { viewBox: `0 0 ${W} ${H}`, height: H, role: 'img', 'aria-label': `Accuracy over releases, ${historyState.measure}. A table view follows.` });
+  box.prepend(svg);
+  for (let v = lo; v <= hi; v += 10) {
+    el('svg:line', { class: 'gridline', x1: m.l, x2: W - m.r, y1: y(v), y2: y(v) }, svg);
+    el('svg:text', { class: 'axis', x: m.l - 10, y: y(v) + 4, 'text-anchor': 'end', text: `${v}%` }, svg);
+  }
+  const stampY = H - m.b + 32;
+  HISTORY.forEach((r, i) => {
+    const g = el('svg:g', { class: 'axis-stamp', 'data-v': r.v }, svg);
+    el('svg:circle', { cx: x(i), cy: stampY, r: 19, fill: css('--paper'), stroke: css('--ink'), 'stroke-width': 1 }, g);
+    el('svg:circle', { cx: x(i), cy: stampY, r: 15.5, fill: 'none', stroke: css('--ink'), 'stroke-width': 1.5 }, g);
+    el('svg:text', { x: x(i), y: stampY + 4, 'text-anchor': 'middle', class: 'stamp-text', text: r.v }, g);
+  });
+  const shared = SHARED_END;
+  if (shared > 0) {
+    const by = H - 8;
+    el('svg:path', { d: `M${x(0)},${by - 6}V${by}H${x(shared)}V${by - 6}`, fill: 'none', stroke: css('--ink-2'), 'stroke-width': 1 }, svg);
+    el('svg:text', { class: 'axis', x: (x(0) + x(shared)) / 2, y: by - 6, 'text-anchor': 'middle', text: 'one shared measurement' }, svg);
+  }
+  const cross = el('svg:line', { x1: 0, x2: 0, y1: m.t, y2: H - m.b, stroke: css('--ink'), 'stroke-width': 1, opacity: 0 }, svg);
+  const ink = css('--ink');
+  const rest = css('--line-rest');
+  const paper = css('--paper');
+  const groups = series.map(([key], si) => {
+    const g = el('svg:g', { 'data-key': key }, svg);
+    const shared = SHARED_END;
+    const pt = (i) => `${x(i).toFixed(1)},${y(HISTORY[i].w[key]).toFixed(1)}`;
+    const flat = el('svg:path', { d: shared > 0 ? `M${pt(0)}L${pt(shared)}` : '', fill: 'none', stroke: ink, 'stroke-width': 1.5, 'stroke-dasharray': '1 5', 'stroke-linecap': 'round' }, g);
+    const d = HISTORY.slice(shared).map((r, j) => `${j ? 'L' : 'M'}${pt(shared + j)}`).join('');
+    const path = el('svg:path', { d, fill: 'none', stroke: ink, 'stroke-width': 2, 'stroke-linejoin': 'round', 'stroke-linecap': 'round' }, g);
+    if (!historyState.drawn && !reduced) {
+      const len = path.getTotalLength();
+      path.style.strokeDasharray = len; path.style.strokeDashoffset = len;
+      path.animate([{ strokeDashoffset: len }, { strokeDashoffset: 0 }], { duration: 900, delay: 150 + si * 90, easing: 'cubic-bezier(.16,1,.3,1)', fill: 'forwards' });
+    }
+    const dots = HISTORY.map((r, i) => i).filter((i) => i >= shared).map((i) => el('svg:circle', { cx: x(i), cy: y(HISTORY[i].w[key]), r: 4, fill: ink, stroke: paper, 'stroke-width': 2 }, g));
+    return { key, g, path, flat, dots };
+  });
+  historyState.drawn = true;
+
+  // Right-hand labels, placed at each line's end and pushed apart so they never overlap.
+  labels.replaceChildren();
+  const items = series.map(([key, name, set, lowerBetter]) => {
+    const li = el('li', {}, labels);
+    const b = el('button', { type: 'button', 'data-key': key }, li);
+    return { key, name, set, lowerBetter, li, b };
+  });
+  const stacked = () => window.matchMedia('(max-width: 640px)').matches;
+  function fillLabels(at) {
+    const idx = at ?? HISTORY.length - 1;
+    items.forEach((it) => {
+      const now = HISTORY[idx].w[it.key];
+      const prev = idx > 0 ? HISTORY[idx - 1].w[it.key] : null;
+      it.b.replaceChildren();
+      el('span', { class: 'val', text: pct(now) }, it.b);
+      if (prev !== null) el('span', { class: 'chg', text: ` (${signed(now - prev)})` }, it.b);
+      el('br', {}, it.b);
+      el('span', { text: `${it.name} ` }, it.b);
+      el('span', { class: 'set', text: `(${it.set})` }, it.b);
+      it.b.setAttribute('aria-label', `${it.name}, ${it.set}: ${pct(now)} at ${HISTORY[idx].v}${prev !== null ? `, ${signed(now - prev)} points from ${HISTORY[idx - 1].v}` : ''}${it.lowerBetter ? ', lower is better' : ''}`);
+    });
+    if (stacked()) { items.forEach((it) => { it.li.style.top = ''; }); labels.style.height = ''; return; }
+    const targets = items.map((it) => ({ it, want: y(HISTORY[idx].w[it.key]) })).sort((a, b) => a.want - b.want);
+    const gap = 38;
+    let last = -Infinity;
+    targets.forEach((t) => { t.at = Math.max(t.want, last + gap); last = t.at; });
+    const overflow = last - (H - m.b + 6);
+    if (overflow > 0) targets.forEach((t) => { t.at -= overflow; });
+    targets.forEach((t) => { t.it.li.style.top = `${t.at}px`; });
+    labels.style.height = `${H}px`;
+  }
+  function emphasize(key) {
+    historyState.hot = key;
+    groups.forEach((gr) => {
+      const on = key === null || gr.key === key;
+      gr.path.setAttribute('stroke', on ? ink : rest);
+      gr.flat.setAttribute('stroke', on ? ink : rest);
+      gr.dots.forEach((d) => d.setAttribute('fill', on ? ink : rest));
+      if (gr.key === key) gr.g.parentNode.append(gr.g);
+    });
+    items.forEach((it) => it.b.classList.toggle('hot', it.key === key));
+  }
+  items.forEach((it) => {
+    it.b.addEventListener('pointerenter', () => emphasize(it.key));
+    it.b.addEventListener('pointerleave', () => emphasize(null));
+    it.b.addEventListener('focus', () => emphasize(it.key));
+    it.b.addEventListener('blur', () => emphasize(null));
+    it.b.addEventListener('click', () => emphasize(historyState.hot === it.key && it.b.classList.contains('hot') ? null : it.key));
+  });
+
+  function showAt(i, px) {
+    if (i === null) { cross.setAttribute('opacity', 0); tip.classList.remove('on'); fillLabels(null); return; }
+    cross.setAttribute('x1', x(i)); cross.setAttribute('x2', x(i)); cross.setAttribute('opacity', .35);
+    tip.replaceChildren();
+    el('div', { class: 't', text: `Wordwarden ${HISTORY[i].v}` }, tip);
+    const rows = items.map((it) => [it, HISTORY[i].w[it.key]]).sort((a, b) => b[1] - a[1]);
+    rows.forEach(([it, v]) => {
+      const row = el('div', { class: 'row' }, tip);
+      el('span', { class: 'key' }, row);
+      el('span', { class: 'n', text: it.name }, row);
+      el('span', { class: 'v', text: pct(v) }, row);
+    });
+    fillLabels(i);
+    // Keep the tooltip inside the plot: right of the line, or left of it near the right edge.
+    const tw = tip.offsetWidth;
+    const want = px > W * 0.55 ? px - tw - 14 : px + 14;
+    tip.style.left = `${Math.min(Math.max(0, want), Math.max(0, W - tw))}px`;
+    tip.style.top = `${m.t + 6}px`;
+    tip.classList.add('on');
+  }
+  const nearest = (clientX) => {
+    const r = svg.getBoundingClientRect();
+    const px = (clientX - r.left) * (W / r.width);
+    const i = Math.round(((px - m.l) / (W - m.l - m.r)) * (HISTORY.length - 1));
+    return [Math.min(HISTORY.length - 1, Math.max(0, i)), px];
+  };
+  svg.addEventListener('pointermove', (e) => { const [i] = nearest(e.clientX); showAt(i, x(i)); });
+  svg.addEventListener('pointerleave', () => showAt(historyState.focus, historyState.focus === null ? 0 : x(historyState.focus)));
+  svg.addEventListener('click', (e) => { const [i] = nearest(e.clientX); selectRelease(HISTORY[i].v, true); });
+  // Keyboard: arrow keys walk the releases.
+  svg.setAttribute('tabindex', '0');
+  svg.addEventListener('keydown', (e) => {
+    if (!['ArrowLeft', 'ArrowRight'].includes(e.key)) return;
+    e.preventDefault();
+    const cur = historyState.focus ?? HISTORY.length - 1;
+    const next = Math.min(HISTORY.length - 1, Math.max(0, cur + (e.key === 'ArrowRight' ? 1 : -1)));
+    historyState.focus = next; showAt(next, x(next));
+  });
+  svg.addEventListener('blur', () => { historyState.focus = null; showAt(null); });
+  historyState.showAt = (i) => (i === null ? showAt(null) : showAt(i, x(i)));
+  fillLabels(null);
+  emphasize(historyState.hot);
+
+  table(document.getElementById('history-table'), ['Release', ...series.map(([, n, s]) => `${n} (${s})`)],
+    HISTORY.map((r) => [r.v, ...series.map(([k]) => pct(r.w[k]))]));
+}
+document.querySelectorAll('[data-measure]').forEach((b) => b.addEventListener('click', () => {
+  historyState.measure = b.dataset.measure; historyState.hot = null;
+  document.querySelectorAll('[data-measure]').forEach((o) => o.setAttribute('aria-pressed', String(o === b)));
+  historyState.drawn = false; drawHistory();
+}));
+
+// ---------- Postmark strip ----------
+const strip = document.getElementById('strip');
+const letter = document.getElementById('letter');
+const latest = RELEASES[RELEASES.length - 1][0];
+RELEASES.forEach(([v, date]) => {
+  const measured = HISTORY.some((r) => r.v === v);
+  const b = el('button', { class: 'stamp', type: 'button', role: 'tab', 'aria-selected': 'false', 'data-v': v, 'aria-label': `Version ${v}, ${fmtDate(date)}${v === latest ? ', latest' : ''}${measured ? ', accuracy measured' : ''}` }, strip);
+  const disc = el('span', { class: 'disc', text: v }, b);
+  if (measured) el('span', { class: 'tick' }, disc);
+  el('span', { class: 'date', text: v === latest ? 'Latest' : fmtDate(date).replace(/ 2026$/, '') }, b);
+  b.addEventListener('click', () => selectRelease(v, false));
+});
+strip.addEventListener('keydown', (e) => {
+  if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(e.key)) return;
+  e.preventDefault();
+  const tabs = [...strip.children];
+  const cur = tabs.findIndex((t) => t.getAttribute('aria-selected') === 'true');
+  const next = e.key === 'Home' ? 0 : e.key === 'End' ? tabs.length - 1 : Math.min(tabs.length - 1, Math.max(0, cur + (e.key === 'ArrowRight' ? 1 : -1)));
+  selectRelease(tabs[next].dataset.v, false); tabs[next].focus();
+});
+function selectRelease(v, fromChart) {
+  const [, date, notes, fixes] = RELEASES.find(([rv]) => rv === v);
+  [...strip.children].forEach((t) => {
+    const on = t.dataset.v === v;
+    t.setAttribute('aria-selected', String(on)); t.tabIndex = on ? 0 : -1;
+    // Scroll only the strip, never the page, to bring the chosen stamp into view.
+    if (on) strip.scrollTo({ left: t.offsetLeft - (strip.clientWidth - t.offsetWidth) / 2, behavior: reduced || !fromChart ? 'auto' : 'smooth' });
+  });
+  letter.replaceChildren();
+  const head = el('div', { class: 'letter-rail' }, letter);
+  el('h3', { text: v }, head);
+  el('p', { class: 'when', text: fmtDate(date) }, head);
+  const body = el('div', {}, letter);
+  const ul = el('ul', {}, body);
+  notes.forEach((n) => richText(el('li', {}, ul), n));
+  if (fixes.length > 0) {
+    const also = el('div', { class: 'also' }, body);
+    el('p', { class: 'also-title', text: 'Fix releases' }, also);
+    const dl = el('dl', {}, also);
+    fixes.forEach(([fv, text]) => { el('dt', { text: fv }, dl); el('dd', { text }, dl); });
+  }
+  const hi = HISTORY.findIndex((r) => r.v === v);
+  historyState.showAt?.(hi >= 0 ? hi : null);
+  if (fromChart) document.getElementById('releases').scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'start' });
+}
+
+// ---------- Paired bars: against LanguageTool ----------
+function barLine(track, value, max, label, tipLines, rival, color) {
+  const line = el('div', { class: `barline${rival ? ' rival' : ''}`, tabindex: '0' }, track);
+  if (color) line.style.setProperty('--bar', color);
+  const b = el('span', { class: 'b' }, line);
+  b.style.width = `${Math.max(0.6, (value / max) * 82)}%`;
+  el('span', { class: 'lbl', text: label }, line);
+  line.setAttribute('aria-label', tipLines.join(', '));
+  attachTip(line, tipLines);
+  return b;
+}
+const floatTip = el('div', { class: 'tip', role: 'status' }, document.body);
+floatTip.style.position = 'fixed';
+function attachTip(node, lines) {
+  const show = () => {
+    floatTip.replaceChildren();
+    el('div', { class: 't', text: lines[0] }, floatTip);
+    lines.slice(1).forEach((l) => el('div', { class: 'n', text: l }, floatTip));
+    const r = node.getBoundingClientRect();
+    floatTip.classList.add('on');
+    const w = floatTip.offsetWidth;
+    floatTip.style.left = `${Math.min(window.innerWidth - w - 12, Math.max(12, r.left))}px`;
+    floatTip.style.top = `${r.top - floatTip.offsetHeight - 8 < 8 ? r.bottom + 8 : r.top - floatTip.offsetHeight - 8}px`;
+  };
+  const hide = () => floatTip.classList.remove('on');
+  node.addEventListener('pointerenter', show); node.addEventListener('pointerleave', hide);
+  node.addEventListener('focus', show); node.addEventListener('blur', hide);
+}
+function grow(bars) {
+  if (reduced) return;
+  bars.forEach((b) => { b.style.transform = 'scaleX(0)'; });
+  requestAnimationFrame(() => requestAnimationFrame(() => bars.forEach((b) => { b.style.transform = ''; })));
+}
+function drawVs(animate) {
+  const spell = document.getElementById('spell-rows');
+  const gram = document.getElementById('grammar-rows');
+  spell.replaceChildren(); gram.replaceChildren();
+  const bars = [];
+  VS.spelling.forEach(([name, set, ours, lt]) => {
+    const row = el('div', { class: 'rowx' }, spell);
+    const n = el('div', { class: 'name', text: name }, row); el('small', { text: set }, n);
+    const track = el('div', { class: 'track' }, row);
+    bars.push(barLine(track, ours.caught, 100, pct(ours.caught), [`Caught: ${pct(ours.caught)}`, `${name}: the misspelling gets an underline`], false, 'var(--m-caught)'));
+    bars.push(barLine(track, ours.topThree, 100, pct(ours.topThree), [`Correct word in top three: ${pct(ours.topThree)}`, `${name}: the right word is among the three suggestions`], false, 'var(--m-three)'));
+    bars.push(barLine(track, ours.topOne, 100, pct(ours.topOne), [`Correct word first: ${pct(ours.topOne)}`, `${name}: the right word is the first suggestion`], false, 'var(--m-first)'));
+    bars.push(barLine(track, lt, 100, pct(lt), [`LanguageTool: ${pct(lt)}`, `${name}: correct word first`], true));
+    const g = el('div', { class: 'gain', text: `${signed(ours.topOne - lt)} pts` }, row);
+  });
+  VS.grammar.forEach(([name, desc, mine, lt, lowerBetter]) => {
+    const row = el('div', { class: 'rowx' }, gram);
+    const n = el('div', { class: 'name', text: name }, row); el('small', { text: desc }, n);
+    const track = el('div', { class: 'track' }, row);
+    bars.push(barLine(track, mine, 100, pct(mine), [`Wordwarden: ${pct(mine)}`, desc]));
+    const g = el('div', { class: 'gain' }, row);
+    if (lt !== null) {
+      bars.push(barLine(track, lt, 100, pct(lt), [`LanguageTool: ${pct(lt)}`, desc], true));
+      const better = lowerBetter ? lt / mine : null;
+      g.textContent = lowerBetter ? `${better.toFixed(1)}× fewer` : `${signed(mine - lt)} pts`;
+    }
+  });
+  document.getElementById('spell-note').textContent = 'Caught: the misspelling gets an underline. Correct word first and in top three: the right word is offered.';
+  if (animate) grow(bars);
+  const accTable = document.getElementById('acc-table');
+  table(accTable, ['Spelling', 'Caught', 'Top three', 'Correct first', 'LanguageTool, correct first'],
+    VS.spelling.map(([n, , o, lt]) => [n, pct(o.caught), pct(o.topThree), pct(o.topOne), pct(lt)]));
+  table(accTable, ['Grammar', 'Wordwarden', 'LanguageTool'], VS.grammar.map(([n, , mine, lt]) => [n, pct(mine), pct(lt)]), true);
+}
+
+
+// ---------- Resource use ----------
+function drawPerf() {
+  const rows = document.getElementById('perf-rows');
+  const bars = [];
+  PERF.forEach(([name, note, ours, theirs, unit, word]) => {
+    const row = el('div', { class: 'rowx' }, rows);
+    const n = el('div', { class: 'name', text: name }, row); el('small', { text: note }, n);
+    const track = el('div', { class: 'track' }, row);
+    const fmt = (v) => `${v} ${unit}`;
+    bars.push(barLine(track, ours, theirs, fmt(ours), [`Wordwarden: ${fmt(ours)}`, name]));
+    bars.push(barLine(track, theirs, theirs, fmt(theirs), [`LanguageTool server: ${fmt(theirs)}`, name], true));
+    const g = el('div', { class: 'gain', text: `${(theirs / ours).toFixed(1)}×` }, row);
+    el('small', { text: word }, g);
+  });
+  table(document.getElementById('perf-table'), ['Measure', 'Wordwarden', 'LanguageTool server'],
+    PERF.map(([n, , o, t, u]) => [n, `${o} ${u}`, `${t} ${u}`]));
+  return bars;
+}
+
+// Bars grow once, when their section first comes into view.
+const perfBars = drawPerf();
+drawVs(false);
+const io = new IntersectionObserver((entries) => entries.forEach((e) => {
+  if (!e.isIntersecting) return;
+  io.unobserve(e.target);
+  if (e.target.id === 'performance') grow(perfBars); else drawVs(true);
+}), { threshold: 0.25 });
+io.observe(document.getElementById('performance'));
+io.observe(document.getElementById('accuracy'));
+
+// ---------- Jumping words: misspellings hop, land fixed, and later hop back ----------
+(() => {
+  const WORDS = [
+    ['teh', 'the'], ['recieve', 'receive'], ['definately', 'definitely'], ['we was', 'we were', 'grammar'],
+    ['seperate', 'separate'], ['becos', 'because'], ['frends', 'friends'], ['wierd', 'weird'],
+    ['could of', 'could have', 'grammar'], ['untill', 'until'], ['goverment', 'government'], ['occured', 'occurred'],
+    ['tommorow', 'tomorrow'], ['alot', 'a lot'], ['neccessary', 'necessary'], ['acommodate', 'accommodate'],
+  ];
+  const line = document.getElementById('hop');
+  const frankSvg = document.querySelector('.frank');
+  const tokens = WORDS.map(([wrong, right, kind]) => {
+    const b = el('button', { class: `hw${kind ? ` ${kind}` : ''}`, type: 'button', text: wrong }, line);
+    const f = frankSvg.cloneNode(true); f.classList.remove('go'); b.append(f);
+    const t = { b, f, wrong, right, fixed: false };
+    const label = () => b.setAttribute('aria-label', t.fixed ? `${right}, fixed` : `${wrong}, ${kind ?? 'spelling'} mistake`);
+    t.set = (fixed) => { t.fixed = fixed; b.firstChild.nodeValue = fixed ? right : wrong; b.classList.toggle('fixed', fixed); label(); };
+    label();
+    b.addEventListener('click', () => hop(t, !t.fixed));
+    return t;
+  });
+  function hop(t, toFixed) {
+    if (reduced) { t.set(toFixed); return; }
+    const rise = -14 - Math.random() * 14;
+    const tilt = (Math.random() < 0.5 ? -1 : 1) * (3 + Math.random() * 5);
+    t.b.animate([
+      { transform: 'none' },
+      { transform: `translateY(${rise}px) rotate(${tilt}deg)`, offset: 0.42 },
+      { transform: 'translateY(0) scale(1.06, 0.9)', offset: 0.78 },
+      { transform: 'none' },
+    ], { duration: 640, easing: 'cubic-bezier(.3,.7,.4,1)' });
+    window.setTimeout(() => {
+      t.set(toFixed);
+      if (toFixed) { t.f.classList.remove('go'); void t.f.getBoundingClientRect(); t.f.classList.add('go'); }
+    }, 270);
+  }
+  // Fix one random word at a time; once all are fixed, rest, then hop them all back.
+  let timer = 0;
+  let running = false;
+  function tick() {
+    const open = tokens.filter((t) => !t.fixed);
+    if (open.length > 0) {
+      hop(open[Math.floor(Math.random() * open.length)], true);
+      timer = window.setTimeout(tick, 700);
+    } else {
+      timer = window.setTimeout(() => {
+        tokens.forEach((t, i) => window.setTimeout(() => hop(t, false), i * 70));
+        timer = window.setTimeout(tick, tokens.length * 70 + 1400);
+      }, 2600);
+    }
+  }
+  const start = () => { if (!running && !reduced) { running = true; timer = window.setTimeout(tick, 500); } };
+  const stop = () => { running = false; window.clearTimeout(timer); };
+  new IntersectionObserver(([e]) => (e.isIntersecting && !document.hidden ? start() : stop())).observe(line);
+  document.addEventListener('visibilitychange', () => (document.hidden ? stop() : null));
+})();
+
+// "Measured at" marks open the stamp that holds the measured release.
+const stampFor = (v) => (RELEASES.find(([rv]) => rv === v) ?? RELEASES.find(([, , , fixes]) => fixes.some(([fv]) => fv === v)) ?? RELEASES[RELEASES.length - 1])[0];
+document.querySelectorAll('[data-measured]').forEach((a) => {
+  const source = a.dataset.measured === 'accuracy' ? SITE.accuracy : SITE.resources;
+  a.lastElementChild.textContent = `Measured at ${source.version}, ${fmtDate(source.date)}`;
+  a.addEventListener('click', () => selectRelease(stampFor(source.version), false));
+});
+if (SITE.accuracy.languageToolVersion) document.querySelectorAll('[data-lt]').forEach((n) => { n.textContent = `LanguageTool ${SITE.accuracy.languageToolVersion}`; });
+drawHistory();
+selectRelease(RELEASES[RELEASES.length - 1][0], false);
+let resizeFrame = 0;
+new ResizeObserver(() => { cancelAnimationFrame(resizeFrame); resizeFrame = requestAnimationFrame(drawHistory); }).observe(document.getElementById('history-plot'));
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change', drawHistory);
+</script>
+</body>
+</html>

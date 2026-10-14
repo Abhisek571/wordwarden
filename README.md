@@ -5,75 +5,57 @@
 [![Users](https://img.shields.io/amo/users/wordwarden-spell-grammar)](https://addons.mozilla.org/en-GB/firefox/addon/wordwarden-spell-grammar/)
 [![Licence: GPL v3](https://img.shields.io/badge/licence-GPL%20v3-blue)](LICENSE)
 
-Wordwarden is a free, privacy-first browser extension for one-click English
-spelling and grammar corrections. Text stays on the device, and all checks use
-only assets packaged with the extension.
+Free, privacy-first English spelling and grammar checking for Firefox, Chromium browsers and LibreOffice.
+Every check runs on the device with files bundled in the package; nothing the user writes is sent anywhere.
 
+**[Website](https://abhisek571.github.io/wordwarden/)**: what it does, accuracy and performance charts, and
+release history ·
 **[Get it for Firefox](https://addons.mozilla.org/en-GB/firefox/addon/wordwarden-spell-grammar/)** ·
 [Chromium and LibreOffice downloads](https://github.com/Abhisek571/wordwarden/releases/latest)
 
-## Features
-
-- Spelling and grammar checks as you type, on your device. Nothing you write is sent anywhere.
-- Click an underline to pick a fix. Text never changes without a click.
-- Your own dictionary, per-site on/off, and US, UK, Canadian or Australian English.
-- A typing test page with speed and accuracy.
-- Works in Firefox and Chromium browsers (Chrome, Edge, Brave and others). Light on memory: all
-  tabs share one checker.
-- A LibreOffice add-on with the same spelling and grammar engine.
-
 ## Install
 
-- **Firefox:** install it from
-  [Firefox Add-ons](https://addons.mozilla.org/en-GB/firefox/addon/wordwarden-spell-grammar/). It updates itself.
-- **Chromium browsers (Chrome, Edge, Brave and others):** Wordwarden is on its way to the Chrome Web
-  Store. Until then, download the `chrome` zip from
-  [Releases](https://github.com/Abhisek571/wordwarden/releases/latest), unzip it, open
-  `chrome://extensions`, turn on Developer mode and choose **Load unpacked**. This copy does not
-  update itself; download the new zip for each release.
-- **LibreOffice:** download the `libreoffice` file for your system (`windows`, `macos` or
-  `linux`) from [Releases](https://github.com/Abhisek571/wordwarden/releases/latest) and double-click it, or open **Tools > Extension Manager** and choose **Add**. Restart
-  LibreOffice. Wordwarden then checks spelling and grammar in English documents; settings are in
-  **Tools > Options > Languages and Locales > Wordwarden**. Apache OpenOffice may work but is not tested.
+- **Firefox:** from [Firefox Add-ons](https://addons.mozilla.org/en-GB/firefox/addon/wordwarden-spell-grammar/).
+  It updates itself.
+- **Chromium browsers (Chrome, Edge, Brave and others):** download the `chrome` zip from
+  [Releases](https://github.com/Abhisek571/wordwarden/releases/latest), unzip it, open `chrome://extensions`,
+  turn on Developer mode and choose **Load unpacked**. This copy does not update itself.
+- **LibreOffice:** download the `libreoffice` file for your system (`windows`, `macos` or `linux`) from
+  [Releases](https://github.com/Abhisek571/wordwarden/releases/latest) and double-click it, or open
+  **Tools > Extension Manager** and choose **Add**, then restart LibreOffice. Settings are in
+  **Tools > Options > Languages and Locales > Wordwarden**.
 
-## Accuracy
+## How it works
 
-![Accuracy chart](docs/accuracy.svg)
+- **Extension:** Manifest V3, built with [WXT](https://wxt.dev/) and React. A content script finds text
+  boxes, draws the underlines and suggestion card in a closed shadow root, and applies a fix only when the
+  user picks one.
+- **One checker for all tabs:** the engine runs in the background script and every tab sends its text there,
+  so extra tabs add little memory.
+- **Engines:** [harper.js](https://github.com/Automattic/harper) for grammar, nspell with Hunspell
+  dictionaries for spelling, a ranker that orders suggestions by edit cost, sound, word frequency and the
+  surrounding words, and a few local rules.
+- **LibreOffice add-on:** a Python UNO component that runs the same engine with a bundled Node.js.
 
-Measured on public test sets that are not bundled with the extension, using held-out data that
-was not used for tuning. The chart is redrawn automatically for each bigger release.
-
-Wordwarden catches most everyday typos but still misses many grammar and fluency problems, and
-typing slips that make another real word ("form" for "from"). Test sets, method and credits:
-[docs/BENCHMARKS.md](docs/BENCHMARKS.md).
-
-![Accuracy over releases](docs/accuracy-history.svg)
-
-## Performance
-
-![Resource use chart](docs/resources.svg)
-
-The newest release against your own LanguageTool server, checking the same text on the same
-machine. Wordwarden needs far less memory and start-up time, and nothing to install besides the
-extension. All tabs share one checker, so each extra tab adds only a little memory. It uses no CPU
-while you are not typing, and once you leave a text box the browser may unload the checker to free
-its memory. The chart is redrawn automatically for each bigger release. Method:
-[docs/BENCHMARKS.md](docs/BENCHMARKS.md#resource-use).
-
-## Reporting a problem
-
-Open Wordwarden's settings, choose **Report issue**, then **Generate diagnostic log** and
-**Copy log**. **Open GitHub Issue** opens a new issue; pick **Bug report** and paste the log into it. The
-log holds browser and extension details only, never your writing, and nothing is sent automatically.
-Security or privacy problems: see [SECURITY.md](SECURITY.md). What changed in each release:
-[CHANGELOG.md](CHANGELOG.md).
+| Folder | What is in it |
+|---|---|
+| `entrypoints/` | Background script, content script, popup, settings page and typing test |
+| `src/engines/` | Spelling, grammar and ranking |
+| `src/editors/` | Finding text boxes and applying fixes in text areas and rich editors |
+| `src/ui/` | The underlines, suggestion card and status badge |
+| `src/standalone/` | The engine host used by the LibreOffice add-on |
+| `libreoffice/` | The LibreOffice add-on |
+| `public/spelling/` | Bundled word lists and word-pair data |
+| `scripts/` | Build, chart, benchmark and website scripts |
+| `tests/` | Unit tests, browser tests and the Firefox smoke test |
+| `website/` | The project website, filled with release notes and benchmark numbers by `scripts/build-website.mjs` |
 
 ## Development
 
-Requires Node.js 22 or newer.
+Requires Node.js 22 or newer and npm 12 (`npm install -g npm@12.0.2`); the lock file is written by npm 12.
 
 ```sh
-npm install
+npm ci
 npm run dev            # Chromium
 npm run dev:firefox
 ```
@@ -90,10 +72,10 @@ npm run test:firefox   # needs Firefox installed
 npm run test:e2e
 ```
 
-### Building the Firefox package from source
+The browser tests need an open-source Chromium build, because branded Chrome and Edge 137+ block
+command-line extension loading.
 
-Works on Windows, macOS and Linux with [Node.js](https://nodejs.org/) 22 or newer and the npm
-that comes with it. No other tools are needed.
+### Building the Firefox package from source
 
 ```sh
 npm ci
@@ -101,15 +83,30 @@ npm run zip:firefox
 ```
 
 The package is written to `.output/wordwarden-<version>-firefox.zip`, and the unpacked files to
-`.output/firefox-mv3/`.
+`.output/firefox-mv3/`. `npm run zip` builds the Chromium package.
 
-`npm run zip` and `npm run zip:firefox` create store archives; pushing a version tag such as
-`v1.1.0` builds them on GitHub and attaches them to a release. The browser tests need an
-open-source Chromium build, because branded Chrome and Edge 137+ block command-line extension
-loading.
+### Releases
 
-See [privacy](docs/PRIVACY.md), [permissions](docs/PERMISSIONS.md) and
-[third-party notices](THIRD_PARTY_NOTICES.md).
+Pushing a version tag such as `v1.6.0` builds the store packages and the LibreOffice add-ons, tests the add-on
+in LibreOffice, and attaches everything to a GitHub release whose notes come from [CHANGELOG.md](CHANGELOG.md).
+For `vX.Y.0` tags the Accuracy and Resources workflows rerun the benchmarks, and the website updates with the
+new numbers and release notes.
+
+### Accuracy
+
+Benchmarks use public test sets that are not bundled with the extension, with held-out data that is not used
+for tuning. Results are on the [website](https://abhisek571.github.io/wordwarden/); test sets, method and
+credits are in [docs/BENCHMARKS.md](docs/BENCHMARKS.md).
+
+## Reporting a problem
+
+Open Wordwarden's settings, choose **Report issue**, then **Generate diagnostic log** and **Copy log**.
+**Open GitHub Issue** opens a new issue; pick **Bug report** and paste the log into it. The log holds browser
+and extension details only, never your writing, and nothing is sent automatically. Security or privacy
+problems: see [SECURITY.md](SECURITY.md).
+
+See also: [privacy](docs/PRIVACY.md), [permissions](docs/PERMISSIONS.md),
+[third-party notices](THIRD_PARTY_NOTICES.md) and the [changelog](CHANGELOG.md).
 
 ## License
 
