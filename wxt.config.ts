@@ -2,9 +2,8 @@ import { defineConfig } from 'wxt';
 import { existsSync, readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 
-const harperWasmPath = fileURLToPath(
-  new URL('./node_modules/harper.js/dist/harper_wasm_bg.wasm', import.meta.url),
-);
+// Harper's engine, built from a patched copy that uses less memory (see vendor/harper/README.md).
+const harperWasmPath = fileURLToPath(new URL('./vendor/harper/harper_wasm_bg.wasm', import.meta.url));
 const spellingRuntimeAssets = Object.freeze([
   Object.freeze({ fileName: 'spelling/en.aff', path: './node_modules/dictionary-en/index.aff' }),
   Object.freeze({ fileName: 'spelling/en.dic', path: './node_modules/dictionary-en/index.dic' }),

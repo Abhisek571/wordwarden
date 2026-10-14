@@ -5,7 +5,7 @@ import australian from 'dictionary-en-au';
 import canadian from 'dictionary-en-ca';
 import british from 'dictionary-en-gb';
 import frequencies from 'subtlex-word-frequencies';
-import { binaryInlined } from 'harper.js/binaryInlined';
+import { harperWasmUrl } from './helpers/harper-wasm';
 import type { EnglishDialect, WritingIssue } from '#/core/types';
 import { POPULAR_VOCABULARY } from '#/core/popular-vocabulary';
 import { createHarperEngine, type HarperEngine } from '#/engines/harper-engine';
@@ -37,7 +37,7 @@ function spellingIssuesOverlapping(
 async function createRuntimeEngine(dialect: EnglishDialect): Promise<HarperEngine> {
   const dictionary = dictionaries[dialect];
   const engine = createHarperEngine(Object.freeze({
-    wasmUrl: binaryInlined.url.toString(),
+    wasmUrl: harperWasmUrl,
     createSpellingRanker: async (_dialect, words) => createSpellingRankerFromData(
       Object.freeze({ aff: decoder.decode(dictionary.aff), dic: decoder.decode(dictionary.dic) }),
       frequencies,

@@ -1,6 +1,6 @@
 # Monthly update pull requests. Minor and patch updates come together in one pull request; each major
-# version and every harper.js update come on their own. harper.js is the checking engine, so its updates
-# change the accuracy numbers: run the Accuracy workflow on its branch before merging.
+# version comes on its own. harper.js is left out: the extension ships a patched Harper engine built for
+# one harper.js version, so updating it means rebuilding that engine (see vendor/harper/README.md).
 version: 2
 updates:
   - package-ecosystem: npm
@@ -12,6 +12,8 @@ updates:
         patterns: ['*']
         update-types: [minor, patch]
         exclude-patterns: [harper.js]
+    ignore:
+      - dependency-name: harper.js
     open-pull-requests-limit: 10
   - package-ecosystem: github-actions
     directory: /

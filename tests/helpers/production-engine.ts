@@ -2,7 +2,7 @@ import { readFile } from 'node:fs/promises';
 import american from 'dictionary-en';
 import british from 'dictionary-en-gb';
 import frequencies from 'subtlex-word-frequencies';
-import { binaryInlined } from 'harper.js/binaryInlined';
+import { harperWasmUrl } from './harper-wasm';
 import type { EnglishDialect } from '#/core/types';
 import {
   createHarperEngine,
@@ -29,7 +29,7 @@ export async function readBundledWordPairs(): Promise<WordPairs> {
 export async function createProductionEngine(dialect: EnglishDialect = 'american'): Promise<HarperEngine> {
   const dictionary = dialect === 'british' ? british : american;
   const engine = createHarperEngine(Object.freeze({
-    wasmUrl: binaryInlined.url.toString(),
+    wasmUrl: harperWasmUrl,
     createSpellingRanker: async (_dialect, personalWords) => createSpellingRankerFromData(
       Object.freeze({ aff: decoder.decode(dictionary.aff), dic: decoder.decode(dictionary.dic) }),
       frequencies,

@@ -1,0 +1,3 @@
+# Applied to Harper's source, which uses LF line endings.
+*.patch text eol=lf
+*.wasm binary

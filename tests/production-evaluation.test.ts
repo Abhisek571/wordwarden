@@ -3,7 +3,7 @@ import { resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import american from 'dictionary-en';
 import frequencies from 'subtlex-word-frequencies';
-import { binaryInlined } from 'harper.js/binaryInlined';
+import { harperWasmUrl } from './helpers/harper-wasm';
 import { createHarperEngine, type HarperEngine } from '#/engines/harper-engine';
 import { createSpellingRankerFromData } from '#/engines/spelling-ranker';
 import type { WritingIssue } from '#/core/types';
@@ -103,7 +103,7 @@ function reportGroups(groups: ReadonlyMap<string, readonly string[]>): Readonly<
 
 async function createProductionEngine(): Promise<HarperEngine> {
   const engine = createHarperEngine(Object.freeze({
-    wasmUrl: binaryInlined.url.toString(),
+    wasmUrl: harperWasmUrl,
     createSpellingRanker: async (_dialect, personalWords) => createSpellingRankerFromData(
       Object.freeze({ aff: decoder.decode(american.aff), dic: decoder.decode(american.dic) }),
       frequencies,
