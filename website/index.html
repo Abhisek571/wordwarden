@@ -262,9 +262,14 @@ section.band { padding: 56px 0; }
 /* Jumping words */
 .hop { padding: 8px 0 40px; }
 .hop-line { display: flex; flex-wrap: wrap; gap: 10px 26px; font: 650 clamp(22px, 2.4vw, 32px)/1.2 var(--display); letter-spacing: -0.02em; color: var(--ink-2); }
-.hw { all: unset; position: relative; display: inline-block; cursor: pointer; transform-origin: 50% 100%; padding: 0 2px 4px; border-radius: 3px; text-decoration: underline 2px solid var(--u, var(--spelling)); text-underline-offset: 6px; }
+.hw { all: unset; position: relative; display: inline-grid; cursor: pointer; transform-origin: 50% 100%; padding: 0 2px 4px; border-radius: 3px; }
+/* Both spellings share one cell, so a word keeps the width of its longer form and the lines never reflow. */
+.hw > .w, .hw > .r { grid-area: 1 / 1; white-space: nowrap; }
+.hw > .w { text-decoration: underline 2px solid var(--u, var(--spelling)); text-underline-offset: 6px; }
+.hw > .r { visibility: hidden; color: var(--ink); }
+.hw.fixed > .w { visibility: hidden; }
+.hw.fixed > .r { visibility: visible; }
 .hw.grammar { --u: var(--grammar); }
-.hw.fixed { color: var(--ink); text-decoration-color: transparent; }
 .hw:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
 .hw .frank { width: 70%; min-width: 48px; }
 .hop-note { margin-top: 14px; font-size: 12.5px; color: var(--ink-2); }
@@ -1118,18 +1123,20 @@ io.observe(document.getElementById('accuracy'));
 (() => {
   const WORDS = [
     ['teh', 'the'], ['recieve', 'receive'], ['definately', 'definitely'], ['we was', 'we were', 'grammar'],
-    ['seperate', 'separate'], ['becos', 'because'], ['frends', 'friends'], ['wierd', 'weird'],
-    ['could of', 'could have', 'grammar'], ['untill', 'until'], ['goverment', 'government'], ['occured', 'occurred'],
-    ['tommorow', 'tomorrow'], ['alot', 'a lot'], ['neccessary', 'necessary'], ['acommodate', 'accommodate'],
+    ['becos', 'because'], ['frends', 'friends'], ['wierd', 'weird'],
+    ['could of', 'could have', 'grammar'], ['untill', 'until'], ['occured', 'occurred'],
+    ['alot', 'a lot'],
   ];
   const line = document.getElementById('hop');
   const frankSvg = document.querySelector('.frank');
   const tokens = WORDS.map(([wrong, right, kind]) => {
-    const b = el('button', { class: `hw${kind ? ` ${kind}` : ''}`, type: 'button', text: wrong }, line);
+    const b = el('button', { class: `hw${kind ? ` ${kind}` : ''}`, type: 'button' }, line);
+    el('span', { class: 'w', text: wrong, 'aria-hidden': 'true' }, b);
+    el('span', { class: 'r', text: right, 'aria-hidden': 'true' }, b);
     const f = frankSvg.cloneNode(true); f.classList.remove('go'); b.append(f);
     const t = { b, f, wrong, right, fixed: false };
     const label = () => b.setAttribute('aria-label', t.fixed ? `${right}, fixed` : `${wrong}, ${kind ?? 'spelling'} mistake`);
-    t.set = (fixed) => { t.fixed = fixed; b.firstChild.nodeValue = fixed ? right : wrong; b.classList.toggle('fixed', fixed); label(); };
+    t.set = (fixed) => { t.fixed = fixed; b.classList.toggle('fixed', fixed); label(); };
     label();
     b.addEventListener('click', () => hop(t, !t.fixed));
     return t;
