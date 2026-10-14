@@ -1,17 +1,25 @@
-# Wordwarden
+<div align="center">
+  <a href="https://abhisek571.github.io/wordwarden/"><img src="public/icon.svg" width="96" alt="Wordwarden"></a>
+  <h1>Wordwarden</h1>
+  <p><strong>Spelling and grammar checks that never leave your device.</strong><br>
+  Free and open source, for Firefox, Chromium browsers and LibreOffice.</p>
+  <p>
+    <a href="https://abhisek571.github.io/wordwarden/"><strong>Website</strong></a> ·
+    <a href="https://addons.mozilla.org/en-GB/firefox/addon/wordwarden-spell-grammar/">Firefox Add-ons</a> ·
+    <a href="https://github.com/Abhisek571/wordwarden/releases/latest">Downloads</a> ·
+    <a href="CHANGELOG.md">Changelog</a>
+  </p>
+  <p>
+    <a href="https://github.com/Abhisek571/wordwarden/actions/workflows/ci.yml"><img alt="Tests" src="https://github.com/Abhisek571/wordwarden/actions/workflows/ci.yml/badge.svg"></a>
+    <a href="https://addons.mozilla.org/en-GB/firefox/addon/wordwarden-spell-grammar/"><img alt="Firefox Add-ons" src="https://img.shields.io/amo/v/wordwarden-spell-grammar?label=Firefox%20Add-ons"></a>
+    <a href="https://addons.mozilla.org/en-GB/firefox/addon/wordwarden-spell-grammar/"><img alt="Users" src="https://img.shields.io/amo/users/wordwarden-spell-grammar"></a>
+    <a href="LICENSE"><img alt="Licence: GPL v3" src="https://img.shields.io/badge/licence-GPL%20v3-blue"></a>
+  </p>
+</div>
 
-[![Tests](https://github.com/Abhisek571/wordwarden/actions/workflows/ci.yml/badge.svg)](https://github.com/Abhisek571/wordwarden/actions/workflows/ci.yml)
-[![Firefox Add-ons](https://img.shields.io/amo/v/wordwarden-spell-grammar?label=Firefox%20Add-ons)](https://addons.mozilla.org/en-GB/firefox/addon/wordwarden-spell-grammar/)
-[![Users](https://img.shields.io/amo/users/wordwarden-spell-grammar)](https://addons.mozilla.org/en-GB/firefox/addon/wordwarden-spell-grammar/)
-[![Licence: GPL v3](https://img.shields.io/badge/licence-GPL%20v3-blue)](LICENSE)
-
-Free, privacy-first English spelling and grammar checking for Firefox, Chromium browsers and LibreOffice.
-Every check runs on the device with files bundled in the package; nothing the user writes is sent anywhere.
-
-**[Website](https://abhisek571.github.io/wordwarden/)**: what it does, accuracy and performance charts, and
-release history ·
-**[Get it for Firefox](https://addons.mozilla.org/en-GB/firefox/addon/wordwarden-spell-grammar/)** ·
-[Chromium and LibreOffice downloads](https://github.com/Abhisek571/wordwarden/releases/latest)
+Wordwarden underlines English spelling and grammar mistakes as you type and fixes them in one click. Every
+check runs on the device with files bundled in the package; nothing the user writes is sent anywhere.
+Accuracy and performance charts are on the [website](https://abhisek571.github.io/wordwarden/).
 
 ## Install
 
