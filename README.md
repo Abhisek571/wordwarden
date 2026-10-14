@@ -85,18 +85,8 @@ npm run zip:firefox
 The package is written to `.output/wordwarden-<version>-firefox.zip`, and the unpacked files to
 `.output/firefox-mv3/`. `npm run zip` builds the Chromium package.
 
-### Releases
-
-Pushing a version tag such as `v1.6.0` builds the store packages and the LibreOffice add-ons, tests the add-on
-in LibreOffice, and attaches everything to a GitHub release whose notes come from [CHANGELOG.md](CHANGELOG.md).
-For `vX.Y.0` tags the Accuracy and Resources workflows rerun the benchmarks, and the website updates with the
-new numbers and release notes.
-
-### Accuracy
-
-Benchmarks use public test sets that are not bundled with the extension, with held-out data that is not used
-for tuning. Results are on the [website](https://abhisek571.github.io/wordwarden/); test sets, method and
-credits are in [docs/BENCHMARKS.md](docs/BENCHMARKS.md).
+Release steps are in [docs/RELEASING.md](docs/RELEASING.md); benchmark method and test sets in
+[docs/BENCHMARKS.md](docs/BENCHMARKS.md).
 
 ## Reporting a problem
 
