@@ -126,14 +126,14 @@ p { margin: 0; text-wrap: pretty; }
 .tip .n { color: var(--ink-2); }
 .tip .foot { margin-top: 8px; padding-top: 6px; border-top: 1px solid var(--hair); color: var(--ink-2); font-size: 12px; }
 .note { margin-top: 12px; font-size: 12.5px; color: var(--ink-2); max-width: 80ch; }
-details.table { margin-top: 10px; font-size: 13px; }
-details.table summary { cursor: pointer; color: var(--ink-2); font-weight: 600; width: max-content; list-style: none; display: inline-flex; align-items: center; gap: 6px; }
+details.table { margin-top: 10px; font-size: 13px; text-align: center; }
+details.table summary { cursor: pointer; color: var(--ink-2); font-weight: 600; width: max-content; margin: 0 auto; padding: 6px 4px; list-style: none; display: flex; align-items: center; gap: 6px; border-radius: 4px; }
 details.table summary::-webkit-details-marker { display: none; }
-details.table summary::before { content: ""; width: 16px; height: 16px; background: currentColor; -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='black' stroke-width='1.75' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 4l4 4-4 4'/%3E%3C/svg%3E") center / contain no-repeat; mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='black' stroke-width='1.75' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 4l4 4-4 4'/%3E%3C/svg%3E") center / contain no-repeat; transition: transform .15s var(--ease); }
-details.table[open] summary::before { transform: rotate(90deg); }
+details.table summary::after { content: ""; width: 16px; height: 16px; background: currentColor; -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='black' stroke-width='1.75' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 6l4 4 4-4'/%3E%3C/svg%3E") center / contain no-repeat; mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='black' stroke-width='1.75' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 6l4 4 4-4'/%3E%3C/svg%3E") center / contain no-repeat; transition: transform .15s var(--ease); }
+details.table[open] summary::after { transform: rotate(180deg); }
 details.table summary:hover { color: var(--ink); }
 details.table table + table { margin-top: 18px; }
-details.table table { margin-top: 10px; border-collapse: collapse; font-variant-numeric: tabular-nums; width: 100%; max-width: 760px; }
+details.table table { margin: 10px auto 0; border-collapse: collapse; font-variant-numeric: tabular-nums; width: 100%; max-width: 760px; text-align: left; }
 details.table th, details.table td { text-align: right; padding: 6px 10px; border-bottom: 1px solid var(--hair); white-space: nowrap; }
 details.table th:first-child, details.table td:first-child { text-align: left; white-space: normal; }
 details.table th { font-weight: 650; color: var(--ink-2); }
