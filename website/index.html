@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Wordwarden — spelling and grammar, checked on your device</title>
 <meta name="description" content="Free spelling and grammar checks for Firefox, Chromium browsers and LibreOffice. Everything runs on your device; nothing you write is sent anywhere.">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='14' fill='%23fff' stroke='%231d2433' stroke-width='2'/%3E%3Ccircle cx='16' cy='16' r='10' fill='none' stroke='%231d2433' stroke-width='3'/%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128"%3E %3Crect width="128" height="128" rx="28" fill="%231d2433"/%3E %3Cg fill="%23f1eee7" transform="translate%2813 0%29 skewX%28-12%29"%3E %3Cpath d="M22 32h13.5l13 53H42z"/%3E %3Cpath d="M42 85h6.5l18-53H62z"/%3E %3Cpath d="M59.5 32H73l12 53h-6.5z"/%3E %3Cpath d="M78.5 85H85l16.5-43.5-4.6-2z"/%3E %3Ccircle cx="100.5" cy="40" r="6.2"/%3E %3Cpath d="M13 41c3-6 7.5-9 12-9h3.5v4H25c-3.4 0-6.4 2-8.6 5.8z"/%3E %3C/g%3E %3Cpath d="M30 105q6-6.5 12 0t12 0t12 0t12 0t12 0t12 0" fill="none" stroke="%23e5484d" stroke-width="6.5" stroke-linecap="round"/%3E %3C/svg%3E">
 <style>
 :root {
   --ink: #1d2433; --ink-2: #4f5768; --paper: #ffffff; --ground: #f4f5f7; --hair: #dde0e6;
@@ -53,7 +53,7 @@ p { margin: 0; text-wrap: pretty; }
 .bar { position: sticky; top: 0; z-index: 20; background: color-mix(in srgb, var(--ground) 92%, transparent); backdrop-filter: saturate(1.2) blur(8px); border-bottom: 1px solid var(--hair); }
 .bar .wrap { display: flex; align-items: center; gap: 28px; height: 60px; }
 .brand { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 17px; letter-spacing: -0.02em; text-decoration: none; }
-.brand .ring { width: 22px; height: 22px; --ring-surface: var(--ground); }
+.brand .logo { width: 26px; height: 26px; border-radius: 6px; flex: none; box-shadow: 0 0 0 1px var(--hair); }
 .bar nav { display: flex; gap: 22px; margin-left: auto; }
 .bar nav a { font-size: 14px; font-weight: 600; color: var(--ink-2); text-decoration: none; }
 .bar nav a:hover { color: var(--ink); }
@@ -234,7 +234,7 @@ section.band.paper { background: var(--paper); }
 footer { padding: 36px 0 48px; border-top: 1px solid var(--hair); font-size: 13px; color: var(--ink-2); }
 footer .wrap { display: flex; flex-wrap: wrap; gap: 10px 28px; align-items: center; }
 footer .brand { font-size: 15px; color: var(--ink); }
-footer .brand .ring { width: 18px; height: 18px; --ring-surface: var(--ground); }
+footer .brand .logo { width: 20px; height: 20px; border-radius: 5px; }
 footer nav { display: flex; flex-wrap: wrap; gap: 8px 20px; margin-left: auto; }
 
 .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
@@ -325,7 +325,7 @@ section.band { padding: 56px 0; }
 <body>
 <header class="bar">
   <div class="wrap">
-    <a class="brand" href="#top"><span class="ring" aria-hidden="true"></span>Wordwarden</a>
+    <a class="brand" href="#top"><svg class="logo" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" aria-hidden="true"> <rect width="128" height="128" rx="28" fill="#1d2433"/> <g fill="#f1eee7" transform="translate(13 0) skewX(-12)"> <path d="M22 32h13.5l13 53H42z"/> <path d="M42 85h6.5l18-53H62z"/> <path d="M59.5 32H73l12 53h-6.5z"/> <path d="M78.5 85H85l16.5-43.5-4.6-2z"/> <circle cx="100.5" cy="40" r="6.2"/> <path d="M13 41c3-6 7.5-9 12-9h3.5v4H25c-3.4 0-6.4 2-8.6 5.8z"/> </g> <path d="M30 105q6-6.5 12 0t12 0t12 0t12 0t12 0t12 0" fill="none" stroke="#e5484d" stroke-width="6.5" stroke-linecap="round"/> </svg>Wordwarden</a>
     <nav aria-label="Sections">
       <a href="#releases">Releases</a>
       <a href="#accuracy">Accuracy</a>
@@ -493,7 +493,7 @@ section.band { padding: 56px 0; }
 
 <footer>
   <div class="wrap">
-    <span class="brand"><span class="ring" aria-hidden="true"></span>Wordwarden</span>
+    <span class="brand"><svg class="logo" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" aria-hidden="true"> <rect width="128" height="128" rx="28" fill="#1d2433"/> <g fill="#f1eee7" transform="translate(13 0) skewX(-12)"> <path d="M22 32h13.5l13 53H42z"/> <path d="M42 85h6.5l18-53H62z"/> <path d="M59.5 32H73l12 53h-6.5z"/> <path d="M78.5 85H85l16.5-43.5-4.6-2z"/> <circle cx="100.5" cy="40" r="6.2"/> <path d="M13 41c3-6 7.5-9 12-9h3.5v4H25c-3.4 0-6.4 2-8.6 5.8z"/> </g> <path d="M30 105q6-6.5 12 0t12 0t12 0t12 0t12 0t12 0" fill="none" stroke="#e5484d" stroke-width="6.5" stroke-linecap="round"/> </svg>Wordwarden</span>
     <span>Free and open source under the GNU GPL v3.</span>
     <nav aria-label="Links">
       <a href="https://github.com/Abhisek571/wordwarden">Source code</a>
