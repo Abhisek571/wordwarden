@@ -37,6 +37,13 @@ that only accepts connections from the same computer, and stops it when the run 
 It uses the default setup, without the optional n-gram data (about 8 GB), which would improve its results.
 Missing LanguageTool is skipped.
 
+## Comparison with Harper on its own
+
+Harper is the grammar engine Wordwarden builds on. The benchmarks also run it on its own, on the holdout halves,
+the way the `harper.js` package ships it: its own engine file, dictionary and default rules, without
+Wordwarden's spelling ranker, word lists, extra rules or engine patch. The difference shows what Wordwarden
+adds on top. Nothing needs downloading; it uses the installed `harper.js`.
+
 ## Resource use
 
 `node scripts/resource-chart.mjs <LanguageTool folder> [report.json]` measures the built Chromium extension

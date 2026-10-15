@@ -20,7 +20,7 @@
   --keyline: rgb(29 36 51 / .28); --wash: #eceef2;
   --spelling: #d32f2f; --grammar: #e08a00; --grammar-ink: #9a5b00; --style: #1e6fd9;
   --clear: #2f7d5b; --clear-wash: #e6f3ec;
-  --rival: #1e6fd9; --line-rest: rgb(29 36 51 / .22);
+  --rival: #1e6fd9; --harper: #2a9d8f; --line-rest: rgb(29 36 51 / .22);
   --m-caught: #b7bcc7; --m-first: #1d2433; --m-three: #4f5768;
   --lift: 0 2px 6px rgb(17 22 33 / .12);
   --face: "Segoe UI Variable Text", "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
@@ -34,7 +34,7 @@
     --keyline: rgb(236 238 243 / .3); --wash: #252b38;
     --spelling: #ff6b6b; --grammar: #ffb340; --grammar-ink: #ffb340; --style: #79a8ff;
     --clear: #4cc38a; --clear-wash: #15291f;
-    --rival: #79a8ff; --line-rest: rgb(236 238 243 / .2);
+    --rival: #79a8ff; --harper: #4fd1bf; --line-rest: rgb(236 238 243 / .2);
     --m-caught: #4a5366; --m-first: #eceef3; --m-three: #a7aebb;
     --lift: 0 2px 8px rgb(0 0 0 / .45);
     color-scheme: dark;
@@ -205,14 +205,14 @@ section.band.paper { background: var(--paper); }
 .mark { display: inline-flex; align-items: center; gap: 8px; margin-bottom: 14px; font-size: 13px; font-weight: 650; color: var(--ink-2); text-decoration: none; }
 .mark:hover { color: var(--ink); text-decoration: underline; }
 .mark .ring { width: 14px; height: 14px; --ring-surface: var(--paper); }
-#performance .mark .ring { --ring-surface: var(--ground); }
 .band-head h2 { font: 700 clamp(30px, 3.6vw, 44px)/1.05 var(--display); letter-spacing: -0.03em; }
 .band-head p { color: var(--ink-2); max-width: 62ch; }
 .pair { margin-top: 36px; }
 .pair-legend { display: flex; flex-wrap: wrap; gap: 6px 20px; font-size: 13px; color: var(--ink-2); }
-.pair-legend span { display: inline-flex; align-items: center; gap: 8px; }
+.pair-legend > span { display: inline-flex; align-items: center; gap: 8px; }
 .pair-legend i { width: 14px; height: 10px; border-radius: 2px; background: var(--ink); }
 .pair-legend i.rival { background: var(--rival); }
+.pair-legend i.harper { background: var(--harper); }
 .pair-legend i[data-m] { background: var(--bar); }
 .rows { margin-top: 18px; }
 .rowx { display: grid; grid-template-columns: 230px minmax(0, 1fr) 120px; gap: 18px; align-items: center; padding: 12px 0; border-top: 1px solid var(--hair); }
@@ -226,8 +226,9 @@ section.band.paper { background: var(--paper); }
 .barline { position: relative; display: flex; align-items: center; gap: 8px; height: 18px; cursor: default; }
 .barline .b { height: 14px; border-radius: 0 4px 4px 0; background: var(--bar, var(--ink)); transform-origin: left; transition: transform .7s var(--ease), filter .12s; }
 .barline.rival .b { background: var(--rival); }
+.barline.harper .b { background: var(--harper); }
 .barline .lbl { font-size: 12.5px; font-weight: 650; font-variant-numeric: tabular-nums; white-space: nowrap; color: var(--ink); }
-.barline.rival .lbl { color: var(--ink-2); font-weight: 500; }
+.barline.rival .lbl, .barline.harper .lbl { color: var(--ink-2); font-weight: 500; }
 .barline:hover .b, .barline:focus-visible .b { opacity: .75; }
 .barline:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
 
@@ -318,7 +319,6 @@ section.band { padding: 56px 0; }
     <nav aria-label="Sections">
       <a href="#releases">Releases</a>
       <a href="#accuracy">Accuracy</a>
-      <a href="#performance">Performance</a>
       <a href="#install">Install</a>
       <a href="https://github.com/Abhisek571/wordwarden">Source</a>
     </nav>
@@ -384,8 +384,8 @@ section.band { padding: 56px 0; }
     <div class="wrap">
       <div class="band-head">
         <div><a class="mark" href="#releases" data-measured="accuracy"><span class="ring" aria-hidden="true"></span><span></span></a>
-        <h2 id="acc-title">Against LanguageTool, on the same tests</h2></div>
-        <p>The newest release next to LanguageTool's latest version at the time of that release, in its default setup, on five spelling sets and a set of learner essays. Hover a bar for the details.</p>
+        <h2 id="acc-title">Against LanguageTool and Harper</h2></div>
+        <p>The newest release next to the latest versions of LanguageTool and Harper at the time of that release, both in their default setup. Harper is the grammar engine Wordwarden builds on, measured here on its own. All three on the same five spelling sets and set of learner essays. Hover a bar for the details.</p>
       </div>
       <div class="pair">
         <div class="group-head">
@@ -394,13 +394,14 @@ section.band { padding: 56px 0; }
             <span><i data-m style="--bar: var(--m-caught)"></i>Caught</span>
             <span><i data-m style="--bar: var(--m-three)"></i>Correct word in top three</span>
             <span><i data-m style="--bar: var(--m-first)"></i>Correct word first</span>
-            <span><i class="rival"></i><span data-lt>LanguageTool</span>, correct word first</span>
+            <span><i class="rival"></i><span><span data-lt>LanguageTool</span>, correct word first</span></span>
+            <span><i class="harper"></i><span>Harper alone, correct word first</span></span>
           </div>
         </div>
         <div class="rows" id="spell-rows"></div>
         <div class="group-head">
           <h3>Grammar <span class="muted">learner essays</span></h3>
-          <div class="pair-legend"><span><i></i>Wordwarden</span><span><i class="rival"></i><span data-lt>LanguageTool</span></span></div>
+          <div class="pair-legend"><span><i></i>Wordwarden</span><span><i class="rival"></i><span data-lt>LanguageTool</span></span><span><i class="harper"></i><span>Harper alone</span></span></div>
         </div>
         <div class="rows" id="grammar-rows"></div>
         <p class="note" id="spell-note"></p>
@@ -409,26 +410,7 @@ section.band { padding: 56px 0; }
     </div>
   </section>
 
-  <section class="band" id="performance" aria-labelledby="perf-title">
-    <div class="wrap">
-      <div class="band-head">
-        <div><a class="mark" href="#releases" data-measured="resources"><span class="ring" aria-hidden="true"></span><span></span></a>
-        <h2 id="perf-title">Light enough to forget it’s there</h2></div>
-        <p>All your tabs share one checker, it uses no CPU while you are not typing, and there is nothing to install besides the extension. Measured against your own LanguageTool server, checking the same text on the same machine.</p>
-      </div>
-      <div class="pair">
-        <div class="group-head">
-          <h3>Resource use</h3>
-          <div class="pair-legend"><span><i></i>Wordwarden</span><span><i class="rival"></i>LanguageTool server</span></div>
-        </div>
-        <div class="rows" id="perf-rows"></div>
-        <p class="note">GitHub’s Linux machine, 2 cores. Memory is private memory. Each row has its own scale; LanguageTool is the full bar, and its own browser extension is not counted.</p>
-        <details class="table"><summary>Show as a table</summary><div class="table-scroll" id="perf-table"></div></details>
-      </div>
-    </div>
-  </section>
-
-  <section class="band paper" id="install" aria-labelledby="install-title">
+  <section class="band" id="install" aria-labelledby="install-title">
     <div class="wrap">
       <div class="band-head">
         <h2 id="install-title">Install it</h2>
@@ -647,68 +629,56 @@ const SITE = {
     "caught": 68,
     "topOne": 51.8,
     "topThree": 58.2,
-    "languageTool": 50.2
+    "languageTool": 50.2,
+    "harper": 39
    },
    "twitter": {
     "caught": 88.8,
     "topOne": 64.6,
     "topThree": 73.1,
-    "languageTool": 59.4
+    "languageTool": 59.4,
+    "harper": 33.8
    },
    "wikipedia": {
     "caught": 98.8,
     "topOne": 90.7,
     "topThree": 96,
-    "languageTool": 84.8
+    "languageTool": 84.8,
+    "harper": 79.5
    },
    "birkbeck": {
     "caught": 91.5,
     "topOne": 44.8,
     "topThree": 52.1,
-    "languageTool": 37.3
+    "languageTool": 37.3,
+    "harper": 35.3
    },
    "holbrook": {
     "caught": 59.7,
     "topOne": 30.1,
     "topThree": 36.5,
-    "languageTool": 25.3
+    "languageTool": 25.3,
+    "harper": 12
    }
   },
   "grammar": {
    "fixes": {
     "wordwarden": 65.6,
-    "languageTool": 60.2
+    "languageTool": 60.2,
+    "harper": 54.3
    },
    "falseAlarms": {
     "wordwarden": 6.5,
-    "languageTool": 12.8
+    "languageTool": 12.8,
+    "harper": 11.7
    },
    "recall": {
     "wordwarden": 64.6,
-    "languageTool": 72.7
+    "languageTool": 72.7,
+    "harper": 66.9
    }
-  }
- },
- "resources": {
-  "version": "1.5.0",
-  "date": "2026-10-12",
-  "words": 492,
-  "tabs": 20,
-  "wordwarden": {
-   "oneTabMb": 255,
-   "manyTabsMb": 515,
-   "startCpuS": 4,
-   "checkCpuMs": 297,
-   "checkMs": 214,
-   "diskMb": 23
   },
-  "languageTool": {
-   "memoryMb": 847,
-   "startCpuS": 19.5,
-   "checkCpuMs": 628,
-   "checkMs": 294,
-   "diskMb": 386
-  }
+  "harperVersion": "2.10.0"
  }
 };
 /* END SITE DATA */
@@ -750,23 +720,17 @@ const SPELLING_SETS = [
 const VS = {
   spelling: SPELLING_SETS.map(([key, name, set]) => {
     const r = SITE.accuracy.spelling[key];
-    return [name, set, { caught: r.caught, topOne: r.topOne, topThree: r.topThree }, r.languageTool];
+    return [name, set, { caught: r.caught, topOne: r.topOne, topThree: r.topThree }, r.languageTool, r.harper ?? null];
   }),
   grammar: [
     ['Helpful fixes', 'Fixes that move the text closer to a human correction', 'fixes', false],
     ['False alarms', 'Correct sentences wrongly flagged; lower is better', 'falseAlarms', true],
     ['Mistakes caught', 'Sentences with mistakes that get flagged', 'recall', false],
-  ].map(([name, desc, key, lowerBetter]) => [name, desc, SITE.accuracy.grammar[key].wordwarden, SITE.accuracy.grammar[key].languageTool, lowerBetter]),
+  ].map(([name, desc, key, lowerBetter]) => {
+    const g = SITE.accuracy.grammar[key];
+    return [name, desc, g.wordwarden, g.languageTool, lowerBetter, g.harper ?? null];
+  }),
 };
-const RES = SITE.resources;
-const PERF = [
-  ['Memory, 1 tab', 'While checking', RES.wordwarden.oneTabMb, RES.languageTool.memoryMb, 'MB', 'less'],
-  [`Memory, ${RES.tabs} tabs`, 'All tabs share one checker', RES.wordwarden.manyTabsMb, RES.languageTool.memoryMb, 'MB', 'less'],
-  ['CPU time to start', 'Summed over all cores', RES.wordwarden.startCpuS, RES.languageTool.startCpuS, 's', 'less'],
-  ['CPU time per check', 'Summed over all cores', RES.wordwarden.checkCpuMs, RES.languageTool.checkCpuMs, 'ms', 'less'],
-  [`Time to check ${RES.words} words`, 'Median of 30 checks', RES.wordwarden.checkMs, RES.languageTool.checkMs, 'ms', 'faster'],
-  ['Size on disk', 'LanguageTool also needs Java', RES.wordwarden.diskMb, RES.languageTool.diskMb, 'MB', 'smaller'],
-];
 // The strip shows each bigger release plus the newest; fix releases fold into the release they followed.
 const RELEASES = SITE.releases;
 
@@ -1029,8 +993,9 @@ function selectRelease(v, fromChart) {
 }
 
 // ---------- Paired bars: against LanguageTool ----------
+// rival: true for LanguageTool, 'harper' for Harper alone.
 function barLine(track, value, max, label, tipLines, rival, color) {
-  const line = el('div', { class: `barline${rival ? ' rival' : ''}`, tabindex: '0' }, track);
+  const line = el('div', { class: `barline${rival ? ` ${rival === true ? 'rival' : rival}` : ''}`, tabindex: '0' }, track);
   if (color) line.style.setProperty('--bar', color);
   const b = el('span', { class: 'b' }, line);
   b.style.width = `${Math.max(0.6, (value / max) * 82)}%`;
@@ -1069,7 +1034,7 @@ function drawVs(animate) {
   const gram = document.getElementById('grammar-rows');
   spell.replaceChildren(); gram.replaceChildren();
   const bars = [];
-  VS.spelling.forEach(([name, set, ours, lt]) => {
+  VS.spelling.forEach(([name, set, ours, lt, harper]) => {
     const row = el('div', { class: 'rowx' }, spell);
     const n = el('div', { class: 'name', text: name }, row); el('small', { text: set }, n);
     const track = el('div', { class: 'track' }, row);
@@ -1077,9 +1042,10 @@ function drawVs(animate) {
     bars.push(barLine(track, ours.topThree, 100, pct(ours.topThree), [`Correct word in top three: ${pct(ours.topThree)}`, `${name}: the right word is among the three suggestions`], false, 'var(--m-three)'));
     bars.push(barLine(track, ours.topOne, 100, pct(ours.topOne), [`Correct word first: ${pct(ours.topOne)}`, `${name}: the right word is the first suggestion`], false, 'var(--m-first)'));
     bars.push(barLine(track, lt, 100, pct(lt), [`LanguageTool: ${pct(lt)}`, `${name}: correct word first`], true));
+    if (harper !== null) bars.push(barLine(track, harper, 100, pct(harper), [`Harper alone: ${pct(harper)}`, `${name}: correct word first`], 'harper'));
     const g = el('div', { class: 'gain', text: `${signed(ours.topOne - lt)} pts` }, row);
   });
-  VS.grammar.forEach(([name, desc, mine, lt, lowerBetter]) => {
+  VS.grammar.forEach(([name, desc, mine, lt, lowerBetter, harper]) => {
     const row = el('div', { class: 'rowx' }, gram);
     const n = el('div', { class: 'name', text: name }, row); el('small', { text: desc }, n);
     const track = el('div', { class: 'track' }, row);
@@ -1090,44 +1056,25 @@ function drawVs(animate) {
       const better = lowerBetter ? lt / mine : null;
       g.textContent = lowerBetter ? `${better.toFixed(1)}× fewer` : `${signed(mine - lt)} pts`;
     }
+    if (harper !== null) bars.push(barLine(track, harper, 100, pct(harper), [`Harper alone: ${pct(harper)}`, desc], 'harper'));
   });
   document.getElementById('spell-note').textContent = 'Caught: the misspelling gets an underline. Correct word first and in top three: the right word is offered.';
   if (animate) grow(bars);
   const accTable = document.getElementById('acc-table');
-  table(accTable, ['Spelling', 'Caught', 'Top three', 'Correct first', 'LanguageTool, correct first'],
-    VS.spelling.map(([n, , o, lt]) => [n, pct(o.caught), pct(o.topThree), pct(o.topOne), pct(lt)]));
-  table(accTable, ['Grammar', 'Wordwarden', 'LanguageTool'], VS.grammar.map(([n, , mine, lt]) => [n, pct(mine), pct(lt)]), true);
+  table(accTable, ['Spelling', 'Caught', 'Top three', 'Correct first', 'LanguageTool, correct first', 'Harper alone, correct first'],
+    VS.spelling.map(([n, , o, lt, harper]) => [n, pct(o.caught), pct(o.topThree), pct(o.topOne), pct(lt), harper === null ? '–' : pct(harper)]));
+  table(accTable, ['Grammar', 'Wordwarden', 'LanguageTool', 'Harper alone'],
+    VS.grammar.map(([n, , mine, lt, , harper]) => [n, pct(mine), pct(lt), harper === null ? '–' : pct(harper)]), true);
 }
 
-
-// ---------- Resource use ----------
-function drawPerf() {
-  const rows = document.getElementById('perf-rows');
-  const bars = [];
-  PERF.forEach(([name, note, ours, theirs, unit, word]) => {
-    const row = el('div', { class: 'rowx' }, rows);
-    const n = el('div', { class: 'name', text: name }, row); el('small', { text: note }, n);
-    const track = el('div', { class: 'track' }, row);
-    const fmt = (v) => `${v} ${unit}`;
-    bars.push(barLine(track, ours, theirs, fmt(ours), [`Wordwarden: ${fmt(ours)}`, name]));
-    bars.push(barLine(track, theirs, theirs, fmt(theirs), [`LanguageTool server: ${fmt(theirs)}`, name], true));
-    const g = el('div', { class: 'gain', text: `${(theirs / ours).toFixed(1)}×` }, row);
-    el('small', { text: word }, g);
-  });
-  table(document.getElementById('perf-table'), ['Measure', 'Wordwarden', 'LanguageTool server'],
-    PERF.map(([n, , o, t, u]) => [n, `${o} ${u}`, `${t} ${u}`]));
-  return bars;
-}
 
 // Bars grow once, when their section first comes into view.
-const perfBars = drawPerf();
 drawVs(false);
 const io = new IntersectionObserver((entries) => entries.forEach((e) => {
   if (!e.isIntersecting) return;
   io.unobserve(e.target);
-  if (e.target.id === 'performance') grow(perfBars); else drawVs(true);
+  drawVs(true);
 }), { threshold: 0.25 });
-io.observe(document.getElementById('performance'));
 io.observe(document.getElementById('accuracy'));
 
 // ---------- Jumping words: misspellings hop, land fixed, and later hop back ----------
@@ -1191,7 +1138,7 @@ io.observe(document.getElementById('accuracy'));
 // "Measured at" marks open the stamp that holds the measured release.
 const stampFor = (v) => (RELEASES.find(([rv]) => rv === v) ?? RELEASES.find(([, , , fixes]) => fixes.some(([fv]) => fv === v)) ?? RELEASES[RELEASES.length - 1])[0];
 document.querySelectorAll('[data-measured]').forEach((a) => {
-  const source = a.dataset.measured === 'accuracy' ? SITE.accuracy : SITE.resources;
+  const source = SITE.accuracy;
   a.lastElementChild.textContent = `Measured at ${source.version}, ${fmtDate(source.date)}`;
   a.addEventListener('click', () => selectRelease(stampFor(source.version), false));
 });

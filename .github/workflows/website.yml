@@ -1,8 +1,8 @@
 name: Website
 
 # Publishes website/ to GitHub Pages with the current release notes and benchmark numbers. Runs when the
-# changelog, the numbers or the page change on main, and after the Accuracy and Resources workflows,
-# whose commits do not start other workflows on their own.
+# changelog, the numbers or the page change on main, and after the Accuracy workflow, whose commits do not
+# start other workflows on their own.
 on:
   push:
     branches: [main]
@@ -10,11 +10,10 @@ on:
       - CHANGELOG.md
       - docs/accuracy-history.json
       - docs/accuracy-latest.json
-      - docs/resources-latest.json
       - website/**
       - scripts/build-website.mjs
   workflow_run:
-    workflows: [Accuracy, Resources]
+    workflows: [Accuracy]
     types: [completed]
   workflow_dispatch:
 

@@ -3,6 +3,8 @@ import { spawn, spawnSync, type ChildProcess } from 'node:child_process';
 import { existsSync, readdirSync } from 'node:fs';
 import { readFile, writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
+import { binaryInlined } from 'harper.js/binaryInlined';
+import { Dialect, LocalLinter } from 'harper.js';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import type { WritingIssue } from '#/core/types';
 import type { HarperEngine } from '#/engines/harper-engine';
@@ -17,6 +19,9 @@ const FAILURE_EXAMPLES = 20;
 // LanguageTool, for comparison: the folder holding languagetool-server.jar (or a LanguageTool-x.y folder with it).
 const languageToolDirectory = process.env.WORDWARDEN_LANGUAGETOOL_DIR ?? resolve(benchmarkDirectory, 'languagetool');
 const LANGUAGETOOL_PORT = 8081;
+const harperVersion = (JSON.parse(await readFile(new URL('../node_modules/harper.js/package.json', import.meta.url), 'utf8')) as {
+  version: string;
+}).version;
 
 type Split = 'tune' | 'holdout';
 type SpellingPair = Readonly<{ misspelling: string; targets: readonly string[]; split: Split }>;
@@ -31,7 +36,7 @@ type RuleCounts = {
 const RULE_EXAMPLES = 5;
 /**
  * One checker under test. Wordwarden's results go at the top of the report; LanguageTool's go under
- * `languagetool` and use only the holdout halves, to keep its slower run short.
+ * `languagetool` and plain Harper's under `harper`, both using only the holdout halves, to keep their runs short.
  */
 type Suite = Readonly<{ out: Report; american: Checker; british: Checker; holdoutOnly: boolean }>;
 
@@ -547,6 +552,33 @@ function languageToolChecker(language: 'en-US' | 'en-GB'): Checker {
   });
 }
 
+/**
+ * Harper on its own, as the harper.js package ships it: its own engine file, dictionary and default rules,
+ * without Wordwarden's spelling ranker, word lists and extra rules. Shows what Wordwarden adds on top.
+ */
+function plainHarperChecker(dialect: Dialect): Checker & Readonly<{ dispose(): Promise<void> }> {
+  const linter = new LocalLinter({ binary: binaryInlined, dialect });
+  return Object.freeze({
+    async lint(text: string): Promise<readonly WritingIssue[]> {
+      const groups = await linter.organizedLints(text, { language: 'plaintext' });
+      // Only the fields the benchmarks read are filled in.
+      return Object.entries(groups).flatMap(([ruleId, lints]) => lints.map((lint) => {
+        const span = lint.span();
+        const kind = lint.lint_kind().toLowerCase();
+        return {
+          id: `${ruleId}:${span.start}`,
+          ruleId,
+          category: kind === 'spelling' || kind === 'typo' ? 'spelling' : 'grammar',
+          range: { start: span.start, end: span.end },
+          originalText: text.slice(span.start, span.end),
+          replacements: lint.suggestions().map((suggestion) => suggestion.get_replacement_text()),
+        } as unknown as WritingIssue;
+      }));
+    },
+    dispose: () => linter.dispose(),
+  });
+}
+
 async function evaluateAll(suite: Suite): Promise<void> {
   await evaluateWordList(suite, 'birkbeck', 'missp.dat', suite.british);
   await evaluateWordList(suite, 'wikipedia', 'wikipedia.dat', suite.american);
@@ -570,6 +602,14 @@ afterAll(async () => {
 describe('real-world benchmarks', () => {
   it('reports spelling, grammar, false-alarm, and speed results', async () => {
     await evaluateAll(Object.freeze({ out: report, american, british, holdoutOnly: false }));
+    const harper = { american: plainHarperChecker(Dialect.American), british: plainHarperChecker(Dialect.British) };
+    const harperOut: Report = { version: harperVersion };
+    report.harper = harperOut;
+    try {
+      await evaluateAll(Object.freeze({ out: harperOut, ...harper, holdoutOnly: true }));
+    } finally {
+      await Promise.all([harper.american.dispose(), harper.british.dispose()]);
+    }
     const jar = findLanguageToolJar();
     if (jar === null) {
       report.languagetool = { skipped: `missing languagetool-server.jar in ${languageToolDirectory}` };

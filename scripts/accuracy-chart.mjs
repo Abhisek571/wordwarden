@@ -6,17 +6,20 @@ const [reportPath, outArg] = process.argv.slice(2);
 if (reportPath === undefined) throw new TypeError('Expected the path of a benchmark report.');
 const report = JSON.parse(readFileSync(reportPath, 'utf8'));
 const other = report.languagetool;
+// Harper on its own, as the harper.js package ships it.
+const harper = report.harper;
 
 const BLUE = '#1e6fd9';
 const GREY = '#9a9893';
+const TEAL = '#2a9d8f';
 // Spelling sets share three bars, plus LanguageTool's "correct word first" when the report has it.
 // Holbrook has no tune/holdout split, so all of it is shown.
 const SPELLING = [
-  ['Typing test slips', report.aalto?.holdout, other?.aalto?.holdout],
-  ['Tweets', report.twitter?.holdout, other?.twitter?.holdout],
-  ['Wikipedia edits', report.wikipedia?.holdout, other?.wikipedia?.holdout],
-  ['Children and students', report.birkbeck?.holdout, other?.birkbeck?.holdout],
-  ['Children\'s writing', report.holbrook?.taggedErrors, other?.holbrook?.taggedErrors],
+  ['Typing test slips', report.aalto?.holdout, other?.aalto?.holdout, harper?.aalto?.holdout],
+  ['Tweets', report.twitter?.holdout, other?.twitter?.holdout, harper?.twitter?.holdout],
+  ['Wikipedia edits', report.wikipedia?.holdout, other?.wikipedia?.holdout, harper?.wikipedia?.holdout],
+  ['Children and students', report.birkbeck?.holdout, other?.birkbeck?.holdout, harper?.birkbeck?.holdout],
+  ['Children\'s writing', report.holbrook?.taggedErrors, other?.holbrook?.taggedErrors, harper?.holbrook?.taggedErrors],
 ].filter(([, rates]) => typeof rates?.detectedPct === 'number');
 const SPELLING_BARS = [
   ['detectedPct', 'Caught', '#2f7d5b'],
@@ -25,15 +28,17 @@ const SPELLING_BARS = [
 ];
 const jfleg = report['jfleg-holdout'];
 const jflegOther = other?.['jfleg-holdout'];
-// [label, value, colour, LanguageTool's value for the same measure, note after the value]
+const jflegHarper = harper?.['jfleg-holdout'];
+// [label, value, colour, LanguageTool's value for the same measure, note after the value, Harper's value]
 const GRAMMAR = jfleg?.learnerText === undefined ? [] : [
-  ['Sentences with mistakes that get flagged', jfleg.learnerText.sentenceRecallPct, '#b45309'],
-  ['Fixes that move the text closer to a human correction', jfleg.learnerText.fixPrecisionPct, '#e0a458', jflegOther?.learnerText?.fixPrecisionPct],
-  ['Correct sentences wrongly flagged', jfleg.cleanText.flaggedSentencesPct, '#8a8884', jflegOther?.cleanText?.flaggedSentencesPct, 'lower is better'],
+  ['Sentences with mistakes that get flagged', jfleg.learnerText.sentenceRecallPct, '#b45309', undefined, '', jflegHarper?.learnerText?.sentenceRecallPct],
+  ['Fixes that move the text closer to a human correction', jfleg.learnerText.fixPrecisionPct, '#e0a458', jflegOther?.learnerText?.fixPrecisionPct, '', jflegHarper?.learnerText?.fixPrecisionPct],
+  ['Correct sentences wrongly flagged', jfleg.cleanText.flaggedSentencesPct, '#8a8884', jflegOther?.cleanText?.flaggedSentencesPct, 'lower is better', jflegHarper?.cleanText?.flaggedSentencesPct],
 ];
 if (SPELLING.length === 0) throw new Error('The report has no spelling results to draw.');
 const hasOther = SPELLING.some(([, , theirs]) => typeof theirs?.topOnePct === 'number')
   || GRAMMAR.some(([, , , theirs]) => typeof theirs === 'number');
+const hasHarper = SPELLING.some(([, , , plain]) => typeof plain?.topOnePct === 'number');
 
 const ink = '#1d1d1b';
 const muted = '#6b6a66';
@@ -71,20 +76,24 @@ const legend = (y, items) => {
 const rowLabel = (top, bottom, label) => {
   parts.push(`<text x="${left - 14}" y="${(top + bottom) / 2 + 5}" font-size="14" font-weight="600" fill="${ink}" text-anchor="end">${label}</text>`);
 };
-const otherLegend = hasOther ? [['LanguageTool, same measure', GREY]] : [];
+const otherLegend = [
+  ...(hasOther ? [['LanguageTool, same measure', GREY]] : []),
+  ...(hasHarper ? [['Harper alone, same measure', TEAL]] : []),
+];
 
 let y = 92;
 parts.push(`<text x="24" y="38" font-size="20" font-weight="700" fill="${ink}">Accuracy</text>`);
-parts.push(`<text x="24" y="60" font-size="13" fill="${muted}">Held-out test data, not used for tuning. Grey bars: LanguageTool, latest version at the time of this release, default setup.</text>`);
+parts.push(`<text x="24" y="60" font-size="13" fill="${muted}">Held-out test data, not used for tuning. Grey: LanguageTool, latest version, default setup. Teal: Harper alone, as harper.js ships it.</text>`);
 parts.push(`<text x="24" y="${y}" font-size="14" font-weight="700" fill="${ink}">Spelling</text>`);
 y += 18;
 const spellingTop = y;
-for (const [label, rates, theirs] of SPELLING) {
+for (const [label, rates, theirs, plain] of SPELLING) {
   const top = y;
   for (const [field, , color] of SPELLING_BARS) {
     y = bar(y, Number(rates[field]), color);
     // LanguageTool's bar sits right under the one it compares with.
     if (field === 'topOnePct' && typeof theirs?.topOnePct === 'number') y = bar(y, Number(theirs.topOnePct), GREY);
+    if (field === 'topOnePct' && typeof plain?.topOnePct === 'number') y = bar(y, Number(plain.topOnePct), TEAL);
   }
   rowLabel(top, y - barGap, label);
   y += groupGap - barGap;
@@ -97,9 +106,10 @@ if (GRAMMAR.length > 0) {
   parts.push(`<text x="24" y="${y}" font-size="14" font-weight="700" fill="${ink}">Grammar</text>`);
   y += 18;
   const grammarTop = y;
-  for (const [, value, color, theirs, note] of GRAMMAR) {
+  for (const [, value, color, theirs, note, plain] of GRAMMAR) {
     y = bar(y, Number(value), color, note);
     if (typeof theirs === 'number') y = bar(y, Number(theirs), GREY);
+    if (typeof plain === 'number') y = bar(y, Number(plain), TEAL);
   }
   rowLabel(grammarTop, y - barGap, 'Learner essays');
   grid(grammarTop - 8, y - barGap + 8);

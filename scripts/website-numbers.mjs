@@ -14,19 +14,24 @@ const round = (value) => (typeof value === 'number' ? Math.round(value * 10) / 1
 
 function accuracy() {
   const lt = report.languagetool ?? {};
+  // Harper on its own, as the harper.js package ships it.
+  const harper = report.harper ?? {};
   // Holbrook has no tune/holdout split, so all of it is used, as in the accuracy chart.
   const spellingSet = (name, part) => ({
     caught: round(report[name]?.[part]?.detectedPct),
     topOne: round(report[name]?.[part]?.topOnePct),
     topThree: round(report[name]?.[part]?.topThreePct),
     languageTool: round(lt[name]?.[part]?.topOnePct),
+    harper: round(harper[name]?.[part]?.topOnePct),
   });
   const jfleg = report['jfleg-holdout'];
   const ltJfleg = lt['jfleg-holdout'];
+  const harperJfleg = harper['jfleg-holdout'];
   return {
     version,
     date: new Date().toISOString().slice(0, 10),
     languageToolVersion: typeof lt.version === 'string' ? lt.version : null,
+    harperVersion: typeof harper.version === 'string' ? harper.version : null,
     spelling: {
       aalto: spellingSet('aalto', 'holdout'),
       twitter: spellingSet('twitter', 'holdout'),
@@ -35,9 +40,21 @@ function accuracy() {
       holbrook: spellingSet('holbrook', 'taggedErrors'),
     },
     grammar: {
-      fixes: { wordwarden: round(jfleg?.learnerText?.fixPrecisionPct), languageTool: round(ltJfleg?.learnerText?.fixPrecisionPct) },
-      falseAlarms: { wordwarden: round(jfleg?.cleanText?.flaggedSentencesPct), languageTool: round(ltJfleg?.cleanText?.flaggedSentencesPct) },
-      recall: { wordwarden: round(jfleg?.learnerText?.sentenceRecallPct), languageTool: round(ltJfleg?.learnerText?.sentenceRecallPct) },
+      fixes: {
+        wordwarden: round(jfleg?.learnerText?.fixPrecisionPct),
+        languageTool: round(ltJfleg?.learnerText?.fixPrecisionPct),
+        harper: round(harperJfleg?.learnerText?.fixPrecisionPct),
+      },
+      falseAlarms: {
+        wordwarden: round(jfleg?.cleanText?.flaggedSentencesPct),
+        languageTool: round(ltJfleg?.cleanText?.flaggedSentencesPct),
+        harper: round(harperJfleg?.cleanText?.flaggedSentencesPct),
+      },
+      recall: {
+        wordwarden: round(jfleg?.learnerText?.sentenceRecallPct),
+        languageTool: round(ltJfleg?.learnerText?.sentenceRecallPct),
+        harper: round(harperJfleg?.learnerText?.sentenceRecallPct),
+      },
     },
   };
 }
