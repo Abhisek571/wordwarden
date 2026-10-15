@@ -41,7 +41,7 @@
     "@types/nspell": "2.1.6",
     "@types/react": "19.3.0",
     "@types/react-dom": "19.3.0",
-    "happy-dom": "20.14.6",
+    "happy-dom": "21.0.1",
     "harper.js": "2.10.0",
     "typescript": "7.0.2",
     "vite": "8.3.4",
