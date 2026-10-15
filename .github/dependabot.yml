@@ -1,6 +1,5 @@
 # Monthly update pull requests. Minor and patch updates come together in one pull request; each major
-# version comes on its own. harper.js is left out: the extension ships a patched Harper engine built for
-# one harper.js version, so updating it means rebuilding that engine (see vendor/harper/README.md).
+# version comes on its own.
 version: 2
 updates:
   - package-ecosystem: npm
@@ -11,9 +10,6 @@ updates:
       packages:
         patterns: ['*']
         update-types: [minor, patch]
-        exclude-patterns: [harper.js]
-    ignore:
-      - dependency-name: harper.js
     open-pull-requests-limit: 10
   - package-ecosystem: github-actions
     directory: /

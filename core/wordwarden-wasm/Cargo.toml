@@ -1,0 +1,24 @@
+[package]
+name = "wordwarden-wasm"
+version = "0.1.0"
+edition = "2024"
+description = "The WebAssembly interface of Wordwarden core."
+license = "Apache-2.0"
+repository = "https://github.com/Abhisek571/wordwarden"
+publish = false
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+console_error_panic_hook = "0.1.7"
+getrandom = { version = "0.3.4", default-features = false, features = ["wasm_js"] }
+serde = { version = "1.0.228", features = ["derive"] }
+serde-wasm-bindgen = "0.6.5"
+wasm-bindgen = "0.2.97"
+wordwarden-core = { path = "../wordwarden-core" }
+
+# The extension gives the engine file's location when it loads the engine, so the generated JavaScript does not need
+# its own (which bundlers would pick up and copy).
+[package.metadata.wasm-pack.profile.release.wasm-bindgen]
+omit-default-module-path = true

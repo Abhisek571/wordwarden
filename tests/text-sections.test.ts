@@ -3,7 +3,7 @@ import { createAnalysisSections, rebaseSectionRange } from '#/engines/text-secti
 
 describe('long-text analysis sections', () => {
   it('splits long prose at logical boundaries and maps local ranges back exactly', () => {
-    const text = `${'Opening words, but '.repeat(12)}we was walking around for nearly two hour, so someone tell us the news.`;
+    const text = `${'Opening words, but '.repeat(30)}we was walking around for nearly two hour, so someone tell us the news.`;
     const sections = createAnalysisSections(text);
     const section = sections.find((candidate) => candidate.text.includes('we was'));
 

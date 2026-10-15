@@ -13,20 +13,22 @@ export type WordContext = Readonly<{
 }>;
 
 export type SpellingRanker = Readonly<{
-  rank(token: string, harperCandidates: readonly string[], context?: WordContext): readonly string[];
+  rank(token: string, coreCandidates: readonly string[], context?: WordContext): readonly string[];
   hasPrefixCompletion(token: string): boolean;
+  /** Adds personal words, as if they had been given when the ranker was made. */
+  addWords(words: readonly string[]): void;
   wordPairs: WordPairs;
 }>;
 
 export function rankIssueReplacements(
   category: IssueCategory,
   token: string,
-  harperCandidates: readonly string[],
+  coreCandidates: readonly string[],
   spellingRanker: SpellingRanker,
   context: WordContext = Object.freeze({}),
 ): readonly string[] {
-  if (category === 'spelling') return spellingRanker.rank(token, harperCandidates, context);
-  return Object.freeze([...harperCandidates]);
+  if (category === 'spelling') return spellingRanker.rank(token, coreCandidates, context);
+  return Object.freeze([...coreCandidates]);
 }
 
 type FrequencyEntry = Readonly<{
@@ -144,7 +146,7 @@ function lowerBound(values: readonly string[], target: string): number {
 }
 
 // Optimal string alignment distance: a swap of two adjacent letters ("teh") is one typo.
-function editDistance(source: string, target: string): number {
+export function editDistance(source: string, target: string): number {
   let beforePrevious = new Array<number>(target.length + 1).fill(0);
   let previous = Array.from({ length: target.length + 1 }, (_, index) => index);
   let current = new Array<number>(target.length + 1);
@@ -227,7 +229,7 @@ function keyPosition(letter: string): Readonly<{ row: number; x: number }> | nul
   return row < 0 ? null : Object.freeze({ row, x: column + row * 0.5 });
 }
 
-function areNeighbourKeys(left: string, right: string): boolean {
+export function areNeighbourKeys(left: string, right: string): boolean {
   const a = keyPosition(left);
   const b = keyPosition(right);
   return a !== null && b !== null && left !== right &&
@@ -357,6 +359,8 @@ function slipWeight(token: string, candidate: string): number {
   return weight;
 }
 
+const RANK_CACHE_SIZE = 2000;
+
 const CONTEXT_FLOOR = 0.01;
 const CONTEXT_CEILING = 100;
 
@@ -404,25 +408,58 @@ export function createSpellingRankerFromData(
   wordPairs: WordPairs = EMPTY_WORD_PAIRS,
 ): SpellingRanker {
   const checker = nspell(dictionary.aff, dictionary.dic);
-  const personalCandidates = Object.freeze([...personalWords]);
+  const personalCandidates: string[] = [];
   const personalCompletionPrefixes = new Set<string>();
-  for (const word of personalWords) {
-    const normalizedWord = word.toLocaleLowerCase('en');
-    // Bundled brands must not make ordinary words such as “space” look unfinished.
-    if (!isPopularVocabularyWord(word)) {
-      for (let length = 2; length < normalizedWord.length; length += 1) {
-        personalCompletionPrefixes.add(normalizedWord.slice(0, length));
+  // The same misspelling next to the same words gets the same suggestions; most of a text is the same as at the
+  // last check. Most recently used last.
+  const rankCache = new Map<string, readonly string[]>();
+
+  function addWords(words: readonly string[]): void {
+    rankCache.clear();
+    for (const word of words) {
+      const normalizedWord = word.toLocaleLowerCase('en');
+      // Bundled brands must not make ordinary words such as “space” look unfinished.
+      if (!isPopularVocabularyWord(word)) {
+        for (let length = 2; length < normalizedWord.length; length += 1) {
+          personalCompletionPrefixes.add(normalizedWord.slice(0, length));
+        }
       }
+      personalCandidates.push(word);
+      checker.add(word);
+      checker.add(normalizedWord);
     }
-    checker.add(word);
-    checker.add(normalizedWord);
   }
+  addWords(personalWords);
   const frequencies = frequencyIndex(entries);
+
+  // Film subtitles leave out newer words ("smartphone", "covid") and contractions; news text, from the word pairs,
+  // has many of them, in about as many words of text.
+  function frequencyOf(word: string): number {
+    return frequencies.counts.get(word) ?? wordPairs.wordCount(word);
+  }
 
   function rank(
     token: string,
-    harperCandidates: readonly string[],
+    coreCandidates: readonly string[],
     context: WordContext = Object.freeze({}),
+  ): readonly string[] {
+    const key = [token, context.previous ?? '', context.next ?? '', ...coreCandidates].join('\u0000');
+    const cached = rankCache.get(key);
+    if (cached !== undefined) {
+      rankCache.delete(key);
+      rankCache.set(key, cached);
+      return cached;
+    }
+    const ranked = uncachedRank(token, coreCandidates, context);
+    rankCache.set(key, ranked);
+    if (rankCache.size > RANK_CACHE_SIZE) rankCache.delete(rankCache.keys().next().value ?? key);
+    return ranked;
+  }
+
+  function uncachedRank(
+    token: string,
+    coreCandidates: readonly string[],
+    context: WordContext,
   ): readonly string[] {
     const normalizedToken = token.toLocaleLowerCase('en');
     const ending = inflectionEnding(normalizedToken);
@@ -436,8 +473,10 @@ export function createSpellingRankerFromData(
       if (normalizedWord === undefined || !normalizedWord.startsWith(normalizedToken)) break;
       prefixCandidates.push(frequencies.displayWords.get(normalizedWord) ?? normalizedWord);
     }
+    // The frequency list has no words with apostrophes, so contractions ("don;t" → "don't") need only be in the
+    // dictionary.
     const editCandidates = singleEdits(normalizedToken).filter(
-      (edit) => frequencies.counts.has(edit) && checker.correct(edit),
+      (edit) => (frequencyOf(edit) > 0 || edit.includes("'")) && checker.correct(edit),
     );
     const irregularPast = IRREGULAR_PAST_TENSES.get(normalizedToken);
     // Personal and bundled words are offered only for near misses, never for unrelated typos.
@@ -461,8 +500,7 @@ export function createSpellingRankerFromData(
       ...(irregularPast === undefined ? [] : [irregularPast]),
       ...nearPersonal,
       ...prefixCandidates,
-      ...checker.suggest(normalizedToken),
-      ...harperCandidates,
+      ...coreCandidates,
       ...editCandidates.map((edit) => frequencies.displayWords.get(edit) ?? edit),
       ...soundCandidates.map((word) => frequencies.displayWords.get(word) ?? word),
     ];
@@ -486,7 +524,7 @@ export function createSpellingRankerFromData(
           keySlip: isNeighbourKeySlip(normalizedToken, normalizedCandidate),
           endingMatch: ending !== null && normalizedCandidate.endsWith(ending),
           byEar,
-          frequency: frequencies.counts.get(normalizedCandidate) ?? 0,
+          frequency: frequencyOf(normalizedCandidate),
           // Which letters slipped only tells mistypings apart; a word spelt by ear is judged by its sound.
           slip: distance <= 2 && !byEar ? slipWeight(normalizedToken, normalizedCandidate) : 0,
           context: contextFit(wordPairs, normalizedCandidate, context),
@@ -544,7 +582,7 @@ export function createSpellingRankerFromData(
     return completionCount >= 0 && (tokenCount === 0 || completionCount * 10 >= tokenCount);
   }
 
-  return Object.freeze({ rank, hasPrefixCompletion, wordPairs });
+  return Object.freeze({ rank, hasPrefixCompletion, addWords, wordPairs });
 }
 
 async function fetchText(path: string): Promise<string> {

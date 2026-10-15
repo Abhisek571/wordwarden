@@ -11,7 +11,7 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { createInterface } from 'node:readline';
 import type { EnglishDialect, WritingIssue } from '#/core/types';
-import { createHarperEngine, extraWordsPath, parseExtraWords, type HarperEngine } from '#/engines/harper-engine';
+import { createWordwardenCore, extraWordsPath, parseExtraWords, type WordwardenCore } from '#/engines/wordwarden-core';
 import { createSpellingRankerFromData } from '#/engines/spelling-ranker';
 import { parseWordPairs, type WordPairs } from '#/engines/word-pairs';
 
@@ -21,19 +21,19 @@ const DICTIONARY_STEMS: Readonly<Record<EnglishDialect, string>> = {
 };
 
 const dataDir = process.argv[2] ?? join(__dirname, 'data');
-const wasmUrl = `data:application/wasm;base64,${readFileSync(join(dataDir, 'harper_wasm_bg.wasm')).toString('base64')}`;
+const wasmUrl = `data:application/wasm;base64,${readFileSync(join(dataDir, 'wordwarden_core_bg.wasm')).toString('base64')}`;
 let frequencies: unknown;
 let wordPairs: WordPairs | undefined;
 
-const engines = new Map<EnglishDialect, Promise<HarperEngine>>();
+const engines = new Map<EnglishDialect, Promise<WordwardenCore>>();
 let personalWords: readonly string[] = [];
 
-function engineFor(dialect: EnglishDialect): Promise<HarperEngine> {
+function engineFor(dialect: EnglishDialect): Promise<WordwardenCore> {
   let engine = engines.get(dialect);
   if (engine === undefined) {
     engine = (async () => {
       const stem = DICTIONARY_STEMS[dialect];
-      const next = createHarperEngine({
+      const next = createWordwardenCore({
         wasmUrl,
         createSpellingRanker: async (_dialect, words) => {
           frequencies ??= JSON.parse(readFileSync(join(dataDir, 'spelling', 'frequencies.json'), 'utf8'));
@@ -71,7 +71,7 @@ function issueOut(issue: WritingIssue) {
   };
 }
 
-async function spell(engine: HarperEngine, word: string) {
+async function spell(engine: WordwardenCore, word: string) {
   const issues = await engine.lint(word);
   const typo = issues.find((issue) => issue.category === 'spelling' && issue.range.start === 0 && issue.range.end === word.length);
   return typo === undefined ? { valid: true, suggestions: [] } : { valid: false, suggestions: typo.replacements };

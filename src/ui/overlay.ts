@@ -244,7 +244,7 @@ function spacingChange(original: string, replacement: string): SpacingChange | n
   return { change: 'Different space', action: 'Use a normal space' };
 }
 
-// Harper's spelling message only restates the word; the preview already shows the change.
+// The core's spelling message only restates the word; the preview already shows the change.
 function issueExplanation(issue: WritingIssue): string | null {
   return issue.category === 'spelling' ? null : issue.message;
 }
@@ -535,9 +535,11 @@ export function createTypeCheckOverlay(actions: OverlayActions): TypeCheckOverla
         rect.bottom > bounds.top + 1 && rect.top < bounds.bottom - 1 &&
         rect.right > bounds.left && rect.left < bounds.right
       );
-    for (const issue of issues) {
+    // Measured before any underline is added, so the page is laid out once rather than once per issue.
+    const issueRects = adapter.rangesToRects(issues.map((issue) => issue.range));
+    for (const [index, issue] of issues.entries()) {
       if (issue.id === pinnedIssueId) pinnedIssueFound = true;
-      const rects = adapter.rangeToRects(issue.range);
+      const rects = issueRects[index] ?? [];
       let pinnedRect: DOMRect | undefined;
       for (const rect of rects) {
         if (rect.width === 0 || rect.height === 0 || !visible(rect)) continue;

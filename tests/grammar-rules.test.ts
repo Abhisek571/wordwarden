@@ -16,7 +16,7 @@ function issue(
 ): WritingIssue {
   return Object.freeze({
     id,
-    source: 'harper',
+    source: 'core',
     ruleId: id,
     range: Object.freeze({ start, end }),
     category,
@@ -28,7 +28,7 @@ function issue(
 }
 
 describe('supplemental grammar rules', () => {
-  it('finds the high-confidence grammar errors Harper misses in the reported sentence', () => {
+  it('finds the high-confidence grammar errors the core misses in the reported sentence', () => {
     const issues = lintSupplementalGrammar(example);
     const findings = issues.map((finding) => ({
       range: finding.range,

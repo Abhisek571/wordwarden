@@ -19,7 +19,7 @@ export type IssueCategory =
 
 export type WritingIssue = Readonly<{
   id: string;
-  source: 'harper' | 'typecheck';
+  source: 'core' | 'typecheck';
   ruleId: string;
   range: TextRange;
   category: IssueCategory;
@@ -41,6 +41,7 @@ export interface EditorAdapter {
   readonly id: string;
   readonly element: HTMLElement;
   capture(revision: number): EditorSnapshot;
-  rangeToRects(range: TextRange): readonly DOMRect[];
+  /** The boxes of each range's text on screen, measured together so the page is laid out only once. */
+  rangesToRects(ranges: readonly TextRange[]): readonly (readonly DOMRect[])[];
   applySuggestion(range: TextRange, replacement: string, revision: number): Promise<ApplyResult>;
 }

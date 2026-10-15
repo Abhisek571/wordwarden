@@ -35,6 +35,16 @@ describe('contenteditable text model', () => {
     expect(rangeForOffsets(root, { start, end: start + 4 })?.toString()).toBe('bold');
   });
 
+  it('reads only up to a given text node with the same offsets as the whole text', () => {
+    const root = editable('<div>First <b>line</b>.</div><div>Second <i>wrods</i> here.</div><p>Last.</p>');
+    const whole = buildTextModel(root);
+    for (const segment of whole.segments) {
+      const partial = buildTextModel(root, segment.node);
+      expect(partial.segments.at(-1)).toEqual(segment);
+      expect(whole.text.startsWith(partial.text)).toBe(true);
+    }
+  });
+
   it('declines ranges that cross a synthetic break or leave the text', () => {
     const root = editable('<div>end</div><div>start</div>');
     expect(rangeForOffsets(root, { start: 2, end: 5 })).toBeNull();

@@ -11,6 +11,8 @@ const PAGE_STATUS_TIMEOUT_MS = 1500;
 // Started on the first check. The browser frees it with the rest of the background after a short idle time.
 const engine = createEngineService();
 let settingsWriteTail: Promise<void> = Promise.resolve();
+// Settings as last read, for checks, which need them each time. Forgotten whenever stored settings change.
+let settingsForChecks: Promise<TypeCheckSettings> | null = null;
 let errorWriteTail: Promise<void> = Promise.resolve();
 
 // One at a time, so two errors arriving together are both kept. A failure to record is not reported again.
@@ -34,9 +36,21 @@ function settingsEqual(left: TypeCheckSettings, right: TypeCheckSettings): boole
 }
 
 function enqueueSettingsWrite<T>(operation: () => Promise<T>): Promise<T> {
-  const result = settingsWriteTail.then(operation);
+  const result = settingsWriteTail.then(operation).finally(forgetSettings);
   settingsWriteTail = result.then(() => undefined, () => undefined);
   return result;
+}
+
+function forgetSettings(): void {
+  settingsForChecks = null;
+}
+
+function checkSettings(): Promise<TypeCheckSettings> {
+  settingsForChecks ??= loadSettings().catch((error: unknown) => {
+    forgetSettings();
+    throw error;
+  });
+  return settingsForChecks;
 }
 
 export async function handleRequest(request: unknown): Promise<RuntimeResponse> {
@@ -92,7 +106,7 @@ export async function handleRequest(request: unknown): Promise<RuntimeResponse> 
   }
   if (request.type === 'engine:keep-alive') return Object.freeze({ ok: true });
   if (request.type === 'engine:lint') {
-    const issues = await engine.lint(request.text, await loadSettings());
+    const issues = await engine.lint(request.text, await checkSettings());
     return Object.freeze({ ok: true, issues });
   }
   if (request.type === 'data:clear') {
@@ -121,6 +135,9 @@ export async function handleRequest(request: unknown): Promise<RuntimeResponse> 
 }
 
 export default defineBackground(() => {
+  browser.storage.onChanged.addListener((_changes, areaName) => {
+    if (areaName === 'local') forgetSettings();
+  });
   browser.runtime.onMessage.addListener((request: unknown) =>
     handleRequest(request).catch((error: unknown): RuntimeResponse => {
       const message = error instanceof Error ? error.message : String(error);

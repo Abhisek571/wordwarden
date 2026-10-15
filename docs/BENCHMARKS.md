@@ -39,10 +39,10 @@ Missing LanguageTool is skipped.
 
 ## Comparison with Harper on its own
 
-Harper is the grammar engine Wordwarden builds on. The benchmarks also run it on its own, on the holdout halves,
-the way the `harper.js` package ships it: its own engine file, dictionary and default rules, without
-Wordwarden's spelling ranker, word lists, extra rules or engine patch. The difference shows what Wordwarden
-adds on top. Nothing needs downloading; it uses the installed `harper.js`.
+Wordwarden core was built from Harper. The benchmarks also run Harper on its own, on the holdout halves, the way
+the `harper.js` package ships it: its own engine file, dictionary and default rules, without Wordwarden's
+spelling ranker, word lists, extra rules or engine changes. The difference shows what Wordwarden adds. Nothing
+needs downloading; it uses the installed `harper.js`.
 
 ## Resource use
 
@@ -58,7 +58,9 @@ LanguageTool, for bigger releases or by hand.
   to its first answer. CPU time is summed over all cores.
 - **Check times:** Wordwarden through the extension's own check message, LanguageTool through its HTTP API.
   Both get 3 warm-up checks and a 5-second pause (so Java compiling hot code is not counted), then 30 timed
-  checks. Time is the median; CPU per check is the average, over all processes involved.
+  checks. Every check numbers each sentence afresh, so it is new text to both: Wordwarden keeps the findings
+  of text that did not change, and the same text again would take about a millisecond. Time is the median; CPU
+  per check is the average, over all processes involved.
 - **LanguageTool:** the Java process serving the port, default setup without the n-gram data. Its memory
   varies by a few hundred MB between runs as Java collects garbage. Its browser extension, which a self-hosted
   setup also needs, is not counted.
@@ -81,7 +83,8 @@ LanguageTool, for bigger releases or by hand.
   (word edit distance) to at least one human correction. `fixPrecisionPct` is the main precision
   number; `sentenceRecallPct` is the share of sentences needing edits that get any flag. `dev` is tune,
   `test` is holdout.
-- **Speed:** median time to check ~500 words. Target: under 100 ms.
+- **Speed:** median time to check ~500 words the checker has not seen (seven different texts, after one
+  warm-up). Before 2026-10-15 it timed the same text seven times. Target: under 100 ms.
 
 ## Rules
 
@@ -101,6 +104,48 @@ LanguageTool, for bigger releases or by hand.
 - [ ] Suggestion card near the bottom of the window opens above the word.
 - [ ] Turn the site off in the popup: underlines disappear without a reload.
 
+## Changes — 2026-10-15
+
+Speed and memory work, with a few accuracy changes measured alongside. Local runs of Wordwarden only
+(LanguageTool and plain Harper were not rerun); holdout numbers, before → after.
+
+- **Spelling candidates.** nspell's `suggest()` took about 70% of each check; it is gone. The core now hands the
+  ranker up to ten candidates instead of three, one-letter edits may produce contractions ("don;t" → don't),
+  and words missing from the subtitle frequencies use their count in the news text of `pairs.bin`.
+- **The core's four-edit search** compares the word with each dictionary word, using a bit-vector form of the
+  edit distance, instead of building a 64 MB automaton: 8–10 ms per unknown word, with the same results.
+- **Names.** An unknown word with a capital in mid-sentence is taken for a name unless its best suggestion is
+  within two edits and starts with the same letter or one next to it on the keyboard.
+- **Sections** are up to 400 characters (were 180), so fewer sentences are cut before the core sees them.
+  The core's `LongSentences`, which the short sections had kept from firing, is muted.
+- **Muted core rules** were all switched on once and read off the per-rule table: on the dev set none fixed
+  more than a third of what it flagged, and together they flagged 116 clean sentences against 3 helpful fixes,
+  so they stay off.
+- **Wordwarden core.** The engine's source is now in `core/`, with its own interface instead of `harper.js`. It
+  computes the noun-phrase network directly instead of through the Burn library (the same scores to the bit),
+  and tries each pattern rule only where its first word is. `RegularIrregulars` now gives "chose" before
+  "chosen" instead of in random order; on 5,002 texts that is the only difference in what the core finds.
+
+| Benchmark | Detected | Top-1 | Top-3 |
+|---|---|---|---|
+| Birkbeck | 91.5% | 44.8% → 45.0% | 52.1% → 53.6% |
+| Wikipedia | 98.8% | 90.7% | 96.0% → 96.3% |
+| Typing slips | 68.2% → 67.5% | 51.9% → 52.8% | 58.3% → 58.4% |
+| Tweets | 88.8% | 64.6% → 65.0% | 73.1% → 74.5% |
+| Holbrook | 59.7% → 59.4% | 30.1% → 30.5% | 36.5% → 37.7% |
+
+Holbrook spelling precision 84.1% → 86.3%. JFLEG: fixes that help 65.5% → 66.4%, sentences needing edits
+that get a flag 64.6% (same), clean sentences flagged 6.5% → 5.9%. The lower detection on typing slips and
+Holbrook is the names rule: slips in names are no longer flagged, nor are correct names.
+
+Speed, in Node, old code against new run alternately on the same busy computer: a first check of ~500 new
+words used about 625 → 205 ms of CPU, a check after changing one word 560 → 10 ms, the same text again 550 →
+0.5 ms, and adding a dictionary word 270 → 10 ms (it used to rebuild the engine). The core work then took a
+check of ~500 new words from about 75 to 25 ms, about 20 ms of it in the core (60 ms before), and left every
+accuracy number above unchanged. The speed benchmark, which now times unseen text, gives 29 ms (80 ms before the
+core work). The core's memory is 39 MB after start-up instead of 125 MB, and 45 MB instead of 221 MB after 300
+sentences ([core](../core/README.md)).
+
 ## Changes — 2026-10-12
 
 Five accuracy changes, measured together by the Accuracy workflow (the chart in the README is the
@@ -108,8 +153,8 @@ Five accuracy changes, measured together by the Accuracy workflow (the chart in 
 
 - **Per-rule precision table.** The JFLEG part of the benchmark now reports, for each rule, its flags,
   helpful fixes and flags on clean text, with examples. Rules were chosen from the dev set only.
-- **Grammar rules muted or narrowed.** Twelve Harper rules that fired mostly on clean text and almost
-  never helped are off (`MUTED_HARPER_RULES` in `harper-engine.ts`). `CompoundSubjectAgreement` needs a
+- **Grammar rules muted or narrowed.** Twelve core rules that fired mostly on clean text and almost
+  never helped are off (`MUTED_CORE_RULES` in `wordwarden-core.ts`). `CompoundSubjectAgreement` needs a
   personal pronoun on one side, `SingularSubjectHave` skips modals, adverbs and relatives after the
   determiner, and `IntroductoryComma` keeps only sentence-initial "however". Local dev-set check, grammar
   rules only: fixes that help 51.9% → 66.5%, clean sentences flagged 12.1% → 7.6%, recall 63.0% → 60.0%.

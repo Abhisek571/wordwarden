@@ -1,0 +1,158 @@
+Lint:    Spelling (63 priority)
+Message: |
+       7 | My favourite color is blu.
+         |    ^~~~~~~~~ Did you mean to spell `favourite` this way?
+Suggest:
+  - Replace with: “favorite”
+  - Replace with: “favorites”
+
+
+
+Lint:    Capitalization (127 priority)
+Message: |
+       7 | My favourite color is blu.
+         |                       ^~~ The canonical dictionary spelling is title case: `Blu`.
+Suggest:
+  - Replace with: “Blu”
+
+
+
+Lint:    Spelling (63 priority)
+Message: |
+       7 | My favourite color is blu.
+         |                       ^~~ Did you mean to spell `blu` this way?
+Suggest:
+  - Replace with: “bl”
+  - Replace with: “blue”
+  - Replace with: “blur”
+  - Replace with: “Blu”
+  - Replace with: “bu”
+  - Replace with: “flu”
+  - Replace with: “baa”
+  - Replace with: “bad”
+  - Replace with: “bag”
+  - Replace with: “bah”
+
+
+
+Lint:    Spelling (63 priority)
+Message: |
+       8 | I must defend my honour!
+         |                  ^~~~~~ Did you mean to spell `honour` this way?
+Suggest:
+  - Replace with: “honor”
+  - Replace with: “hour”
+  - Replace with: “honer”
+  - Replace with: “honker”
+  - Replace with: “honorer”
+  - Replace with: “honors”
+  - Replace with: “concur”
+  - Replace with: “donor”
+  - Replace with: “contour”
+
+
+
+Lint:    Spelling (63 priority)
+Message: |
+       9 | I recognize that you recognise me.
+         |                      ^~~~~~~~~ Did you mean to spell `recognise` this way?
+Suggest:
+  - Replace with: “recognize”
+  - Replace with: “recognized”
+  - Replace with: “recognizer”
+  - Replace with: “recognizes”
+
+
+
+Lint:    Spelling (63 priority)
+Message: |
+      11 | I analyse how you infantilise me.
+         |   ^~~~~~~ Did you mean to spell `analyse` this way?
+Suggest:
+  - Replace with: “analyze”
+  - Replace with: “analyst”
+  - Replace with: “analyte”
+  - Replace with: “analysis”
+  - Replace with: “analyzer”
+  - Replace with: “analysts”
+  - Replace with: “analytes”
+  - Replace with: “analyzed”
+  - Replace with: “analyzes”
+
+
+
+Lint:    Spelling (63 priority)
+Message: |
+      11 | I analyse how you infantilise me.
+         |                   ^~~~~~~~~~~ Did you mean to spell `infantilise` this way?
+Suggest:
+  - Replace with: “infantilize”
+  - Replace with: “infantile”
+  - Replace with: “infanticide”
+  - Replace with: “infantilized”
+  - Replace with: “infantilizes”
+
+
+
+Lint:    Spelling (63 priority)
+Message: |
+      12 | Careful, traveller!
+         |          ^~~~~~~~~ Did you mean to spell `traveller` this way?
+Suggest:
+  - Replace with: “traveler”
+  - Replace with: “traveled”
+  - Replace with: “travelers”
+
+
+
+Lint:    Spelling (63 priority)
+Message: |
+      13 | At the centre of the theatre I dropped a litre of coke.
+         |        ^~~~~~ Did you mean to spell `centre` this way?
+Suggest:
+  - Replace with: “center”
+  - Replace with: “cent's”
+  - Replace with: “censure”
+  - Replace with: “cent”
+  - Replace with: “central”
+  - Replace with: “centric”
+  - Replace with: “century”
+  - Replace with: “contra”
+  - Replace with: “canter”
+  - Replace with: “censer”
+
+
+
+Lint:    Spelling (63 priority)
+Message: |
+      13 | At the centre of the theatre I dropped a litre of coke.
+         |                      ^~~~~~~ Did you mean to spell `theatre` this way?
+Suggest:
+  - Replace with: “theater”
+  - Replace with: “they're”
+  - Replace with: “there”
+  - Replace with: “theaters”
+  - Replace with: “sheathe”
+  - Replace with: “heater”
+  - Replace with: “cheater”
+
+
+
+Lint:    Spelling (63 priority)
+Message: |
+      13 | At the centre of the theatre I dropped a litre of coke.
+         |                                          ^~~~~ Did you mean to spell `litre` this way?
+Suggest:
+  - Replace with: “liter”
+  - Replace with: “lithe”
+  - Replace with: “lire”
+  - Replace with: “lite”
+  - Replace with: “lathe”
+  - Replace with: “lither”
+  - Replace with: “late”
+  - Replace with: “liar”
+  - Replace with: “lice”
+  - Replace with: “lie”
+
+
+

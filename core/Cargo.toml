@@ -1,0 +1,19 @@
+[workspace]
+members = ["wordwarden-core", "wordwarden-brill", "wordwarden-pos-utils", "wordwarden-wasm"]
+resolver = "2"
+
+[profile.test]
+opt-level = 1
+
+[profile.test.package."*"]
+opt-level = 3
+
+[profile.release]
+opt-level = 3
+panic = "abort"
+lto = "fat"
+
+# Release profile with debug info, for profiling.
+[profile.release-debug]
+inherits = "release"
+debug = 2

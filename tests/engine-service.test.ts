@@ -1,21 +1,22 @@
 import { describe, expect, it, vi } from 'vitest';
 import { DEFAULT_SETTINGS, mergeSettings } from '#/core/settings';
-import type { HarperEngine } from '#/engines/harper-engine';
+import type { WordwardenCore } from '#/engines/wordwarden-core';
 import { createEngineService } from '#/engines/engine-service';
 
-function fakeEngine(log: string[]): HarperEngine {
+function fakeEngine(log: string[]): WordwardenCore {
   let dialect = '';
   return Object.freeze({
     setup: vi.fn(async (next: string, words: readonly string[]) => {
       dialect = next;
       log.push(`setup ${next} ${words.join(',')}`);
     }),
+    addWords: vi.fn(async (words: readonly string[]) => { log.push(`add ${words.join(',')}`); }),
     lint: vi.fn(async (text: string) => {
       log.push(`lint ${dialect} ${text}`);
       return Object.freeze([]);
     }),
     dispose: vi.fn(async () => { log.push(`dispose ${dialect}`); }),
-  }) as unknown as HarperEngine;
+  }) as unknown as WordwardenCore;
 }
 
 describe('shared engine service', () => {
@@ -32,7 +33,7 @@ describe('shared engine service', () => {
     expect(log).toEqual(['setup american ', 'lint american one', 'lint american two', 'lint american three']);
   });
 
-  it('replaces the engine when the dialect or dictionary changes', async () => {
+  it('replaces the engine when the dialect changes and adds new dictionary words to it', async () => {
     const log: string[] = [];
     const service = createEngineService(() => fakeEngine(log));
     await service.lint('a', DEFAULT_SETTINGS);
@@ -45,8 +46,23 @@ describe('shared engine service', () => {
     expect(log).toEqual([
       'setup american ', 'lint american a',
       'dispose american', 'setup british ', 'lint british b',
-      'dispose british', 'setup british Zorbleton', 'lint british c',
+      'add Zorbleton', 'lint british c',
       'lint british d',
+    ]);
+  });
+
+  it('replaces the engine when a word is removed or differs from one only in capitals', async () => {
+    const log: string[] = [];
+    const service = createEngineService(() => fakeEngine(log));
+    await service.lint('a', mergeSettings(DEFAULT_SETTINGS, { dictionary: ['Zorbleton'] }));
+    await service.lint('b', DEFAULT_SETTINGS);
+    await service.lint('c', mergeSettings(DEFAULT_SETTINGS, { dictionary: ['zorbleton'] }));
+    await service.lint('d', mergeSettings(DEFAULT_SETTINGS, { dictionary: ['Zorbleton', 'zorbleton'] }));
+    expect(log).toEqual([
+      'setup american Zorbleton', 'lint american a',
+      'dispose american', 'setup american ', 'lint american b',
+      'add zorbleton', 'lint american c',
+      'dispose american', 'setup american Zorbleton,zorbleton', 'lint american d',
     ]);
   });
 

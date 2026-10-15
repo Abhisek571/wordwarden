@@ -67,13 +67,14 @@ function copyMeasurementStyles(source: HTMLElement, target: HTMLElement): void {
   for (const property of properties) target.style[property] = style[property];
 }
 
+// One hidden copy of the field's text for all ranges: each copy made and measured on its own lays the page out again.
 function textControlRects(
   element: HTMLInputElement | HTMLTextAreaElement,
-  range: TextRange,
-): readonly DOMRect[] {
+  ranges: readonly TextRange[],
+): readonly (readonly DOMRect[])[] {
+  if (ranges.length === 0) return Object.freeze([]);
   const outer = document.createElement('div');
   const mirror = document.createElement('div');
-  const marker = document.createElement('span');
   const bounds = element.getBoundingClientRect();
 
   Object.assign(outer.style, {
@@ -104,17 +105,22 @@ function textControlRects(
     if (contentHeight > 0) mirror.style.lineHeight = `${contentHeight}px`;
   }
 
-  mirror.append(document.createTextNode(element.value.slice(0, range.start)));
-  marker.textContent = element.value.slice(range.start, range.end) || '\u200b';
-  mirror.append(marker, document.createTextNode(element.value.slice(range.end)));
+  const text = document.createTextNode(element.value);
+  mirror.append(text);
   outer.append(mirror);
   document.documentElement.append(outer);
-  const rects = Object.freeze(Array.from(marker.getClientRects(), (rect) => new DOMRect(
-    rect.x,
-    rect.y,
-    rect.width,
-    rect.height,
-  )));
+  const measured = document.createRange();
+  const rects = Object.freeze(ranges.map((range) => {
+    if (range.start < 0 || range.end < range.start || range.end > element.value.length) return Object.freeze([]);
+    measured.setStart(text, range.start);
+    measured.setEnd(text, range.end);
+    return Object.freeze(Array.from(measured.getClientRects(), (rect) => new DOMRect(
+      rect.x,
+      rect.y,
+      rect.width,
+      rect.height,
+    )));
+  }));
   outer.remove();
   return rects;
 }
@@ -237,14 +243,17 @@ export function createEditorAdapter(element: SupportedEditor): EditorAdapter {
       element instanceof HTMLInputElement || element instanceof HTMLTextAreaElement
         ? textControlSnapshot(element, revision)
         : contentEditableSnapshot(element, revision),
-    rangeToRects: (range: TextRange): readonly DOMRect[] => {
+    rangesToRects: (ranges: readonly TextRange[]): readonly (readonly DOMRect[])[] => {
       if (element instanceof HTMLInputElement || element instanceof HTMLTextAreaElement) {
-        return textControlRects(element, range);
+        return textControlRects(element, ranges);
       }
-      const domRange = rangeForOffsets(element, range);
-      return domRange === null
-        ? Object.freeze([])
-        : Object.freeze(Array.from(domRange.getClientRects()));
+      const model = buildTextModel(element);
+      return Object.freeze(ranges.map((range) => {
+        const domRange = rangeForOffsets(element, range, model);
+        return domRange === null
+          ? Object.freeze([])
+          : Object.freeze(Array.from(domRange.getClientRects()));
+      }));
     },
     applySuggestion: (
       range: TextRange,

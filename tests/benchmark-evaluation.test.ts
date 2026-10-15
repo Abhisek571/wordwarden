@@ -7,7 +7,7 @@ import { binaryInlined } from 'harper.js/binaryInlined';
 import { Dialect, LocalLinter } from 'harper.js';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import type { WritingIssue } from '#/core/types';
-import type { HarperEngine } from '#/engines/harper-engine';
+import type { WordwardenCore } from '#/engines/wordwarden-core';
 import { createProductionEngine } from './helpers/production-engine';
 
 const benchmarkDirectory = process.env.WORDWARDEN_BENCHMARK_DIR ?? 'E:/CODING/Wordwarden/benchmarks';
@@ -41,8 +41,8 @@ const RULE_EXAMPLES = 5;
 type Suite = Readonly<{ out: Report; american: Checker; british: Checker; holdoutOnly: boolean }>;
 
 const report: Report = {};
-let american: HarperEngine;
-let british: HarperEngine;
+let american: WordwardenCore;
+let british: WordwardenCore;
 let languageTool: ChildProcess | null = null;
 
 function emptyCounts(): Counts {
@@ -449,24 +449,32 @@ async function evaluateAalto(suite: Suite): Promise<void> {
   await evaluateInContext(suite, 'aalto', items);
 }
 
+// Each timed check is of text the checker has not seen: it keeps the findings of text that did not change.
 async function evaluateSpeed(suite: Suite): Promise<void> {
   const path = resolve(jflegDirectory, 'dev.ref0');
   if (!existsSync(path)) return;
   const sentences = (await readLines(path)).map(detokenize);
+  const texts: string[] = [];
   let text = '';
   for (const sentence of sentences) {
-    if (text.split(/\s+/u).length >= 500) break;
     text += `${sentence} `;
+    if (text.split(/\s+/u).length < 500) continue;
+    texts.push(text);
+    text = '';
+    if (texts.length === 8) break;
   }
-  await suite.american.lint(text);
+  const [warmUp, ...timed] = texts;
+  if (warmUp === undefined) return;
+  await suite.american.lint(warmUp);
   const timings: number[] = [];
-  for (let run = 0; run < 7; run += 1) {
+  for (const sample of timed) {
     const started = performance.now();
-    await suite.american.lint(text);
+    await suite.american.lint(sample);
     timings.push(performance.now() - started);
   }
   timings.sort((a, b) => a - b);
-  suite.out.speed = { words: text.split(/\s+/u).length - 1, medianMs: Math.round(timings[3] ?? 0) };
+  const words = Math.round(timed.reduce((sum, sample) => sum + sample.split(/\s+/u).length - 1, 0) / timed.length);
+  suite.out.speed = { words, medianMs: Math.round(timings[Math.floor(timings.length / 2)] ?? 0) };
 }
 
 function findLanguageToolJar(): string | null {

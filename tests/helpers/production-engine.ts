@@ -2,14 +2,14 @@ import { readFile } from 'node:fs/promises';
 import american from 'dictionary-en';
 import british from 'dictionary-en-gb';
 import frequencies from 'subtlex-word-frequencies';
-import { harperWasmUrl } from './harper-wasm';
+import { wordwardenCoreWasmUrl } from './wordwarden-core-wasm';
 import type { EnglishDialect } from '#/core/types';
 import {
-  createHarperEngine,
+  createWordwardenCore,
   extraWordsPath,
   parseExtraWords,
-  type HarperEngine,
-} from '#/engines/harper-engine';
+  type WordwardenCore,
+} from '#/engines/wordwarden-core';
 import { createSpellingRankerFromData } from '#/engines/spelling-ranker';
 import { parseWordPairs, type WordPairs } from '#/engines/word-pairs';
 
@@ -25,11 +25,11 @@ export async function readBundledWordPairs(): Promise<WordPairs> {
   return parseWordPairs(new Uint8Array(await readFile(new URL('../../public/spelling/pairs.bin', import.meta.url))));
 }
 
-/** The shipped engine (Harper, local rules, spelling ranker) with bundled data, outside the browser. */
-export async function createProductionEngine(dialect: EnglishDialect = 'american'): Promise<HarperEngine> {
+/** The shipped engine (the core, local rules, spelling ranker) with bundled data, outside the browser. */
+export async function createProductionEngine(dialect: EnglishDialect = 'american'): Promise<WordwardenCore> {
   const dictionary = dialect === 'british' ? british : american;
-  const engine = createHarperEngine(Object.freeze({
-    wasmUrl: harperWasmUrl,
+  const engine = createWordwardenCore(Object.freeze({
+    wasmUrl: wordwardenCoreWasmUrl,
     createSpellingRanker: async (_dialect, personalWords) => createSpellingRankerFromData(
       Object.freeze({ aff: decoder.decode(dictionary.aff), dic: decoder.decode(dictionary.dic) }),
       frequencies,

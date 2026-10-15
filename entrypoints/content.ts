@@ -342,10 +342,10 @@ export async function startTypeCheck(context: Readonly<{
     function scheduleAnalysis(adapter: EditorAdapter): void {
       if (invalidated) return;
       effects.cancel();
-      const snapshot = adapter.capture(revision);
       currentIssues = Object.freeze([]);
       overlay.showBadge(adapter.element.getBoundingClientRect(), 'checking', 0);
-      effects.schedule(LINT_DEBOUNCE_MS, () => void analyze(adapter, snapshot));
+      // The text is read once typing pauses, not on every key: in a rich editor reading it walks the whole field.
+      effects.schedule(LINT_DEBOUNCE_MS, () => void analyze(adapter, adapter.capture(revision)));
     }
 
     function activate(event: Event): void {

@@ -2,8 +2,8 @@ import { defineConfig } from 'wxt';
 import { existsSync, readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 
-// Harper's engine, built from a patched copy that uses less memory (see vendor/harper/README.md).
-const harperWasmPath = fileURLToPath(new URL('./vendor/harper/harper_wasm_bg.wasm', import.meta.url));
+// Wordwarden core, built from the Rust sources in core/ by scripts/build-core.mjs (see core/README.md).
+const wordwardenCoreWasmPath = fileURLToPath(new URL('./core/dist/wordwarden_core_bg.wasm', import.meta.url));
 const spellingRuntimeAssets = Object.freeze([
   Object.freeze({ fileName: 'spelling/en.aff', path: './node_modules/dictionary-en/index.aff' }),
   Object.freeze({ fileName: 'spelling/en.dic', path: './node_modules/dictionary-en/index.dic' }),
@@ -20,7 +20,7 @@ const spellingRuntimeAssets = Object.freeze([
 ]);
 const packageNoticeAssets = Object.freeze([
   Object.freeze({ fileName: 'THIRD_PARTY_NOTICES.txt', path: './THIRD_PARTY_NOTICES.md' }),
-  Object.freeze({ fileName: 'licenses/Apache-2.0.txt', path: './node_modules/harper.js/LICENSE' }),
+  Object.freeze({ fileName: 'licenses/Apache-2.0.txt', path: './core/LICENSE' }),
   Object.freeze({ fileName: 'licenses/React-MIT.txt', path: './node_modules/react/LICENSE' }),
   Object.freeze({ fileName: 'licenses/nspell-MIT.txt', path: './node_modules/nspell/license' }),
   Object.freeze({
@@ -77,13 +77,13 @@ export default defineConfig({
   vite: () => ({
     plugins: [
       {
-        name: 'typecheck-harper-wasm',
+        name: 'typecheck-wordwarden-core-wasm',
         apply: 'build',
         buildStart() {
           this.emitFile({
             type: 'asset',
-            fileName: 'harper_wasm_bg.wasm',
-            source: readFileSync(harperWasmPath),
+            fileName: 'wordwarden_core_bg.wasm',
+            source: readFileSync(wordwardenCoreWasmPath),
           });
           for (const asset of spellingRuntimeAssets) {
             const assetPath = fileURLToPath(new URL(asset.path, import.meta.url));

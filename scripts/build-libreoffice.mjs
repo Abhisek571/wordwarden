@@ -16,7 +16,7 @@ const TARGETS = {
 };
 // The same data files the browser extension ships (see wxt.config.ts).
 const ENGINE_DATA = {
-  'harper_wasm_bg.wasm': 'vendor/harper/harper_wasm_bg.wasm',
+  'wordwarden_core_bg.wasm': 'core/dist/wordwarden_core_bg.wasm',
   'spelling/en.aff': 'node_modules/dictionary-en/index.aff',
   'spelling/en.dic': 'node_modules/dictionary-en/index.dic',
   'spelling/en-au.aff': 'node_modules/dictionary-en-au/index.aff',

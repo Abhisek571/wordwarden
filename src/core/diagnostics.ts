@@ -162,7 +162,7 @@ export function createDiagnostics(
       sitesTurnedOff: settings.disabledSites.length,
     }),
     checker: Object.freeze({
-      grammar: `${GRAMMAR_RUNTIME.name} ${GRAMMAR_RUNTIME.version}`,
+      grammar: GRAMMAR_RUNTIME.name,
       webAssembly: environment.webAssemblyAvailable,
     }),
     recentErrors: Object.freeze([...environment.recentErrors]),

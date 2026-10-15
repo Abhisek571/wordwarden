@@ -1,6 +1,6 @@
 import type { WordPairs } from '#/engines/word-pairs';
 
-// Real words often typed for one another that Harper has no rule for (it already covers there/their/
+// Real words often typed for one another that the core has no rule for (it already covers there/their/
 // they're, then/than, to/too, were/where, its/it's, your/you're, quite/quiet, lose/loose and
 // weather/whether). A word is flagged only when the words either side fit the other member far better.
 const CONFUSION_SETS: readonly (readonly string[])[] = Object.freeze([

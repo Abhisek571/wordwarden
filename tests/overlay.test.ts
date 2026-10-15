@@ -5,7 +5,7 @@ import { DEFAULT_CUSTOM_UNDERLINES } from '#/core/settings';
 
 const issue: WritingIssue = Object.freeze({
   id: 'issue-1',
-  source: 'harper',
+  source: 'core',
   ruleId: 'SpellCheck',
   range: Object.freeze({ start: 0, end: 4 }),
   category: 'spelling',
@@ -25,7 +25,7 @@ function editorAdapter(element: HTMLElement): EditorAdapter {
         revision: 0,
         text: 'wors',
       }),
-    rangeToRects: () => Object.freeze([new DOMRect(10, 10, 40, 18)]),
+    rangesToRects: (ranges: readonly unknown[]) => ranges.map(() => Object.freeze([new DOMRect(10, 10, 40, 18)])),
     applySuggestion: () => Promise.resolve(Object.freeze({ applied: true, revision: 1 })),
   });
 }
@@ -383,7 +383,7 @@ describe('issue popover', () => {
     vi.spyOn(textarea, 'getBoundingClientRect').mockReturnValue(new DOMRect(0, 100, 300, 60));
     const overlay = createTypeCheckOverlay(Object.freeze({ apply: vi.fn(), ignoreAlways: vi.fn(), addWord: vi.fn() }));
     const scrolled = Object.freeze({ ...editorAdapter(textarea),
-      rangeToRects: (range: { start: number }) => Object.freeze([range.start === 0 ? new DOMRect(10, 20, 40, 18) : new DOMRect(10, 120, 40, 18)]) });
+      rangesToRects: (ranges: readonly { start: number }[]) => ranges.map((range) => Object.freeze([range.start === 0 ? new DOMRect(10, 20, 40, 18) : new DOMRect(10, 120, 40, 18)])) });
     overlay.renderIssues(scrolled, [issue, Object.freeze({ ...issue, id: 'issue-visible', range: Object.freeze({ start: 5, end: 9 }) })]);
     const shadow = capturedShadow as ShadowRoot | null;
     const marks = shadow?.querySelectorAll<HTMLElement>('[data-testid="issue-mark"]');
@@ -405,7 +405,7 @@ describe('issue popover', () => {
     const overlay = createTypeCheckOverlay(Object.freeze({ apply: vi.fn(), ignoreAlways: vi.fn(), addWord: vi.fn() }));
     const bottomAdapter = Object.freeze({
       ...editorAdapter(textarea),
-      rangeToRects: () => Object.freeze([new DOMRect(10, window.innerHeight - 40, 40, 18)]),
+      rangesToRects: (ranges: readonly unknown[]) => ranges.map(() => Object.freeze([new DOMRect(10, window.innerHeight - 40, 40, 18)])),
     });
     overlay.renderIssues(bottomAdapter, [issue]);
     const shadow = capturedShadow as ShadowRoot | null;

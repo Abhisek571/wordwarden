@@ -1,0 +1,54 @@
+use crate::{
+    Span, Token,
+    expr::{AsBoxedExpr, Expr, FirstWords},
+};
+
+/// An [`Expr`] that matches against tokens if and only if all of its children do.
+/// This can be useful for situations where you have multiple expressions that represent a grammatical
+/// error, but you need _all_ of them to match to be certain.
+///
+/// It will return the position of the farthest window.
+#[derive(Default)]
+pub struct All {
+    children: Vec<Box<dyn Expr>>,
+}
+
+impl All {
+    pub fn new(children: impl IntoIterator<Item = impl AsBoxedExpr>) -> Self {
+        Self {
+            children: children.into_iter().map(|e| e.into_boxed_expr()).collect(),
+        }
+    }
+
+    pub fn add(&mut self, e: impl Expr + 'static) {
+        self.children.push(Box::new(e));
+    }
+}
+
+impl Expr for All {
+    fn run(&self, cursor: usize, tokens: &[Token], source: &[char]) -> Option<Span<Token>> {
+        let mut longest: Option<Span<Token>> = None;
+
+        for expr in self.children.iter() {
+            let window = expr.run(cursor, tokens, source)?;
+
+            if let Some(longest_window) = longest {
+                if window.len() > longest_window.len() {
+                    longest = Some(window);
+                }
+            } else {
+                longest = Some(window);
+            }
+        }
+
+        longest
+    }
+
+    /// Every child has to match at the cursor, so the fewest first words of any of them will do.
+    fn first_words(&self) -> Option<FirstWords> {
+        self.children
+            .iter()
+            .filter_map(|child| child.first_words())
+            .min_by_key(Vec::len)
+    }
+}

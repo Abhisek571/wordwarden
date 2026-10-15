@@ -66,7 +66,7 @@ describe('local spelling ranker', () => {
     expect(ranker.rank('WORS', Object.freeze([]))[0]).toBe('WORDS');
   });
 
-  it('preserves uppercase input for ordinary titlecase Harper candidates', () => {
+  it('preserves uppercase input for ordinary titlecase core candidates', () => {
     const ranker = createSpellingRankerFromData(
       { aff: 'SET UTF-8', dic: '1\nhello' }, [], [],
     );
@@ -139,14 +139,14 @@ describe('local spelling ranker', () => {
     expect(ranker.hasPrefixCompletion('tomor')).toBe(true);
   });
 
-  it('keeps Harper grammar replacements in their original order', () => {
+  it('keeps core grammar replacements in their original order', () => {
     const ranker = createSpellingRankerFromData(
       dictionaryText(american),
       frequencies,
       Object.freeze([]),
     );
-    const harperCandidates = Object.freeze(['are', 'were']);
-    expect(rankIssueReplacements('grammar', 'is', harperCandidates, ranker)).toEqual([
+    const coreCandidates = Object.freeze(['are', 'were']);
+    expect(rankIssueReplacements('grammar', 'is', coreCandidates, ranker)).toEqual([
       'are',
       'were',
     ]);
@@ -164,15 +164,15 @@ describe('local spelling ranker with bundled frequencies', () => {
     ['Whne', ['Wine', 'Whee', 'Whine'], 'When'],
     ['daat', ['dart', 'daft', 'DAT'], 'data'],
     ['recieve', [], 'receive'],
-  ])('ranks a swapped-letter fix first: %s', (token, harper, expected) => {
-    expect(ranker.rank(token, harper)[0]).toBe(expected);
+  ])('ranks a swapped-letter fix first: %s', (token, candidates, expected) => {
+    expect(ranker.rank(token, candidates)[0]).toBe(expected);
   });
 
   it.each([
     ['workd', ['work', 'world', 'word'], 'worked'],
     ['dely', ['rely', 'duly', 'deny'], 'delay'],
-  ])('offers dictionary words one typo away: %s', (token, harper, expected) => {
-    expect(ranker.rank(token, harper)).toContain(expected);
+  ])('offers dictionary words one typo away: %s', (token, candidates, expected) => {
+    expect(ranker.rank(token, candidates)).toContain(expected);
   });
 
   it('keeps the most common one-typo word on the card', () => {

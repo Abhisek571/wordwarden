@@ -1,8 +1,8 @@
 # Third-Party Notices
 
-- Harper / `harper.js`: Apache License 2.0, Copyright Harper contributors. The bundled Harper engine
-  (`harper_wasm_bg.wasm`) is built from Harper 2.10.0 with small changes that reduce its memory use; the changes
-  are listed in `vendor/harper/wordwarden.patch` in the source code.
+- Harper: Apache License 2.0, Copyright Harper contributors. Wordwarden core, the bundled grammar engine
+  (`wordwarden_core_bg.wasm`, source in the `core` folder), is derived from Harper 2.10.0 and changed since; see
+  `core/NOTICE` in the source code.
 - Node.js, bundled in the LibreOffice add-on to run the checking engine: MIT License, Copyright Node.js
   contributors. Its full license is in the add-on's `licenses` folder.
 - WXT: MIT License, Copyright Aaron Klinker and contributors.

@@ -15,12 +15,14 @@ const BLOCK_ELEMENTS = new Set([
 /**
  * Editor text built from DOM text nodes. `<br>` and block boundaries add a synthetic
  * "\n" with no backing node; every other character maps to exactly one text node offset.
+ * With `stopAt`, only the text up to and including that text node is read.
  */
-export function buildTextModel(root: HTMLElement): TextModel {
+export function buildTextModel(root: HTMLElement, stopAt: Node | null = null): TextModel {
   const parts: string[] = [];
   const segments: TextSegment[] = [];
   let length = 0;
   let pendingBreak = false;
+  let stopped = false;
 
   function append(value: string, node: Text | null): void {
     if (pendingBreak && length > 0 && parts.at(-1)?.endsWith('\n') !== true) {
@@ -37,6 +39,7 @@ export function buildTextModel(root: HTMLElement): TextModel {
     if (node.nodeType === Node.TEXT_NODE) {
       const text = node as Text;
       if (text.data.length > 0) append(text.data, text);
+      if (node === stopAt) stopped = true;
       return;
     }
     if (node.nodeType !== Node.ELEMENT_NODE) return;
@@ -47,11 +50,17 @@ export function buildTextModel(root: HTMLElement): TextModel {
     }
     const isBlock = BLOCK_ELEMENTS.has(element.localName);
     if (isBlock) pendingBreak = true;
-    for (const child of element.childNodes) visit(child);
+    for (const child of element.childNodes) {
+      visit(child);
+      if (stopped) return;
+    }
     if (isBlock) pendingBreak = true;
   }
 
-  for (const child of root.childNodes) visit(child);
+  for (const child of root.childNodes) {
+    visit(child);
+    if (stopped) break;
+  }
   return Object.freeze({ text: parts.join(''), segments: Object.freeze(segments) });
 }
 
@@ -69,15 +78,16 @@ export function selectionOffset(root: HTMLElement): number | null {
   const selection = root.ownerDocument.getSelection();
   const node = selection?.anchorNode;
   if (selection === null || node === null || node === undefined || !root.contains(node)) return null;
-  const model = buildTextModel(root);
   const range = selection.getRangeAt(0);
+  // Only the text before the cursor decides its offset.
+  const model = buildTextModel(root, range.startContainer);
   const segment = model.segments.find((candidate) => candidate.node === range.startContainer);
   return segment === undefined ? null : segment.start + range.startOffset;
 }
 
-export function rangeForOffsets(root: HTMLElement, range: TextRange): Range | null {
+/** `model` can be passed in when several ranges are looked up in the same text. */
+export function rangeForOffsets(root: HTMLElement, range: TextRange, model = buildTextModel(root)): Range | null {
   if (range.end < range.start) return null;
-  const model = buildTextModel(root);
   const start = pointAt(model, range.start);
   const end = pointAt(model, range.end);
   if (start === null || end === null) return null;

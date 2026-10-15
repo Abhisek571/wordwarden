@@ -53,7 +53,7 @@ describe('diagnostics', () => {
     });
     expect(diagnostics.settings.dictionaryWords).toBe(1);
     expect(diagnostics.settings.sitesTurnedOff).toBe(1);
-    expect(diagnostics.checker).toEqual({ grammar: 'Harper 2.7.0', webAssembly: true });
+    expect(diagnostics.checker).toEqual({ grammar: 'Wordwarden core', webAssembly: true });
     expect(diagnostics.recentErrors).toEqual([]);
     expect(isDiagnostics(diagnostics)).toBe(true);
     expect(serialized).not.toContain('PrivateProjectName');

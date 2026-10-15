@@ -1,10 +1,10 @@
 // @vitest-environment node
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import type { HarperEngine } from '#/engines/harper-engine';
+import type { WordwardenCore } from '#/engines/wordwarden-core';
 import { CORRECT_SENTENCES, GRAMMAR_MISTAKES } from './fixtures/grammar-cases';
 import { createProductionEngine } from './helpers/production-engine';
 
-let engine: HarperEngine;
+let engine: WordwardenCore;
 
 beforeAll(async () => {
   engine = await createProductionEngine('american');

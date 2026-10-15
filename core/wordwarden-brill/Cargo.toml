@@ -1,0 +1,15 @@
+[package]
+name = "wordwarden-brill"
+version = "0.1.0"
+edition = "2024"
+description = "The part-of-speech tagger and chunker of Wordwarden core."
+license = "Apache-2.0"
+repository = "https://github.com/Abhisek571/wordwarden"
+publish = false
+
+[dependencies]
+wordwarden-pos-utils = { path = "../wordwarden-pos-utils" }
+serde_json = "1.0.150"
+
+[build-dependencies]
+serde_json = "1.0.150"

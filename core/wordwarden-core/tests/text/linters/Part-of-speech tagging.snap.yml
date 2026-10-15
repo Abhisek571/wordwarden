@@ -1,0 +1,840 @@
+Lint:    Capitalization (127 priority)
+Message: |
+       6 | # Part-of-speech tagging
+         | ^~~~~~~~~~~~~~~~~~~~~~~~ Try to use title case in headings.
+Suggest:
+  - Replace with: “# Part-of-Speech Tagging”
+
+
+
+Lint:    Readability (127 priority)
+Message: |
+       8 | In corpus linguistics, part-of-speech tagging (POS tagging or PoS tagging or
+         | ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+       9 | POST), also called grammatical tagging is the process of marking up a word in a
+         | ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      10 | text (corpus) as corresponding to a particular part of speech, based on both its
+         | ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      11 | definition and its context. A simplified form of this is commonly taught to
+         | ~~~~~~~~~~~~~~~~~~~~~~~~~~~ This sentence is 46 words long.
+
+
+
+Lint:    Capitalization (127 priority)
+Message: |
+       8 | In corpus linguistics, part-of-speech tagging (POS tagging or PoS tagging or
+         |                                                               ^~~ This word's canonical spelling is all-caps.
+       9 | POST), also called grammatical tagging is the process of marking up a word in a
+Suggest:
+  - Replace with: “POS”
+
+
+
+Lint:    Spelling (63 priority)
+Message: |
+       8 | In corpus linguistics, part-of-speech tagging (POS tagging or PoS tagging or
+         |                                                               ^~~ Did you mean to spell `PoS` this way?
+       9 | POST), also called grammatical tagging is the process of marking up a word in a
+Suggest:
+  - Replace with: “Pod”
+  - Replace with: “Poi”
+  - Replace with: “Pol”
+  - Replace with: “Pom”
+  - Replace with: “Pop”
+  - Replace with: “Pose”
+  - Replace with: “Posh”
+  - Replace with: “Post”
+  - Replace with: “Pot”
+  - Replace with: “Pow”
+
+
+
+Lint:    Spelling (63 priority)
+Message: |
+      18 | two distinctive groups: rule-based and stochastic. E. Brill's tagger, one of the
+         |                                                    ^~ Did you mean to spell `E.` this way?
+Suggest:
+  - Replace with: “Eh”
+  - Replace with: “Em”
+  - Replace with: “Ex”
+  - Replace with: “EC”
+  - Replace with: “ET”
+  - Replace with: “EV”
+  - Replace with: “Eu”
+  - Replace with: “E”
+  - Replace with: “Ed”
+  - Replace with: “En”
+
+
+
+Lint:    Spelling (63 priority)
+Message: |
+      18 | two distinctive groups: rule-based and stochastic. E. Brill's tagger, one of the
+         |                                                       ^~~~~~~ Did you mean to spell `Brill's` this way?
+      19 | first and most widely used English POS-taggers, employs rule-based algorithms.
+Suggest:
+  - Replace with: “Brillo's”
+  - Replace with: “Bill's”
+  - Replace with: “Drill's”
+  - Replace with: “Frill's”
+  - Replace with: “Grill's”
+  - Replace with: “Krill's”
+  - Replace with: “Rill's”
+  - Replace with: “Trill's”
+  - Replace with: “Brian's”
+  - Replace with: “Brice's”
+
+
+
+Lint:    Readability (127 priority)
+Message: |
+      33 | as the more common plural noun. Grammatical context is one way to determine
+         |                                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      34 | this; semantic analysis can also be used to infer that "sailor" and "hatch"
+         | ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      35 | implicate "dogs" as 1) in the nautical context and 2) an action applied to the
+         | ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      36 | object "hatch" (in this context, "dogs" is a nautical term meaning "fastens (a
+         | ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      37 | watertight door) securely").
+         | ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ This sentence is 49 words long.
+
+
+
+Lint:    Capitalization (127 priority)
+Message: |
+      39 | ### Tag sets
+         | ^~~~~~~~~~~~ Try to use title case in headings.
+Suggest:
+  - Replace with: “### Tag Sets”
+
+
+
+Lint:    Spelling (127 priority)
+Message: |
+      43 | However, there are clearly many more categories and sub-categories. For nouns,
+         |                                                     ^~~~~~~~~~~~~~ This looks like a prefix that can be joined with the rest of the word.
+Suggest:
+  - Replace with: “subcategories”
+
+
+
+Lint:    Spelling (63 priority)
+Message: |
+      49 | tags. For example, NN for singular common nouns, NNS for plural common nouns, NP
+         |                    ^~ Did you mean to spell `NN` this way?
+Suggest:
+  - Replace with: “No”
+  - Replace with: “Non”
+  - Replace with: “Nu”
+  - Replace with: “Nun”
+  - Replace with: “Na”
+  - Replace with: “NaN”
+  - Replace with: “Ne”
+  - Replace with: “Ni”
+  - Replace with: “An”
+  - Replace with: “In”
+
+
+
+Lint:    Spelling (63 priority)
+Message: |
+      49 | tags. For example, NN for singular common nouns, NNS for plural common nouns, NP
+         |                                                  ^~~ Did you mean to spell `NNS` this way?
+      50 | for singular proper nouns (see the POS tags used in the Brown Corpus). Other
+Suggest:
+  - Replace with: “NES”
+  - Replace with: “Nos”
+  - Replace with: “Nuns”
+  - Replace with: “Nus”
+  - Replace with: “INS”
+  - Replace with: “NBS”
+  - Replace with: “NHS”
+  - Replace with: “NS”
+  - Replace with: “Ens”
+  - Replace with: “Inns”
+
+
+
+Lint:    Spelling (63 priority)
+Message: |
+      49 | tags. For example, NN for singular common nouns, NNS for plural common nouns, NP
+         |                                                                               ^~ Did you mean to spell `NP` this way?
+      50 | for singular proper nouns (see the POS tags used in the Brown Corpus). Other
+Suggest:
+  - Replace with: “Nap”
+  - Replace with: “Nip”
+  - Replace with: “No”
+  - Replace with: “Nu”
+  - Replace with: “Na”
+  - Replace with: “Ne”
+  - Replace with: “Ni”
+  - Replace with: “Op”
+  - Replace with: “Up”
+  - Replace with: “AP”
+
+
+
+Lint:    Spelling (63 priority)
+Message: |
+      55 | 150 separate parts of speech for English. Work on stochastic methods for tagging
+      56 | Koine Greek (DeRose 1990) has used over 1,000 parts of speech and found that
+         | ^~~~~ Did you mean to spell `Koine` this way?
+Suggest:
+  - Replace with: “Kline”
+  - Replace with: “Kine”
+  - Replace with: “Kin”
+  - Replace with: “Kind”
+  - Replace with: “King”
+  - Replace with: “Kite”
+  - Replace with: “Knife”
+  - Replace with: “Kane”
+  - Replace with: “Kobe”
+  - Replace with: “Kong”
+
+
+
+Lint:    Spelling (63 priority)
+Message: |
+      55 | 150 separate parts of speech for English. Work on stochastic methods for tagging
+      56 | Koine Greek (DeRose 1990) has used over 1,000 parts of speech and found that
+         |              ^~~~~~ Did you mean to spell `DeRose` this way?
+Suggest:
+  - Replace with: “Depose”
+  - Replace with: “Demise”
+  - Replace with: “Dense”
+  - Replace with: “Dose”
+  - Replace with: “Drone”
+  - Replace with: “Drove”
+  - Replace with: “Defoe”
+  - Replace with: “Denise”
+  - Replace with: “Debase”
+  - Replace with: “Decode”
+
+
+
+Lint:    Spelling (63 priority)
+Message: |
+      57 | about as many words were ambiguous in that language as in English. A
+      58 | morphosyntactic descriptor in the case of morphologically rich languages is
+         | ^~~~~~~~~~~~~~~ Did you mean to spell `morphosyntactic` this way?
+Suggest:
+  - Replace with: “morphosyntax's”
+  - Replace with: “morphosyntax”
+
+
+
+Lint:    Spelling (63 priority)
+Message: |
+      58 | morphosyntactic descriptor in the case of morphologically rich languages is
+         |                                           ^~~~~~~~~~~~~~~ Did you mean `morphological`?
+      59 | commonly expressed using very short mnemonics, such as Ncmsan for Category=Noun,
+Suggest:
+  - Replace with: “morphological”
+
+
+
+Lint:    Spelling (63 priority)
+Message: |
+      59 | commonly expressed using very short mnemonics, such as Ncmsan for Category=Noun,
+         |                                                        ^~~~~~ Did you mean to spell `Ncmsan` this way?
+      60 | Type = common, Gender = masculine, Number = singular, Case = accusative, Animate
+Suggest:
+  - Replace with: “Nisan”
+  - Replace with: “Nissan”
+
+
+
+Lint:    Spelling (63 priority)
+Message: |
+      63 | The most popular "tag set" for POS tagging for American English is probably the
+      64 | Penn tag set, developed in the Penn Treebank project. It is largely similar to
+         |                                     ^~~~~~~~ Did you mean to spell `Treebank` this way?
+Suggest:
+  - Replace with: “Tie back”
+  - Replace with: “Tieback”
+  - Replace with: “Traceback”
+  - Replace with: “Treeing”
+  - Replace with: “Treeline”
+  - Replace with: “Freeman”
+  - Replace with: “Debank”
+  - Replace with: “Embank”
+  - Replace with: “Freeball”
+  - Replace with: “Freebase”
+
+
+
+Lint:    WordChoice (63 priority)
+Message: |
+      73 | cross-language differences. The tag sets for heavily inflected languages such as
+         |                                 ^~~~~~~~ Did you mean the closed compound noun “tagsets”?
+Suggest:
+  - Replace with: “tagsets”
+
+
+
+Lint:    Spelling (63 priority)
+Message: |
+      75 | as Inuit languages may be virtually impossible. At the other extreme, Petrov et
+         |                                                                       ^~~~~~ Did you mean to spell `Petrov` this way?
+      76 | al. have proposed a "universal" tag set, with 12 categories (for example, no
+Suggest:
+  - Replace with: “Petrol”
+  - Replace with: “Patrol”
+  - Replace with: “Patron”
+  - Replace with: “Perv”
+  - Replace with: “Petrel”
+  - Replace with: “Prov”
+  - Replace with: “Pedro”
+  - Replace with: “Peron”
+  - Replace with: “Perot”
+  - Replace with: “Petra”
+
+
+
+Lint:    Spelling (63 priority)
+Message: |
+      75 | as Inuit languages may be virtually impossible. At the other extreme, Petrov et
+         |                                                                              ^~~
+      76 | al. have proposed a "universal" tag set, with 12 categories (for example, no
+         | ~~~ Did you mean `et al.`?
+Suggest:
+  - Replace with: “et al.”
+
+
+
+Lint:    Spelling (63 priority)
+Message: |
+      86 | The first major corpus of English for computer analysis was the Brown Corpus
+      87 | developed at Brown University by Henry Kučera and W. Nelson Francis, in the
+         |                                        ^~~~~~ Did you mean to spell `Kučera` this way?
+Suggest:
+  - Replace with: “Kara”
+  - Replace with: “Kendra”
+  - Replace with: “Keri”
+  - Replace with: “Kerr”
+  - Replace with: “Khmer”
+  - Replace with: “Korea”
+  - Replace with: “Kruger”
+  - Replace with: “Kurd”
+  - Replace with: “Kurt”
+  - Replace with: “Kern”
+
+
+
+Lint:    Spelling (63 priority)
+Message: |
+      87 | developed at Brown University by Henry Kučera and W. Nelson Francis, in the
+         |                                                   ^~ Did you mean to spell `W.` this way?
+Suggest:
+  - Replace with: “We”
+  - Replace with: “WA”
+  - Replace with: “WI”
+  - Replace with: “Wu”
+  - Replace with: “WC”
+  - Replace with: “WP”
+  - Replace with: “WV”
+  - Replace with: “WW”
+  - Replace with: “WY”
+  - Replace with: “Wm”
+
+
+
+Lint:    Spelling (63 priority)
+Message: |
+      98 | and corrected by hand, and later users sent in errata so that by the late 70s
+         |                                                                             ^ Did you mean to spell `s` this way?
+      99 | the tagging was nearly perfect (allowing for some cases on which even human
+Suggest:
+  - Replace with: “so”
+  - Replace with: “as”
+  - Replace with: “is”
+  - Replace with: “us”
+  - Replace with: “Os”
+  - Replace with: “es”
+  - Replace with: “a”
+  - Replace with: “i”
+  - Replace with: “sf”
+  - Replace with: “sh”
+
+
+
+Lint:    WordChoice (126 priority)
+Message: |
+     104 | other languages. Statistics derived by analyzing it formed the basis for most
+         |                                                                          ^~~~~
+     105 | later part-of-speech tagging systems, such as CLAWS and VOLSUNGA. However, by
+         | ~~~~~ The degree of the adverb conflicts with the degree of the adjective.
+Suggest:
+  - Replace with: “later”
+  - Replace with: “latest”
+
+
+
+Lint:    Spelling (63 priority)
+Message: |
+     105 | later part-of-speech tagging systems, such as CLAWS and VOLSUNGA. However, by
+         |                                                         ^~~~~~~~ Did you mean to spell `VOLSUNGA` this way?
+Suggest:
+  - Replace with: “Volcanic”
+  - Replace with: “Volcano”
+  - Replace with: “Voltage”
+  - Replace with: “Volume”
+  - Replace with: “Voluntary”
+  - Replace with: “Volga”
+  - Replace with: “Valuing”
+  - Replace with: “Valving”
+  - Replace with: “Versing”
+  - Replace with: “Vicuna”
+
+
+
+Lint:    Readability (127 priority)
+Message: |
+     110 | For some time, part-of-speech tagging was considered an inseparable part of
+         | ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     111 | natural language processing, because there are certain cases where the correct
+         | ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     112 | part of speech cannot be decided without understanding the semantics or even the
+         | ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     113 | pragmatics of the context. This is extremely expensive, especially because
+         | ~~~~~~~~~~~~~~~~~~~~~~~~~~ This sentence is 41 words long.
+
+
+
+Lint:    Capitalization (127 priority)
+Message: |
+     117 | ### Use of hidden Markov models
+         | ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Try to use title case in headings.
+Suggest:
+  - Replace with: “### Use of Hidden Markov Models”
+
+
+
+Lint:    Spelling (63 priority)
+Message: |
+     119 | In the mid-1980s, researchers in Europe began to use hidden Markov models (HMMs)
+         |                                                                            ^~~~ Did you mean to spell `HMMs` this way?
+     120 | to disambiguate parts of speech, when working to tag the Lancaster-Oslo-Bergen
+Suggest:
+  - Replace with: “Hams”
+  - Replace with: “Hems”
+  - Replace with: “Hums”
+  - Replace with: “HMO's”
+  - Replace with: “Ha's”
+  - Replace with: “Ham's”
+  - Replace with: “He's”
+  - Replace with: “Hem's”
+  - Replace with: “Ho's”
+  - Replace with: “Hum's”
+
+
+
+Lint:    Spelling (63 priority)
+Message: |
+     121 | Corpus of British English. HMMs involve counting cases (such as from the Brown
+         |                            ^~~~ Did you mean to spell `HMMs` this way?
+Suggest:
+  - Replace with: “Hams”
+  - Replace with: “Hems”
+  - Replace with: “Hums”
+  - Replace with: “HMO's”
+  - Replace with: “Ha's”
+  - Replace with: “Ham's”
+  - Replace with: “He's”
+  - Replace with: “Hem's”
+  - Replace with: “Ho's”
+  - Replace with: “Hum's”
+
+
+
+Lint:    Spelling (63 priority)
+Message: |
+     129 | More advanced ("higher-order") HMMs learn the probabilities not only of pairs
+         |                                ^~~~ Did you mean to spell `HMMs` this way?
+Suggest:
+  - Replace with: “Hams”
+  - Replace with: “Hems”
+  - Replace with: “Hums”
+  - Replace with: “HMO's”
+  - Replace with: “Ha's”
+  - Replace with: “Ham's”
+  - Replace with: “He's”
+  - Replace with: “Hem's”
+  - Replace with: “Ho's”
+  - Replace with: “Hum's”
+
+
+
+Lint:    Readability (127 priority)
+Message: |
+     141 | Eugene Charniak points out in Statistical techniques for natural language
+         | ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     142 | parsing (1997) that merely assigning the most common tag to each known word and
+         | ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     143 | the tag "proper noun" to all unknowns will approach 90% accuracy because many
+         | ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     144 | words are unambiguous, and many others only rarely represent their less-common
+         | ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     145 | parts of speech.
+         | ~~~~~~~~~~~~~~~~ This sentence is 50 words long.
+
+
+
+Lint:    Spelling (63 priority)
+Message: |
+     141 | Eugene Charniak points out in Statistical techniques for natural language
+         |        ^~~~~~~~ Did you mean to spell `Charniak` this way?
+Suggest:
+  - Replace with: “Cardiac”
+  - Replace with: “Carnal”
+  - Replace with: “Carnival”
+  - Replace with: “Chainsaw”
+  - Replace with: “Charcoal”
+  - Replace with: “Chariot”
+  - Replace with: “Charity”
+  - Replace with: “Charlie”
+  - Replace with: “Cranial”
+  - Replace with: “Carina”
+
+
+
+Lint:    Readability (127 priority)
+Message: |
+     148 | expensive since it enumerated all possibilities. It sometimes had to resort to
+         |                                                  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     149 | backup methods when there were simply too many options (the Brown Corpus
+         | ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     150 | contains a case with 17 ambiguous words in a row, and there are words such as
+         | ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     151 | "still" that can represent as many as 7 distinct parts of speech.
+         | ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ This sentence is 44 words long.
+
+
+
+Lint:    WordChoice (63 priority)
+Message: |
+     148 | expensive since it enumerated all possibilities. It sometimes had to resort to
+     149 | backup methods when there were simply too many options (the Brown Corpus
+         | ^~~~~~ This word should be a phrasal verb, not a compound noun.
+Suggest:
+  - Replace with: “back up”
+
+
+
+Lint:    Spelling (63 priority)
+Message: |
+     153 | HMMs underlie the functioning of stochastic taggers and are used in various
+         | ^~~~ Did you mean to spell `HMMs` this way?
+Suggest:
+  - Replace with: “Hams”
+  - Replace with: “Hems”
+  - Replace with: “Hums”
+  - Replace with: “HMO's”
+  - Replace with: “Ha's”
+  - Replace with: “Ham's”
+  - Replace with: “He's”
+  - Replace with: “Hem's”
+  - Replace with: “Ho's”
+  - Replace with: “Hum's”
+
+
+
+Lint:    Spelling (127 priority)
+Message: |
+     154 | algorithms one of the most widely used being the bi-directional inference
+         |                                                  ^~~~~~~~~~~~~~ This looks like a prefix that can be joined with the rest of the word.
+     155 | algorithm.
+Suggest:
+  - Replace with: “bidirectional”
+
+
+
+Lint:    Capitalization (127 priority)
+Message: |
+     157 | ### Dynamic programming methods
+         | ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Try to use title case in headings.
+Suggest:
+  - Replace with: “### Dynamic Programming Methods”
+
+
+
+Lint:    Spelling (63 priority)
+Message: |
+     159 | In 1987, Steven DeRose and Kenneth W. Church independently developed dynamic
+         |                 ^~~~~~ Did you mean to spell `DeRose` this way?
+Suggest:
+  - Replace with: “Depose”
+  - Replace with: “Demise”
+  - Replace with: “Dense”
+  - Replace with: “Dose”
+  - Replace with: “Drone”
+  - Replace with: “Drove”
+  - Replace with: “Defoe”
+  - Replace with: “Denise”
+  - Replace with: “Debase”
+  - Replace with: “Decode”
+
+
+
+Lint:    Spelling (63 priority)
+Message: |
+     159 | In 1987, Steven DeRose and Kenneth W. Church independently developed dynamic
+         |                                    ^~ Did you mean to spell `W.` this way?
+Suggest:
+  - Replace with: “We”
+  - Replace with: “WA”
+  - Replace with: “WI”
+  - Replace with: “Wu”
+  - Replace with: “WC”
+  - Replace with: “WP”
+  - Replace with: “WV”
+  - Replace with: “WW”
+  - Replace with: “WY”
+  - Replace with: “Wm”
+
+
+
+Lint:    Spelling (63 priority)
+Message: |
+     160 | programming algorithms to solve the same problem in vastly less time. Their
+     161 | methods were similar to the Viterbi algorithm known for some time in other
+         |                             ^~~~~~~ Did you mean to spell `Viterbi` this way?
+Suggest:
+  - Replace with: “Vite's”
+  - Replace with: “Viper's”
+  - Replace with: “Voter's”
+  - Replace with: “Verb”
+  - Replace with: “Veteran”
+  - Replace with: “Viceroy”
+  - Replace with: “Viper”
+  - Replace with: “Voter”
+  - Replace with: “Verdi”
+  - Replace with: “Vite”
+
+
+
+Lint:    Spelling (63 priority)
+Message: |
+     162 | fields. DeRose used a table of pairs, while Church used a table of triples and a
+         |         ^~~~~~ Did you mean to spell `DeRose` this way?
+Suggest:
+  - Replace with: “Depose”
+  - Replace with: “Demise”
+  - Replace with: “Dense”
+  - Replace with: “Dose”
+  - Replace with: “Drone”
+  - Replace with: “Drove”
+  - Replace with: “Defoe”
+  - Replace with: “Denise”
+  - Replace with: “Debase”
+  - Replace with: “Decode”
+
+
+
+Lint:    Readability (127 priority)
+Message: |
+     162 | fields. DeRose used a table of pairs, while Church used a table of triples and a
+         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     163 | method of estimating the values for triples that were rare or nonexistent in the
+         | ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     164 | Brown Corpus (an actual measurement of triple probabilities would require a much
+         | ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     165 | larger corpus). Both methods achieved an accuracy of over 95%. DeRose's 1990
+         | ~~~~~~~~~~~~~~~ This sentence is 43 words long.
+
+
+
+Lint:    Spelling (63 priority)
+Message: |
+     165 | larger corpus). Both methods achieved an accuracy of over 95%. DeRose's 1990
+         |                                                                ^~~~~~~~ Did you mean to spell `DeRose's` this way?
+     166 | dissertation at Brown University included analyses of the specific error types,
+Suggest:
+  - Replace with: “Defoe's”
+  - Replace with: “Denise's”
+  - Replace with: “Demise's”
+  - Replace with: “Devise's”
+  - Replace with: “Dextrose's”
+  - Replace with: “Dose's”
+  - Replace with: “Drone's”
+  - Replace with: “Dross's”
+  - Replace with: “Drove's”
+  - Replace with: “Drowse's”
+
+
+
+Lint:    Spelling (63 priority)
+Message: |
+     166 | dissertation at Brown University included analyses of the specific error types,
+         |                                           ^~~~~~~~ Did you mean to spell `analyses` this way?
+     167 | probabilities, and other related data, and replicated his work for Greek, where
+Suggest:
+  - Replace with: “analyzes”
+  - Replace with: “analysis”
+  - Replace with: “analysts”
+  - Replace with: “analytes”
+  - Replace with: “analyst's”
+  - Replace with: “analyte's”
+  - Replace with: “analyzers”
+  - Replace with: “analyst”
+  - Replace with: “analyze”
+  - Replace with: “analyzer”
+
+
+
+Lint:    Spelling (63 priority)
+Message: |
+     173 | levels of linguistic analysis: syntax, morphology, semantics, and so on. CLAWS,
+     174 | DeRose's and Church's methods did fail for some of the known cases where
+         | ^~~~~~~~ Did you mean to spell `DeRose's` this way?
+Suggest:
+  - Replace with: “Defoe's”
+  - Replace with: “Denise's”
+  - Replace with: “Demise's”
+  - Replace with: “Devise's”
+  - Replace with: “Dextrose's”
+  - Replace with: “Dose's”
+  - Replace with: “Drone's”
+  - Replace with: “Dross's”
+  - Replace with: “Drove's”
+  - Replace with: “Drowse's”
+
+
+
+Lint:    Readability (127 priority)
+Message: |
+     175 | semantics is required, but those proved negligibly rare. This convinced many in
+         |                                                          ^~~~~~~~~~~~~~~~~~~~~~~
+     176 | the field that part-of-speech tagging could usefully be separated from the other
+         | ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     177 | levels of processing; this, in turn, simplified the theory and practice of
+         | ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     178 | computerized language analysis and encouraged researchers to find ways to
+         | ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     179 | separate other pieces as well. Markov Models became the standard method for the
+         | ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ This sentence is 45 words long.
+
+
+
+Lint:    Capitalization (127 priority)
+Message: |
+     182 | #### Unsupervised taggers
+         | ^~~~~~~~~~~~~~~~~~~~~~~~~ Try to use title case in headings.
+Suggest:
+  - Replace with: “#### Unsupervised Taggers”
+
+
+
+Lint:    Spelling (127 priority)
+Message: |
+     184 | The methods already discussed involve working from a pre-existing corpus to
+         |                                                      ^~~~~~~~~~~~ This looks like a prefix that can be joined with the rest of the word.
+     185 | learn tag probabilities. It is, however, also possible to bootstrap using
+Suggest:
+  - Replace with: “preexisting”
+
+
+
+Lint:    Capitalization (127 priority)
+Message: |
+     198 | #### Other taggers and methods
+         | ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Try to use title case in headings.
+Suggest:
+  - Replace with: “#### Other Taggers and Methods”
+
+
+
+Lint:    Spelling (63 priority)
+Message: |
+     200 | Some current major algorithms for part-of-speech tagging include the Viterbi
+         |                                                                      ^~~~~~~ Did you mean to spell `Viterbi` this way?
+     201 | algorithm, Brill tagger, Constraint Grammar, and the Baum-Welch algorithm (also
+Suggest:
+  - Replace with: “Vite's”
+  - Replace with: “Viper's”
+  - Replace with: “Voter's”
+  - Replace with: “Verb”
+  - Replace with: “Veteran”
+  - Replace with: “Viceroy”
+  - Replace with: “Viper”
+  - Replace with: “Voter”
+  - Replace with: “Verdi”
+  - Replace with: “Vite”
+
+
+
+Lint:    Spelling (63 priority)
+Message: |
+     201 | algorithm, Brill tagger, Constraint Grammar, and the Baum-Welch algorithm (also
+         |                                                           ^~~~~ Did you mean to spell `Welch` this way?
+     202 | known as the forward-backward algorithm). Hidden Markov model and visible Markov
+Suggest:
+  - Replace with: “Welsh”
+  - Replace with: “Wench”
+  - Replace with: “Watch”
+  - Replace with: “Weigh”
+  - Replace with: “Weld”
+  - Replace with: “Well”
+  - Replace with: “Welt”
+  - Replace with: “Which”
+  - Replace with: “Winch”
+  - Replace with: “Witch”
+
+
+
+Lint:    Spelling (63 priority)
+Message: |
+     203 | model taggers can both be implemented using the Viterbi algorithm. The
+         |                                                 ^~~~~~~ Did you mean to spell `Viterbi` this way?
+Suggest:
+  - Replace with: “Vite's”
+  - Replace with: “Viper's”
+  - Replace with: “Voter's”
+  - Replace with: “Verb”
+  - Replace with: “Veteran”
+  - Replace with: “Viceroy”
+  - Replace with: “Viper”
+  - Replace with: “Voter”
+  - Replace with: “Verdi”
+  - Replace with: “Vite”
+
+
+
+Lint:    Spelling (63 priority)
+Message: |
+     208 | tagging. Methods such as SVM, maximum entropy classifier, perceptron, and
+         |                          ^~~ Did you mean to spell `SVM` this way?
+Suggest:
+  - Replace with: “Sim”
+  - Replace with: “Sum”
+  - Replace with: “SCM”
+  - Replace with: “SVG”
+  - Replace with: “SVN”
+  - Replace with: “SA”
+  - Replace with: “SAR”
+  - Replace with: “SBA”
+  - Replace with: “SDI”
+  - Replace with: “SEO”
+
+
+
+Lint:    Spelling (63 priority)
+Message: |
+     213 | Wiki. This comparison uses the Penn tag set on some of the Penn Treebank data,
+         |                                                                 ^~~~~~~~ Did you mean to spell `Treebank` this way?
+     214 | so the results are directly comparable. However, many significant taggers are
+Suggest:
+  - Replace with: “Tie back”
+  - Replace with: “Tieback”
+  - Replace with: “Traceback”
+  - Replace with: “Treeing”
+  - Replace with: “Treeline”
+  - Replace with: “Freeman”
+  - Replace with: “Debank”
+  - Replace with: “Embank”
+  - Replace with: “Freeball”
+  - Replace with: “Freebase”
+
+
+

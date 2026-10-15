@@ -40,13 +40,22 @@ Accuracy and performance charts are on the [website](https://abhisek571.github.i
   user picks one.
 - **One checker for all tabs:** the engine runs in the background script and every tab sends its text there,
   so extra tabs add little memory.
-- **Engines:** [harper.js](https://github.com/Automattic/harper) for grammar, nspell with Hunspell
-  dictionaries for spelling, a ranker that orders suggestions by edit cost, sound, word frequency and the
-  surrounding words, and a few local rules.
+- **Core engine:** Wordwarden core, our own grammar and spelling engine, written in Rust and compiled to
+  WebAssembly (see [`core`](core/README.md)). Releases up to 1.5.2 were built on
+  [Harper](https://github.com/Automattic/harper)'s engine, run through the `harper.js` package. Wordwarden core
+  replaces it: it began from Harper 2.10.0's source code and has since been reworked into a separate engine, so the
+  extension no longer uses Harper or `harper.js`. It uses about a quarter of Harper's memory, starts in half the
+  time, checks new text about three times as fast, and gives Wordwarden's ranker more spelling suggestions to
+  choose from.
+- **On top of the core:** Wordwarden's own layer: nspell with Hunspell dictionaries for spelling, a ranker
+  that orders suggestions by edit cost, sound, word frequency and the surrounding words, and extra local
+  grammar rules. Findings are kept per section of text, so a check after typing only redoes the part that
+  changed.
 - **LibreOffice add-on:** a Python UNO component that runs the same engine with a bundled Node.js.
 
 | Folder | What is in it |
 |---|---|
+| `core/` | Wordwarden core: the Rust engine, and the built engine in `core/dist` |
 | `entrypoints/` | Background script, content script, popup, settings page and typing test |
 | `src/engines/` | Spelling, grammar and ranking |
 | `src/editors/` | Finding text boxes and applying fixes in text areas and rich editors |
@@ -83,6 +92,9 @@ npm run test:e2e
 The browser tests need an open-source Chromium build, because branded Chrome and Edge 137+ block
 command-line extension loading.
 
+The built engine in `core/dist` is part of the repository, so none of this needs Rust. After changing the Rust
+code in `core/`, rebuild it with `node scripts/build-core.mjs` (see [core/README.md](core/README.md)).
+
 ### Building the Firefox package from source
 
 ```sh
@@ -109,6 +121,7 @@ See also: [privacy](docs/PRIVACY.md), [permissions](docs/PERMISSIONS.md),
 ## License
 
 Copyright (C) 2026 Wordwarden contributors. Licensed under the
-[GNU General Public License v3.0](LICENSE).
+[GNU General Public License v3.0](LICENSE), except Wordwarden core in `core/`, which stays under the
+[Apache License 2.0](core/LICENSE) of the Harper code it started from.
 
 For the licences of the open-source parts it includes, see [third-party notices](THIRD_PARTY_NOTICES.md).

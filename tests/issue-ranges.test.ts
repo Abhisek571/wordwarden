@@ -14,7 +14,7 @@ function issue(
 ): WritingIssue {
   return Object.freeze({
     id,
-    source: 'harper',
+    source: 'core',
     ruleId: 'SpellCheck',
     range: Object.freeze({ start, end }),
     category,

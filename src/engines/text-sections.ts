@@ -1,6 +1,6 @@
 import type { TextRange } from '#/core/types';
 
-const MAX_SECTION_LENGTH = 180;
+const MAX_SECTION_LENGTH = 400;
 const CONTEXT_LENGTH = 48;
 
 export type AnalysisSection = Readonly<{
