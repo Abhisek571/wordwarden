@@ -4,7 +4,7 @@ import { existsSync, readdirSync } from 'node:fs';
 import { readFile, writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { binaryInlined } from 'harper.js/binaryInlined';
-import { Dialect, LocalLinter } from 'harper.js';
+import { createBinaryModuleFromUrl, Dialect, LocalLinter } from 'harper.js';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import type { WritingIssue } from '#/core/types';
 import type { WordwardenCore } from '#/engines/wordwarden-core';
@@ -19,9 +19,19 @@ const FAILURE_EXAMPLES = 20;
 // LanguageTool, for comparison: the folder holding languagetool-server.jar (or a LanguageTool-x.y folder with it).
 const languageToolDirectory = process.env.WORDWARDEN_LANGUAGETOOL_DIR ?? resolve(benchmarkDirectory, 'languagetool');
 const LANGUAGETOOL_PORT = 8081;
-const harperVersion = (JSON.parse(await readFile(new URL('../node_modules/harper.js/package.json', import.meta.url), 'utf8')) as {
-  version: string;
-}).version;
+// Harper, for comparison: the unpacked harper-chrome-plugin.zip of its newest GitHub release, whose engine file
+// harper.js runs. Harper's npm package stopped at 2.10.0 while its releases went on; without the folder, the
+// engine bundled with harper.js is used.
+const harperDirectory = process.env.WORDWARDEN_HARPER_DIR ?? resolve(benchmarkDirectory, 'harper');
+const harperEngineFile = resolve(harperDirectory, 'wasm', 'harper_wasm_bg.wasm');
+const harperRelease = existsSync(resolve(harperDirectory, 'manifest.json')) && existsSync(harperEngineFile);
+const harperBinary = harperRelease
+  ? createBinaryModuleFromUrl(`data:application/wasm;base64,${(await readFile(harperEngineFile)).toString('base64')}`, 'full')
+  : binaryInlined;
+const harperVersion = (JSON.parse(await readFile(
+  harperRelease ? resolve(harperDirectory, 'manifest.json') : new URL('../node_modules/harper.js/package.json', import.meta.url),
+  'utf8',
+)) as { version: string }).version;
 
 type Split = 'tune' | 'holdout';
 type SpellingPair = Readonly<{ misspelling: string; targets: readonly string[]; split: Split }>;
@@ -561,11 +571,11 @@ function languageToolChecker(language: 'en-US' | 'en-GB'): Checker {
 }
 
 /**
- * Harper on its own, as the harper.js package ships it: its own engine file, dictionary and default rules,
+ * Harper on its own, as it ships: its own engine file, dictionary and default rules,
  * without Wordwarden's spelling ranker, word lists and extra rules. Shows what Wordwarden adds on top.
  */
 function plainHarperChecker(dialect: Dialect): Checker & Readonly<{ dispose(): Promise<void> }> {
-  const linter = new LocalLinter({ binary: binaryInlined, dialect });
+  const linter = new LocalLinter({ binary: harperBinary, dialect });
   return Object.freeze({
     async lint(text: string): Promise<readonly WritingIssue[]> {
       const groups = await linter.organizedLints(text, { language: 'plaintext' });

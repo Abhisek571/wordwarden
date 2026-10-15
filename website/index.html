@@ -290,7 +290,10 @@ section.band { padding: 56px 0; }
 .rows { margin-top: 0; }
 .rowx, .split .rowx { grid-template-columns: calc(var(--col) + var(--gap) - 24px) minmax(0, 1fr) 120px; column-gap: 24px; row-gap: 8px; padding: 10px 0; }
 /* Room for "less than LanguageTool" on one line. */
-@media (min-width: 761px) { #performance .rowx { grid-template-columns: calc(var(--col) + var(--gap) - 24px) minmax(0, 1fr) 160px; } }
+@media (min-width: 761px) {
+  #performance .rowx { grid-template-columns: calc(var(--col) + var(--gap) - 24px) minmax(0, 1fr) 160px; }
+  #accuracy .rowx { grid-template-columns: calc(var(--col) + var(--gap) - 24px) minmax(0, 1fr) 230px; }
+}
 .inst { grid-template-columns: calc(var(--col) + var(--gap) - 24px) minmax(0, 1fr) auto; column-gap: 24px; }
 
 /* Jumping words */
@@ -576,14 +579,22 @@ const SITE = {
     [
      "1.5.1",
      "Fixes now work in Twitch chat. A picked suggestion used to land at the end of the message (\"sdasad\") instead of replacing the word, because Twitch puts its old cursor back when the chat box gets focus. No more \"Could not apply this suggestion safely\" after a fix that worked, in editors that redraw a moment later, such as Twitch chat. Messages such as \"The text changed\" now disappear after a few seconds instead of staying on the page."
+    ],
+    [
+     "1.5.2",
+     "A text box that already had focus when a page finished loading is now checked straight away, instead of only after the next keystroke."
     ]
    ]
   ],
   [
-   "1.5.2",
-   "2026-10-13",
+   "1.6.0",
+   "2026-10-15",
    [
-    "A text box that already had focus when a page finished loading is now checked straight away, instead of only after the next keystroke."
+    "**Wordwarden's own engine.** Spelling and grammar are now checked by Wordwarden core, our own engine. It began from Harper's code and has been reworked into a separate engine: it uses about a quarter of the memory, starts in half the time and checks new text about three times as fast, and finds the same mistakes.",
+    "Typing in long rich editors is lighter: the text is read once you pause, not on every key.",
+    "Underlines in long text boxes are placed in one pass instead of one at a time.",
+    "Fixes for wrong verb forms such as \"choosed\" always offer \"chose\" before \"chosen\".",
+    "The website compares resource use with Harper and LanguageTool again."
    ],
    []
   ]
@@ -795,12 +806,12 @@ const VS = {
     return [name, set, { caught: r.caught, topOne: r.topOne, topThree: r.topThree }, r.languageTool, r.harper ?? null];
   }),
   grammar: [
-    ['Helpful fixes', 'Fixes that move the text closer to a human correction', 'fixes', false],
-    ['False alarms', 'Correct sentences wrongly flagged; lower is better', 'falseAlarms', true],
-    ['Mistakes caught', 'Sentences with mistakes that get flagged', 'recall', false],
-  ].map(([name, desc, key, lowerBetter]) => {
+    ['Helpful fixes', 'Fixes that move the text closer to a human correction', 'fixes', false, 'more often helpful', 'less often helpful'],
+    ['False alarms', 'Correct sentences wrongly flagged; lower is better', 'falseAlarms', true, 'more', 'fewer'],
+    ['Mistakes caught', 'Sentences with mistakes that get flagged', 'recall', false, 'more', 'fewer'],
+  ].map(([name, desc, key, lowerBetter, more, less]) => {
     const g = SITE.accuracy.grammar[key];
-    return [name, desc, g.wordwarden, g.languageTool, lowerBetter, g.harper ?? null];
+    return [name, desc, g.wordwarden, g.languageTool, lowerBetter, g.harper ?? null, more, less];
   }),
 };
 // One stamp per bigger release plus the newest; fix releases fold into the release they followed.
@@ -1127,6 +1138,17 @@ function grow(bars) {
   bars.forEach((b) => { b.style.transform = 'scaleX(0)'; });
   requestAnimationFrame(() => requestAnimationFrame(() => bars.forEach((b) => { b.style.transform = ''; })));
 }
+/**
+ * One line of the right-hand column: how many times better or worse Wordwarden does than `who`, in words, the
+ * way the resource rows put it. `more` and `less` say it for a higher and a lower value than theirs; with
+ * `lowerBetter`, a lower value is the better one. Within 5% counts as about the same.
+ */
+function versus(g, ours, theirs, who, more, less) {
+  if (theirs === null) return;
+  const ratio = ours >= theirs ? ours / theirs : theirs / ours;
+  const vs = el('span', { class: 'vs', text: ratio < 1.05 ? '≈' : `${ratio.toFixed(1)}×` }, g);
+  el('small', { text: ratio < 1.05 ? `about the same as ${who}` : `${ours > theirs ? more : less} than ${who}` }, vs);
+}
 function drawVs(animate) {
   const spell = document.getElementById('spell-rows');
   const gram = document.getElementById('grammar-rows');
@@ -1141,22 +1163,23 @@ function drawVs(animate) {
     bars.push(barLine(track, ours.topOne, 100, pct(ours.topOne), [`Correct word first: ${pct(ours.topOne)}`, `${name}: the right word is the first suggestion`], false, 'var(--m-first)'));
     bars.push(barLine(track, lt, 100, pct(lt), [`LanguageTool: ${pct(lt)}`, `${name}: correct word first`], true));
     if (harper !== null) bars.push(barLine(track, harper, 100, pct(harper), [`Harper: ${pct(harper)}`, `${name}: correct word first`], 'harper'));
-    const g = el('div', { class: 'gain', text: `${signed(ours.topOne - lt)} pts` }, row);
+    // Compared on the correct word coming first.
+    const g = el('div', { class: 'gain' }, row);
+    versus(g, ours.topOne, harper, 'Harper', 'more often', 'less often');
+    versus(g, ours.topOne, lt, 'LanguageTool', 'more often', 'less often');
   });
-  VS.grammar.forEach(([name, desc, mine, lt, lowerBetter, harper]) => {
+  VS.grammar.forEach(([name, desc, mine, lt, lowerBetter, harper, more, less]) => {
     const row = el('div', { class: 'rowx' }, gram);
     const n = el('div', { class: 'name', text: name }, row); el('small', { text: desc }, n);
     const track = el('div', { class: 'track' }, row);
     bars.push(barLine(track, mine, 100, pct(mine), [`Wordwarden: ${pct(mine)}`, desc]));
-    const g = el('div', { class: 'gain' }, row);
-    if (lt !== null) {
-      bars.push(barLine(track, lt, 100, pct(lt), [`LanguageTool: ${pct(lt)}`, desc], true));
-      const better = lowerBetter ? lt / mine : null;
-      g.textContent = lowerBetter ? `${better.toFixed(1)}× fewer` : `${signed(mine - lt)} pts`;
-    }
+    if (lt !== null) bars.push(barLine(track, lt, 100, pct(lt), [`LanguageTool: ${pct(lt)}`, desc], true));
     if (harper !== null) bars.push(barLine(track, harper, 100, pct(harper), [`Harper: ${pct(harper)}`, desc], 'harper'));
+    const g = el('div', { class: 'gain' }, row);
+    versus(g, mine, harper, 'Harper', more, less);
+    versus(g, mine, lt, 'LanguageTool', more, less);
   });
-  document.getElementById('spell-note').textContent = 'Caught: the misspelling gets an underline. Correct word first and in top three: the right word is offered.';
+  document.getElementById('spell-note').textContent = 'Caught: the misspelling gets an underline. Correct word first and in top three: the right word is offered. On the right, spelling is compared on the correct word coming first.';
   testedWith('acc-versions', SITE.accuracy.harperVersion, SITE.accuracy.languageToolVersion);
   if (animate) grow(bars);
   const accTable = document.getElementById('acc-table');

@@ -39,26 +39,33 @@ Missing LanguageTool is skipped.
 
 ## Comparison with Harper on its own
 
-Wordwarden core was built from Harper. The benchmarks also run Harper on its own, on the holdout halves, the way
-the `harper.js` package ships it: its own engine file, dictionary and default rules, without Wordwarden's
-spelling ranker, word lists, extra rules or engine changes. The difference shows what Wordwarden adds. Nothing
-needs downloading; it uses the installed `harper.js`.
+Wordwarden core began from Harper's code. The benchmarks also run Harper on its own, on the holdout halves, as
+its newest release ships it: its own engine file, dictionary and default rules, without Wordwarden's spelling
+ranker, word lists, extra rules or engine changes. The difference shows what Wordwarden adds.
+
+`harper/` is the unpacked `harper-chrome-plugin.zip` from Harper's newest GitHub release
+(<https://github.com/Automattic/harper/releases/latest>, Apache 2.0); its engine file is run through the installed
+`harper.js`, whose npm package stopped at 2.10.0 while Harper's releases went on. Without the folder, the engine
+inside `harper.js` is used. The Accuracy workflow downloads the newest release on each run.
 
 ## Resource use
 
 `node scripts/resource-chart.mjs <LanguageTool folder> [report.json]` measures the built Chromium extension
-(`npm run build`) and the LanguageTool server on the same machine, with the same 492-word text full of mistakes,
-and redraws `docs/resources.svg`. The Resources workflow runs it on GitHub's Linux machine with the newest
-LanguageTool, for bigger releases or by hand.
+(`npm run build`), Harper's browser extension and the LanguageTool server on the same machine, with the same
+528-word text full of mistakes, and redraws `docs/resources.svg`. Harper is included when
+`WORDWARDEN_HARPER_EXTENSION` names the unpacked `harper-chrome-plugin.zip` of its newest release. The Resources
+workflow runs it on GitHub's Linux machine with the newest Harper and LanguageTool, for bigger releases or by hand.
 
-- **Wordwarden memory:** the extension in Playwright's Chromium; private memory of all browser processes before
-  the text box is focused and once the underlines appear, with 1 and with 20 tabs. Before all tabs shared one
-  checker (1.3.5), each tab started its own: 3 tabs added 708 MB, against about 315 MB since.
-- **CPU time to start:** from focusing the first text box to its underlines, and for LanguageTool from launch
-  to its first answer. CPU time is summed over all cores.
-- **Check times:** Wordwarden through the extension's own check message, LanguageTool through its HTTP API.
-  Both get 3 warm-up checks and a 5-second pause (so Java compiling hot code is not counted), then 30 timed
-  checks. Every check numbers each sentence afresh, so it is new text to both: Wordwarden keeps the findings
+- **Extension memory:** each extension in Playwright's Chromium, against the same browser with no extension:
+  private memory of all browser processes once every tab's text box has been focused and underlined, with 1 and
+  with 20 tabs. Harper checks only a list of sites until checking everywhere is switched on, so the run switches
+  it on. Before all tabs shared one checker (1.3.5), each Wordwarden tab started its own: 3 tabs added 708 MB.
+- **CPU time to start:** for an extension, the CPU its one-tab run adds over the run with no extension, up to and
+  including the first underlines; for LanguageTool, from launch to its first answer. CPU time is summed over all
+  cores.
+- **Check times:** each extension through its own check message, LanguageTool through its HTTP API.
+  All get 3 warm-up checks and a 5-second pause (so Java compiling hot code is not counted), then 30 timed
+  checks. Every check numbers each sentence afresh, so it is new text to all of them: Wordwarden keeps the findings
   of text that did not change, and the same text again would take about a millisecond. Time is the median; CPU
   per check is the average, over all processes involved.
 - **LanguageTool:** the Java process serving the port, default setup without the n-gram data. Its memory

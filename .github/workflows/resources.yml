@@ -1,7 +1,7 @@
 name: Resources
 
-# Measures the memory and CPU of the built extension against the newest LanguageTool server and redraws
-# docs/resources.svg. Runs for bigger releases only (v1.1.0, v2.0.0; not bug-fix tags like v1.0.1), or by hand.
+# Measures the memory and CPU of the built extension against the newest Harper extension and LanguageTool server,
+# and redraws docs/resources.svg. Runs for bigger releases only (v1.1.0, v2.0.0; not bug-fix tags like v1.0.1), or by hand.
 on:
   push:
     tags: ['v*.*.0']
@@ -48,8 +48,16 @@ jobs:
           curl -fsSL "https://languagetool.org/download/LanguageTool-${{ steps.latest.outputs.version }}.zip" -o "$RUNNER_TEMP/languagetool.zip"
           unzip -q "$RUNNER_TEMP/languagetool.zip" -d "$RUNNER_TEMP/benchmarks/languagetool"
           rm "$RUNNER_TEMP/languagetool.zip"
+      # Harper's browser extension from its newest GitHub release, measured the same way as Wordwarden.
+      - name: Download the latest Harper
+        run: |
+          curl -fsSL "https://github.com/Automattic/harper/releases/latest/download/harper-chrome-plugin.zip" -o "$RUNNER_TEMP/harper.zip"
+          unzip -q "$RUNNER_TEMP/harper.zip" -d "$RUNNER_TEMP/harper"
+          rm "$RUNNER_TEMP/harper.zip"
       - name: Measure resource use
         run: node scripts/resource-chart.mjs "$RUNNER_TEMP/benchmarks/languagetool" "$RUNNER_TEMP/resources.json"
+        env:
+          WORDWARDEN_HARPER_EXTENSION: ${{ runner.temp }}/harper
       # The numbers the website shows.
       - run: node scripts/website-numbers.mjs resources "$RUNNER_TEMP/resources.json"
       - uses: actions/upload-artifact@v7

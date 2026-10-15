@@ -3,6 +3,16 @@
 Each release's section is also its release notes on GitHub. Accuracy and resource numbers are in the
 README charts; method in [docs/BENCHMARKS.md](docs/BENCHMARKS.md).
 
+## 1.6.0 — 2026-10-15
+
+- **Wordwarden's own engine.** Spelling and grammar are now checked by Wordwarden core, our own engine. It
+  began from Harper's code and has been reworked into a separate engine: it uses about a quarter of the memory,
+  starts in half the time and checks new text about three times as fast, and finds the same mistakes.
+- Typing in long rich editors is lighter: the text is read once you pause, not on every key.
+- Underlines in long text boxes are placed in one pass instead of one at a time.
+- Fixes for wrong verb forms such as "choosed" always offer "chose" before "chosen".
+- The website compares resource use with Harper and LanguageTool again.
+
 ## 1.5.2 — 2026-10-13
 
 - A text box that already had focus when a page finished loading is now checked straight away, instead of
