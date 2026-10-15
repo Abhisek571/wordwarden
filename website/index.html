@@ -133,6 +133,7 @@ p { margin: 0; text-wrap: pretty; }
 .tip .v { font-weight: 700; font-variant-numeric: tabular-nums; text-align: right; }
 .tip .n { color: var(--ink-2); }
 .tip .foot { margin-top: 8px; padding-top: 6px; border-top: 1px solid var(--hair); color: var(--ink-2); font-size: 12px; }
+.note.versions { margin-top: 2px; }
 .note { margin-top: 12px; font-size: 12.5px; color: var(--ink-2); max-width: 80ch; }
 details.table { margin-top: 10px; font-size: 13px; text-align: center; }
 details.table summary { cursor: pointer; color: var(--ink-2); font-weight: 600; width: max-content; margin: 0 auto; padding: 6px 4px; list-style: none; display: flex; align-items: center; gap: 6px; border-radius: 4px; }
@@ -165,37 +166,59 @@ details.table th { font-weight: 650; color: var(--ink-2); }
   .labels li { position: static; transform: none; }
 }
 
-/* Postmark strip */
-.releases { padding: 36px 0 8px; }
-.strip { position: relative; display: flex; justify-content: space-between; gap: 12px; margin-top: 18px; padding: 8px 2px 14px; overflow-x: auto; scroll-snap-type: x proximity; scrollbar-width: thin; }
-.strip::before { content: ""; position: absolute; left: 40px; right: 40px; top: 54px; height: 1px; background: var(--hair); }
-.stamp { all: unset; position: relative; flex: none; width: 92px; display: grid; justify-items: center; gap: 8px; cursor: pointer; scroll-snap-align: start; border-radius: 6px; padding: 4px 0 6px; }
-.stamp:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
-.stamp .disc { position: relative; display: grid; place-items: center; width: 92px; height: 92px; border-radius: 50%; background: var(--ground); --ring: var(--ink); border: 1px solid var(--ring); box-shadow: inset 0 0 0 3px var(--ground), inset 0 0 0 4px var(--ring); font: 700 17px/1 var(--face); letter-spacing: -0.02em; color: var(--ink); font-variant-numeric: tabular-nums; transition: transform .2s var(--ease), background .15s ease-out; }
-.stamp .disc .tick { position: absolute; bottom: 14px; width: 5px; height: 5px; border-radius: 50%; background: var(--ink-2); }
-.stamp .date { font-size: 12.5px; color: var(--ink-2); font-variant-numeric: tabular-nums; }
-.stamp:hover .disc { transform: rotate(-6deg); }
-.stamp[aria-selected="true"] .disc { background: var(--ink); color: var(--paper); --ring: var(--ink); box-shadow: inset 0 0 0 3px var(--ink), inset 0 0 0 4px var(--paper); }
-.stamp[aria-selected="true"] .disc .tick { background: var(--paper); }
-.stamp[aria-selected="true"] .date { color: var(--ink); font-weight: 650; }
-.letter { display: grid; grid-template-columns: 200px minmax(0, 1fr) 260px; gap: 32px; margin-top: 10px; padding: 24px 0 30px; border-top: 1px solid var(--ink); }
-@media (max-width: 900px) { .letter { grid-template-columns: 1fr; gap: 14px; } }
-.letter h3 { font: 700 30px/1.05 var(--display); letter-spacing: -0.03em; font-variant-numeric: tabular-nums; }
-.letter .when { margin-top: 6px; font-size: 13px; color: var(--ink-2); }
-.letter ul { margin: 0; padding: 0; list-style: none; }
-.letter li { position: relative; padding: 0 0 10px 18px; max-width: 70ch; }
-.letter li::before { content: ""; position: absolute; left: 0; top: .62em; width: 7px; height: 7px; border-radius: 50%; border: 1px solid var(--ink-2); }
-.letter li strong { font-weight: 650; }
-.letter .measured { font-size: 13px; color: var(--ink-2); border-left: 1px solid var(--hair); padding-left: 20px; }
-@media (max-width: 900px) { .letter .measured { border-left: 0; padding-left: 0; } }
-.letter .measured b { display: block; color: var(--ink); font-size: 13px; margin-bottom: 4px; }
-.letter .measured dl { margin: 8px 0 0; display: grid; grid-template-columns: 1fr auto; gap: 3px 12px; }
+/* Release log: one postmarked row per bigger release, newest first; a row opens to its notes. */
+.log { display: grid; grid-template-columns: var(--col) minmax(0, 1fr); gap: var(--gap); align-items: start; }
+.posts { min-width: 0; }
+.post { position: relative; }
+/* The rail through the stamps. */
+.post::before { content: ""; position: absolute; left: 27.5px; top: 0; bottom: 0; width: 1px; background: var(--hair); }
+.posts > .post:first-child::before { top: 30px; }
+.post > summary { position: relative; display: grid; grid-template-columns: 56px minmax(0, 1fr) 16px; gap: 18px; align-items: center; padding: 8px 0; cursor: pointer; list-style: none; border-radius: 6px; }
+.post > summary::-webkit-details-marker { display: none; }
+.post > summary:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+.post > summary::after { content: ""; width: 16px; height: 16px; background: var(--ink-2); -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='black' stroke-width='1.75' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 6l4 4 4-4'/%3E%3C/svg%3E") center / contain no-repeat; mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='black' stroke-width='1.75' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 6l4 4 4-4'/%3E%3C/svg%3E") center / contain no-repeat; transition: transform .15s var(--ease); }
+.post[open] > summary::after { transform: rotate(180deg); background: var(--ink); }
+/* The newest release always stays open. */
+.post.pinned > summary { cursor: default; }
+.post.pinned > summary::after { visibility: hidden; }
+.post.pinned > summary:hover .disc { transform: none; }
+.post .disc { position: relative; display: grid; place-items: center; width: 56px; height: 56px; border-radius: 50%; background: var(--ground); --ring: var(--ink); border: 1px solid var(--ring); box-shadow: inset 0 0 0 2px var(--ground), inset 0 0 0 3px var(--ring); font: 700 13px/1 var(--face); letter-spacing: -0.02em; color: var(--ink); font-variant-numeric: tabular-nums; transition: transform .2s var(--ease), background .15s ease-out; }
+.post .disc .tick { position: absolute; bottom: 8px; width: 4px; height: 4px; border-radius: 50%; background: var(--ink-2); }
+.post > summary:hover .disc { transform: rotate(-6deg); }
+.post[open] .disc { background: var(--ink); color: var(--paper); box-shadow: inset 0 0 0 2px var(--ink), inset 0 0 0 3px var(--paper); }
+.post[open] .disc .tick { background: var(--paper); }
+.post-meta { min-width: 0; display: grid; gap: 2px; }
+.post-when { font-size: 14px; font-weight: 650; color: var(--ink); font-variant-numeric: tabular-nums; }
+.post-when .latest { display: inline-block; margin-right: 8px; padding: 1px 7px; border-radius: 99px; background: var(--ink); color: var(--paper); font-size: 11.5px; font-weight: 650; vertical-align: 1px; }
+.post-when .fixes { font-weight: 400; color: var(--ink-2); }
+.post-teaser { font-size: 13.5px; color: var(--ink-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.post[open] .post-teaser { display: none; }
+.post-body { padding: 6px 0 22px 74px; }
+.post-body ul { margin: 0; padding: 0; list-style: none; }
+.post-body li { position: relative; padding: 0 0 10px 18px; max-width: 70ch; }
+.post-body li::before { content: ""; position: absolute; left: 0; top: .62em; width: 7px; height: 7px; border-radius: 50%; border: 1px solid var(--ink-2); }
+.post-body li strong { font-weight: 650; }
+.older { margin-top: 4px; }
+/* Its own fold, not details.table: that style centres text and restyles every summary inside it. */
+.older > summary { display: flex; align-items: center; gap: 6px; width: max-content; margin: 6px auto 0; padding: 6px 4px; border-radius: 4px; font-size: 13px; font-weight: 600; color: var(--ink-2); cursor: pointer; list-style: none; }
+.older > summary::-webkit-details-marker { display: none; }
+.older > summary::after { content: ""; width: 16px; height: 16px; background: currentColor; -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='black' stroke-width='1.75' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 6l4 4 4-4'/%3E%3C/svg%3E") center / contain no-repeat; mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='black' stroke-width='1.75' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 6l4 4 4-4'/%3E%3C/svg%3E") center / contain no-repeat; transition: transform .15s var(--ease); }
+.older[open] > summary::after { transform: rotate(180deg); }
+.older > summary:hover { color: var(--ink); }
+.older > summary:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+.older[open] > summary { margin-bottom: 6px; }
 .also { margin-top: 8px; padding-top: 12px; border-top: 1px solid var(--hair); max-width: 70ch; }
 .also-title { font-size: 12px; font-weight: 650; color: var(--ink-2); }
 .also dl { margin: 6px 0 0; display: grid; grid-template-columns: max-content 1fr; gap: 4px 14px; font-size: 14px; }
 .also dt { font-weight: 650; font-variant-numeric: tabular-nums; }
 .also dd { margin: 0; color: var(--ink-2); }
-.letter .measured dd { margin: 0; text-align: right; font-weight: 700; color: var(--ink); font-variant-numeric: tabular-nums; }
+@media (max-width: 600px) {
+  .post::before { display: none; }
+  .post > summary { grid-template-columns: 50px minmax(0, 1fr) 16px; gap: 14px; }
+  .post .disc { width: 50px; height: 50px; font-size: 12px; }
+  .post-teaser { display: none; }
+  .post-body { padding-left: 0; }
+}
 
 /* Sections */
 section.band { padding: 64px 0; border-top: 1px solid var(--hair); }
@@ -205,7 +228,7 @@ section.band.paper { background: var(--paper); }
 .mark { display: inline-flex; align-items: center; gap: 8px; margin-bottom: 14px; font-size: 13px; font-weight: 650; color: var(--ink-2); text-decoration: none; }
 .mark:hover { color: var(--ink); text-decoration: underline; }
 .mark .ring { width: 14px; height: 14px; --ring-surface: var(--paper); }
-.band-head h2 { font: 700 clamp(30px, 3.6vw, 44px)/1.05 var(--display); letter-spacing: -0.03em; }
+.band-head h2, .log-title { font: 700 clamp(30px, 3.6vw, 44px)/1.05 var(--display); letter-spacing: -0.03em; }
 .band-head p { color: var(--ink-2); max-width: 62ch; }
 .pair { margin-top: 36px; }
 .pair-legend { display: flex; flex-wrap: wrap; gap: 6px 20px; font-size: 13px; color: var(--ink-2); }
@@ -222,6 +245,10 @@ section.band.paper { background: var(--paper); }
 .rowx .name small { display: block; font-weight: 400; color: var(--ink-2); font-size: 12.5px; }
 .rowx .gain { text-align: right; font-weight: 700; font-variant-numeric: tabular-nums; font-size: 15px; }
 .rowx .gain small { display: block; font-weight: 400; font-size: 12px; color: var(--ink-2); }
+.rowx .gain .vs { display: block; }
+.rowx .gain .vs + .vs { margin-top: 4px; }
+@media (max-width: 760px) { .rowx .gain .vs small { display: inline; margin-left: 4px; } .rowx .gain .vs + .vs { margin-top: 0; } }
+#performance .mark .ring { --ring-surface: var(--ground); }
 .track { display: grid; gap: 3px; }
 .barline { position: relative; display: flex; align-items: center; gap: 8px; height: 18px; cursor: default; }
 .barline .b { height: 14px; border-radius: 0 4px 4px 0; background: var(--bar, var(--ink)); transform-origin: left; transition: transform .7s var(--ease), filter .12s; }
@@ -254,23 +281,22 @@ footer nav { display: flex; flex-wrap: wrap; gap: 8px 20px; margin-left: auto; }
 .band-head { align-items: end; }
 .head-note { margin-top: 14px; color: var(--ink-2); max-width: 46ch; }
 section.band { padding: 56px 0; }
-.pair, .install-list, .letter { margin-top: 24px; }
-.history { background: none; border: 0; border-top: 1px solid var(--ink); border-radius: 0; padding: 20px 0 0; }
+.pair, .install-list { margin-top: 24px; }
+.history { background: none; border: 0; border-radius: 0; padding: 20px 0 0; }
 .group-head { display: grid; grid-template-columns: var(--col) minmax(0, 1fr); gap: 8px var(--gap); align-items: baseline; margin-top: 40px; padding-bottom: 14px; }
 .group-head:first-child { margin-top: 0; }
 .group-head h3 { font: 700 18px/1.25 var(--face); letter-spacing: -0.015em; }
 .group-head .muted { font-weight: 400; color: var(--ink-2); }
 .rows { margin-top: 0; }
 .rowx, .split .rowx { grid-template-columns: calc(var(--col) + var(--gap) - 24px) minmax(0, 1fr) 120px; column-gap: 24px; row-gap: 8px; padding: 10px 0; }
+/* Room for "less than LanguageTool" on one line. */
+@media (min-width: 761px) { #performance .rowx { grid-template-columns: calc(var(--col) + var(--gap) - 24px) minmax(0, 1fr) 160px; } }
 .inst { grid-template-columns: calc(var(--col) + var(--gap) - 24px) minmax(0, 1fr) auto; column-gap: 24px; }
-.letter { grid-template-columns: var(--col) minmax(0, 1fr); gap: var(--gap); padding: 28px 0 0; }
-.letter .measured { border-left: 0; padding-left: 0; margin-top: 22px; max-width: 320px; }
-.strip { justify-content: flex-start; gap: 18px; width: max-content; max-width: 100%; margin-top: 0; padding-bottom: 6px; }
-.strip::before { left: 46px; right: 46px; }
 
 /* Jumping words */
 .hop { padding: 8px 0 40px; }
-.hop-line { display: flex; flex-wrap: wrap; gap: 10px 26px; font: 650 clamp(22px, 2.4vw, 32px)/1.2 var(--display); letter-spacing: -0.02em; color: var(--ink-2); }
+/* Full rows only: 12 words in 2 rows of 6, 3 of 4 on tablets and 4 of 3 on phones, spread across the width. */
+.hop-line { display: grid; grid-template-columns: repeat(6, auto); justify-content: space-between; align-items: end; gap: 10px 26px; font: 650 clamp(22px, 2.4vw, 32px)/1.2 var(--display); letter-spacing: -0.02em; color: var(--ink-2); }
 .hw { all: unset; position: relative; display: inline-grid; cursor: pointer; transform-origin: 50% 100%; padding: 0 2px 4px; border-radius: 3px; }
 /* Both spellings share one cell, so a word keeps the width of its longer form and the lines never reflow. */
 .hw > .w, .hw > .r { grid-area: 1 / 1; white-space: nowrap; }
@@ -285,8 +311,9 @@ section.band { padding: 56px 0; }
 
 @media (max-width: 980px) {
   :root { --col: 210px; --gap: 32px; }
-  .open .wrap, .band-head, .letter { grid-template-columns: 1fr; }
+  .open .wrap, .band-head, .log { grid-template-columns: 1fr; }
   .group-head { grid-template-columns: 1fr; }
+  .hop-line { grid-template-columns: repeat(4, auto); }
 }
 @media (max-width: 760px) {
   .rowx, .split .rowx { grid-template-columns: 1fr auto; }
@@ -295,16 +322,10 @@ section.band { padding: 56px 0; }
 @media (max-width: 600px) {
   section.band { padding: 48px 0; }
   .open { padding: 40px 0 36px; }
-  .strip { width: 100%; justify-content: space-between; gap: 6px; }
-  .strip::before { top: 33px; left: 25px; right: 25px; }
-  .stamp { width: 50px; }
-  .stamp .disc { width: 50px; height: 50px; font-size: 11.5px; box-shadow: inset 0 0 0 2px var(--ground), inset 0 0 0 3px var(--ring); }
-  .stamp[aria-selected="true"] .disc { box-shadow: inset 0 0 0 2px var(--ink), inset 0 0 0 3px var(--paper); }
-  .stamp .disc .tick { bottom: 6px; width: 4px; height: 4px; }
-  .stamp .date { font-size: 11px; }
   .labels { grid-template-columns: 1fr 1fr; }
-  .hop-line { gap: 8px 16px; }
+  .hop-line { grid-template-columns: repeat(3, auto); gap: 8px 16px; }
 }
+@media (max-width: 380px) { .hop-line { grid-template-columns: repeat(2, auto); } }
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   *, *::before, *::after { animation: none !important; transition: none !important; }
@@ -317,9 +338,10 @@ section.band { padding: 56px 0; }
   <div class="wrap">
     <a class="brand" href="#top"><svg class="logo" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" aria-hidden="true"> <rect width="128" height="128" rx="28" fill="#1d2433"/> <g fill="#f1eee7" transform="translate(13 0) skewX(-12)"> <path d="M22 32h13.5l13 53H42z"/> <path d="M42 85h6.5l18-53H62z"/> <path d="M59.5 32H73l12 53h-6.5z"/> <path d="M78.5 85H85l16.5-43.5-4.6-2z"/> <circle cx="100.5" cy="40" r="6.2"/> <path d="M13 41c3-6 7.5-9 12-9h3.5v4H25c-3.4 0-6.4 2-8.6 5.8z"/> </g> <path d="M30 105q6-6.5 12 0t12 0t12 0t12 0t12 0t12 0" fill="none" stroke="#e5484d" stroke-width="6.5" stroke-linecap="round"/> </svg>Wordwarden</a>
     <nav aria-label="Sections">
-      <a href="#releases">Releases</a>
       <a href="#accuracy">Accuracy</a>
+      <a href="#performance">Performance</a>
       <a href="#install">Install</a>
+      <a href="#releases">Releases</a>
       <a href="https://github.com/Abhisek571/wordwarden">Source</a>
     </nav>
     <a class="btn small" href="https://addons.mozilla.org/en-GB/firefox/addon/wordwarden-spell-grammar/">Get it for Firefox</a>
@@ -367,25 +389,12 @@ section.band { padding: 56px 0; }
     <div class="wrap"><p class="hop-line" id="hop"></p></div>
   </section>
 
-  <section class="band releases" id="releases" aria-labelledby="releases-title">
-    <div class="wrap">
-      <div class="band-head">
-        <div>
-          <h2 id="releases-title">Every release, postmarked</h2>
-          <p class="head-note">Each bigger release and the newest. Pick a stamp to read what changed; a dot means its accuracy was measured.</p>
-        </div>
-        <div class="strip" id="strip" role="tablist" aria-label="Releases"></div>
-      </div>
-      <article class="letter" id="letter" role="tabpanel" aria-live="polite"></article>
-    </div>
-  </section>
-
   <section class="band paper" id="accuracy" aria-labelledby="acc-title">
     <div class="wrap">
       <div class="band-head">
         <div><a class="mark" href="#releases" data-measured="accuracy"><span class="ring" aria-hidden="true"></span><span></span></a>
         <h2 id="acc-title">Against LanguageTool and Harper</h2></div>
-        <p>The newest release next to the latest versions of LanguageTool and Harper at the time of that release, both in their default setup. Harper is the grammar engine Wordwarden builds on, measured here on its own. All three on the same five spelling sets and set of learner essays. Hover a bar for the details.</p>
+        <p>The newest release next to the latest versions of LanguageTool and Harper at the time of that release, both in their default setup. Harper, which Wordwarden's engine was built from, is measured here on its own. All three on the same five spelling sets and set of learner essays. Hover a bar for the details.</p>
       </div>
       <div class="pair">
         <div class="group-head">
@@ -394,23 +403,44 @@ section.band { padding: 56px 0; }
             <span><i data-m style="--bar: var(--m-caught)"></i>Caught</span>
             <span><i data-m style="--bar: var(--m-three)"></i>Correct word in top three</span>
             <span><i data-m style="--bar: var(--m-first)"></i>Correct word first</span>
-            <span><i class="rival"></i><span><span data-lt>LanguageTool</span>, correct word first</span></span>
-            <span><i class="harper"></i><span>Harper alone, correct word first</span></span>
+            <span><i class="rival"></i><span>LanguageTool, correct word first</span></span>
+            <span><i class="harper"></i><span>Harper, correct word first</span></span>
           </div>
         </div>
         <div class="rows" id="spell-rows"></div>
         <div class="group-head">
           <h3>Grammar <span class="muted">learner essays</span></h3>
-          <div class="pair-legend"><span><i></i>Wordwarden</span><span><i class="rival"></i><span data-lt>LanguageTool</span></span><span><i class="harper"></i><span>Harper alone</span></span></div>
+          <div class="pair-legend"><span><i></i>Wordwarden</span><span><i class="rival"></i><span>LanguageTool</span></span><span><i class="harper"></i><span>Harper</span></span></div>
         </div>
         <div class="rows" id="grammar-rows"></div>
         <p class="note" id="spell-note"></p>
+        <p class="note versions" id="acc-versions"></p>
         <details class="table"><summary>Show as a table</summary><div class="table-scroll" id="acc-table"></div></details>
       </div>
     </div>
   </section>
 
-  <section class="band" id="install" aria-labelledby="install-title">
+  <section class="band" id="performance" aria-labelledby="perf-title">
+    <div class="wrap">
+      <div class="band-head">
+        <div><a class="mark" href="#releases" data-measured="resources"><span class="ring" aria-hidden="true"></span><span></span></a>
+        <h2 id="perf-title">Light enough to forget it’s there</h2></div>
+        <p>All your tabs share one checker, and it uses no CPU while you are not typing. Measured against Harper’s browser extension and your own LanguageTool server, checking the same text on the same machine. Hover a bar for the details.</p>
+      </div>
+      <div class="pair">
+        <div class="group-head">
+          <h3>Resource use <span class="muted">shorter is better</span></h3>
+          <div class="pair-legend"><span><i></i>Wordwarden</span><span><i class="harper"></i><span>Harper</span></span><span><i class="rival"></i><span>LanguageTool</span></span></div>
+        </div>
+        <div class="rows" id="perf-rows"></div>
+        <p class="note" id="perf-note"></p>
+        <p class="note versions" id="perf-versions"></p>
+        <details class="table"><summary>Show as a table</summary><div class="table-scroll" id="perf-table"></div></details>
+      </div>
+    </div>
+  </section>
+
+  <section class="band paper" id="install" aria-labelledby="install-title">
     <div class="wrap">
       <div class="band-head">
         <h2 id="install-title">Install it</h2>
@@ -433,6 +463,16 @@ section.band { padding: 56px 0; }
           <a class="btn ghost" href="https://github.com/Abhisek571/wordwarden/releases/latest">Download from GitHub</a>
         </div>
       </div>
+    </div>
+  </section>
+
+  <section class="band" id="releases" aria-labelledby="releases-title">
+    <div class="wrap log">
+      <div>
+        <h2 id="releases-title" class="log-title">Every release, postmarked</h2>
+        <p class="head-note">Newest first, with each bigger release and the fix releases that followed it. Open one to read what changed; a dot on the stamp means its accuracy was measured.</p>
+      </div>
+      <div class="posts" id="posts"></div>
     </div>
   </section>
 </main>
@@ -679,6 +719,38 @@ const SITE = {
    }
   },
   "harperVersion": "2.10.0"
+ },
+ "resources": {
+  "version": "1.5.2",
+  "date": "2026-10-15",
+  "machine": "a Windows PC (12 threads)",
+  "words": 528,
+  "tabs": 20,
+  "wordwarden": {
+   "oneTabMb": 170,
+   "manyTabsMb": 264,
+   "startCpuS": 1.7,
+   "checkCpuMs": 34,
+   "checkMs": 27,
+   "diskMb": 14
+  },
+  "harper": {
+   "version": "2.12.0",
+   "oneTabMb": 277,
+   "manyTabsMb": 544,
+   "startCpuS": 2.8,
+   "checkCpuMs": 131,
+   "checkMs": 113,
+   "diskMb": 17
+  },
+  "languageTool": {
+   "version": "6.6",
+   "memoryMb": 1282,
+   "startCpuS": 13.1,
+   "checkCpuMs": 336,
+   "checkMs": 130,
+   "diskMb": 386
+  }
  }
 };
 /* END SITE DATA */
@@ -731,7 +803,7 @@ const VS = {
     return [name, desc, g.wordwarden, g.languageTool, lowerBetter, g.harper ?? null];
   }),
 };
-// The strip shows each bigger release plus the newest; fix releases fold into the release they followed.
+// One stamp per bigger release plus the newest; fix releases fold into the release they followed.
 const RELEASES = SITE.releases;
 
 // ---------- Helpers ----------
@@ -757,6 +829,11 @@ function richText(parent, text) {
     if (part.startsWith('**')) el('strong', { text: part.slice(2, -2) }, parent);
     else if (part) parent.append(document.createTextNode(part));
   });
+}
+/** The versions a chart was measured against, taken from the benchmark report it was drawn from. */
+function testedWith(id, harperVersion, languageToolVersion) {
+  const tools = [harperVersion && `Harper ${harperVersion}`, languageToolVersion && `LanguageTool ${languageToolVersion}`].filter(Boolean);
+  document.getElementById(id).textContent = tools.length === 0 ? '' : `Tested against ${tools.join(' and ')}.`;
 }
 function table(container, head, rows, keep) {
   if (!keep) container.replaceChildren();
@@ -946,39 +1023,43 @@ document.querySelectorAll('[data-measure]').forEach((b) => b.addEventListener('c
   historyState.drawn = false; drawHistory();
 }));
 
-// ---------- Postmark strip ----------
-const strip = document.getElementById('strip');
-const letter = document.getElementById('letter');
+// ---------- Release log ----------
+// One row per stamp, newest first; the newest few are shown and the rest fold away. The newest is
+// always open; of the others, only one is open at a time.
+const SHOWN_RELEASES = 4;
+const posts = document.getElementById('posts');
 const latest = RELEASES[RELEASES.length - 1][0];
-RELEASES.forEach(([v, date]) => {
+// The stamp that holds a release: itself, or the stamp a fix release folded into.
+const stampFor = (v) => (RELEASES.find(([rv]) => rv === v) ?? RELEASES.find(([, , , fixes]) => fixes.some(([fv]) => fv === v)) ?? RELEASES[RELEASES.length - 1])[0];
+const plain = (text) => text.replace(/\*\*/gu, '');
+let older = null;
+[...RELEASES].reverse().forEach(([v, date, notes, fixes], index) => {
+  if (index === SHOWN_RELEASES) {
+    const count = RELEASES.length - SHOWN_RELEASES;
+    older = el('details', { class: 'older' }, posts);
+    el('summary', { text: `Show ${count} older release${count === 1 ? '' : 's'}` }, older);
+  }
   const measured = HISTORY.some((r) => r.v === v);
-  const b = el('button', { class: 'stamp', type: 'button', role: 'tab', 'aria-selected': 'false', 'data-v': v, 'aria-label': `Version ${v}, ${fmtDate(date)}${v === latest ? ', latest' : ''}${measured ? ', accuracy measured' : ''}` }, strip);
-  const disc = el('span', { class: 'disc', text: v }, b);
+  const pinned = v === latest;
+  const post = el('details', pinned
+    ? { class: 'post pinned', id: `release-${v}`, 'data-v': v, open: '' }
+    : { class: 'post', id: `release-${v}`, 'data-v': v, name: 'release' }, older ?? posts);
+  const fixNote = fixes.length === 0 ? '' : `${fixes.length} fix release${fixes.length === 1 ? '' : 's'}`;
+  const summary = el('summary', { 'aria-label': `Version ${v}, ${fmtDate(date)}${v === latest ? ', latest' : ''}${fixNote ? `, ${fixNote}` : ''}${measured ? ', accuracy measured' : ''}` }, post);
+  if (pinned) {
+    // Nothing to toggle: keep it out of the tab order and ignore clicks.
+    summary.tabIndex = -1;
+    summary.addEventListener('click', (e) => e.preventDefault());
+  }
+  const disc = el('span', { class: 'disc', text: v, 'aria-hidden': 'true' }, summary);
   if (measured) el('span', { class: 'tick' }, disc);
-  el('span', { class: 'date', text: v === latest ? 'Latest' : fmtDate(date).replace(/ 2026$/, '') }, b);
-  b.addEventListener('click', () => selectRelease(v, false));
-});
-strip.addEventListener('keydown', (e) => {
-  if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(e.key)) return;
-  e.preventDefault();
-  const tabs = [...strip.children];
-  const cur = tabs.findIndex((t) => t.getAttribute('aria-selected') === 'true');
-  const next = e.key === 'Home' ? 0 : e.key === 'End' ? tabs.length - 1 : Math.min(tabs.length - 1, Math.max(0, cur + (e.key === 'ArrowRight' ? 1 : -1)));
-  selectRelease(tabs[next].dataset.v, false); tabs[next].focus();
-});
-function selectRelease(v, fromChart) {
-  const [, date, notes, fixes] = RELEASES.find(([rv]) => rv === v);
-  [...strip.children].forEach((t) => {
-    const on = t.dataset.v === v;
-    t.setAttribute('aria-selected', String(on)); t.tabIndex = on ? 0 : -1;
-    // Scroll only the strip, never the page, to bring the chosen stamp into view.
-    if (on) strip.scrollTo({ left: t.offsetLeft - (strip.clientWidth - t.offsetWidth) / 2, behavior: reduced || !fromChart ? 'auto' : 'smooth' });
-  });
-  letter.replaceChildren();
-  const head = el('div', { class: 'letter-rail' }, letter);
-  el('h3', { text: v }, head);
-  el('p', { class: 'when', text: fmtDate(date) }, head);
-  const body = el('div', {}, letter);
+  const meta = el('span', { class: 'post-meta', 'aria-hidden': 'true' }, summary);
+  const when = el('span', { class: 'post-when' }, meta);
+  if (v === latest) el('span', { class: 'latest', text: 'Latest' }, when);
+  when.append(document.createTextNode(fmtDate(date)));
+  if (fixNote) el('span', { class: 'fixes', text: ` · ${fixNote}` }, when);
+  if (notes.length > 0) el('span', { class: 'post-teaser', text: plain(notes[0]) }, meta);
+  const body = el('div', { class: 'post-body' }, post);
   const ul = el('ul', {}, body);
   notes.forEach((n) => richText(el('li', {}, ul), n));
   if (fixes.length > 0) {
@@ -987,13 +1068,30 @@ function selectRelease(v, fromChart) {
     const dl = el('dl', {}, also);
     fixes.forEach(([fv, text]) => { el('dt', { text: fv }, dl); el('dd', { text }, dl); });
   }
-  const hi = HISTORY.findIndex((r) => r.v === v);
+  // Opening a release marks it on the accuracy chart.
+  post.addEventListener('toggle', () => {
+    if (!post.open) return;
+    const hi = HISTORY.findIndex((r) => r.v === v);
+    historyState.showAt?.(hi >= 0 ? hi : null);
+  });
+});
+/** Opens the release that holds `version`, and scrolls to it when asked. */
+function selectRelease(version, scroll) {
+  const post = document.getElementById(`release-${stampFor(version)}`);
+  if (older?.contains(post)) older.open = true;
+  post.open = true;
+  const hi = HISTORY.findIndex((r) => r.v === post.dataset.v);
   historyState.showAt?.(hi >= 0 ? hi : null);
-  if (fromChart) document.getElementById('releases').scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'start' });
+  if (scroll) post.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'start' });
 }
+const openFromHash = () => {
+  const match = /^#release-(.+)$/u.exec(decodeURIComponent(location.hash));
+  if (match) selectRelease(match[1], true);
+};
+window.addEventListener('hashchange', openFromHash);
 
 // ---------- Paired bars: against LanguageTool ----------
-// rival: true for LanguageTool, 'harper' for Harper alone.
+// rival: true for LanguageTool, 'harper' for Harper.
 function barLine(track, value, max, label, tipLines, rival, color) {
   const line = el('div', { class: `barline${rival ? ` ${rival === true ? 'rival' : rival}` : ''}`, tabindex: '0' }, track);
   if (color) line.style.setProperty('--bar', color);
@@ -1042,7 +1140,7 @@ function drawVs(animate) {
     bars.push(barLine(track, ours.topThree, 100, pct(ours.topThree), [`Correct word in top three: ${pct(ours.topThree)}`, `${name}: the right word is among the three suggestions`], false, 'var(--m-three)'));
     bars.push(barLine(track, ours.topOne, 100, pct(ours.topOne), [`Correct word first: ${pct(ours.topOne)}`, `${name}: the right word is the first suggestion`], false, 'var(--m-first)'));
     bars.push(barLine(track, lt, 100, pct(lt), [`LanguageTool: ${pct(lt)}`, `${name}: correct word first`], true));
-    if (harper !== null) bars.push(barLine(track, harper, 100, pct(harper), [`Harper alone: ${pct(harper)}`, `${name}: correct word first`], 'harper'));
+    if (harper !== null) bars.push(barLine(track, harper, 100, pct(harper), [`Harper: ${pct(harper)}`, `${name}: correct word first`], 'harper'));
     const g = el('div', { class: 'gain', text: `${signed(ours.topOne - lt)} pts` }, row);
   });
   VS.grammar.forEach(([name, desc, mine, lt, lowerBetter, harper]) => {
@@ -1056,25 +1154,66 @@ function drawVs(animate) {
       const better = lowerBetter ? lt / mine : null;
       g.textContent = lowerBetter ? `${better.toFixed(1)}× fewer` : `${signed(mine - lt)} pts`;
     }
-    if (harper !== null) bars.push(barLine(track, harper, 100, pct(harper), [`Harper alone: ${pct(harper)}`, desc], 'harper'));
+    if (harper !== null) bars.push(barLine(track, harper, 100, pct(harper), [`Harper: ${pct(harper)}`, desc], 'harper'));
   });
   document.getElementById('spell-note').textContent = 'Caught: the misspelling gets an underline. Correct word first and in top three: the right word is offered.';
+  testedWith('acc-versions', SITE.accuracy.harperVersion, SITE.accuracy.languageToolVersion);
   if (animate) grow(bars);
   const accTable = document.getElementById('acc-table');
-  table(accTable, ['Spelling', 'Caught', 'Top three', 'Correct first', 'LanguageTool, correct first', 'Harper alone, correct first'],
+  table(accTable, ['Spelling', 'Caught', 'Top three', 'Correct first', 'LanguageTool, correct first', 'Harper, correct first'],
     VS.spelling.map(([n, , o, lt, harper]) => [n, pct(o.caught), pct(o.topThree), pct(o.topOne), pct(lt), harper === null ? '–' : pct(harper)]));
-  table(accTable, ['Grammar', 'Wordwarden', 'LanguageTool', 'Harper alone'],
+  table(accTable, ['Grammar', 'Wordwarden', 'LanguageTool', 'Harper'],
     VS.grammar.map(([n, , mine, lt, , harper]) => [n, pct(mine), pct(lt), harper === null ? '–' : pct(harper)]), true);
 }
 
 
+// ---------- Resource use: Wordwarden, Harper's extension and a LanguageTool server ----------
+const RES = SITE.resources;
+const HARPER_RES = RES.harper ?? null;
+const resRow = (name, note, key, ltKey, unit, word) => [name, note, RES.wordwarden[key], HARPER_RES?.[key] ?? null, RES.languageTool[ltKey], unit, word];
+const PERF = [
+  resRow('Memory, 1 tab', 'While checking', 'oneTabMb', 'memoryMb', 'MB', 'less'),
+  resRow(`Memory, ${RES.tabs} tabs`, 'All tabs share one checker', 'manyTabsMb', 'memoryMb', 'MB', 'less'),
+  resRow('CPU time to start', 'Up to the first check; summed over all cores', 'startCpuS', 'startCpuS', 's', 'less'),
+  resRow('CPU time per check', 'Summed over all cores', 'checkCpuMs', 'checkCpuMs', 'ms', 'less'),
+  resRow(`Time to check ${RES.words} words`, 'Median of 30 checks', 'checkMs', 'checkMs', 'ms', 'faster'),
+  resRow('Size on disk', 'LanguageTool also needs Java', 'diskMb', 'diskMb', 'MB', 'smaller'),
+];
+function drawPerf() {
+  const rows = document.getElementById('perf-rows');
+  const bars = [];
+  PERF.forEach(([name, note, ours, harper, lt, unit, word]) => {
+    const row = el('div', { class: 'rowx' }, rows);
+    const n = el('div', { class: 'name', text: name }, row); el('small', { text: note }, n);
+    const track = el('div', { class: 'track' }, row);
+    const max = Math.max(ours, harper ?? 0, lt);
+    const fmt = (v) => `${v.toLocaleString('en-GB')} ${unit}`;
+    bars.push(barLine(track, ours, max, fmt(ours), [`Wordwarden: ${fmt(ours)}`, name]));
+    if (harper !== null) bars.push(barLine(track, harper, max, fmt(harper), [`Harper: ${fmt(harper)}`, name], 'harper'));
+    bars.push(barLine(track, lt, max, fmt(lt), [`LanguageTool: ${fmt(lt)}`, name], true));
+    const g = el('div', { class: 'gain' }, row);
+    [[harper, 'Harper'], [lt, 'LanguageTool']].forEach(([theirs, who]) => {
+      if (theirs === null) return;
+      const vs = el('span', { class: 'vs', text: `${(theirs / ours).toFixed(1)}×` }, g);
+      el('small', { text: `${word} than ${who}` }, vs);
+    });
+  });
+  document.getElementById('perf-note').textContent = `Measured on ${RES.machine ?? 'one machine'}. Memory is private memory: for the two extensions, what each adds to the browser; for LanguageTool, its server, whose own browser extension is not counted. Each row has its own scale.`;
+  testedWith('perf-versions', HARPER_RES?.version ?? null, RES.languageTool.version ?? null);
+  table(document.getElementById('perf-table'), ['Measure', 'Wordwarden', 'Harper', 'LanguageTool'],
+    PERF.map(([n, , o, h, t, u]) => [n, `${o} ${u}`, h === null ? '–' : `${h} ${u}`, `${t} ${u}`]));
+  return bars;
+}
+
 // Bars grow once, when their section first comes into view.
+const perfBars = drawPerf();
 drawVs(false);
 const io = new IntersectionObserver((entries) => entries.forEach((e) => {
   if (!e.isIntersecting) return;
   io.unobserve(e.target);
-  drawVs(true);
+  if (e.target.id === 'performance') grow(perfBars); else drawVs(true);
 }), { threshold: 0.25 });
+io.observe(document.getElementById('performance'));
 io.observe(document.getElementById('accuracy'));
 
 // ---------- Jumping words: misspellings hop, land fixed, and later hop back ----------
@@ -1083,7 +1222,7 @@ io.observe(document.getElementById('accuracy'));
     ['teh', 'the'], ['recieve', 'receive'], ['definately', 'definitely'], ['we was', 'we were', 'grammar'],
     ['becos', 'because'], ['frends', 'friends'], ['wierd', 'weird'],
     ['could of', 'could have', 'grammar'], ['untill', 'until'], ['occured', 'occurred'],
-    ['alot', 'a lot'],
+    ['alot', 'a lot'], ['seperate', 'separate'],
   ];
   const line = document.getElementById('hop');
   const frankSvg = document.querySelector('.frank');
@@ -1136,15 +1275,16 @@ io.observe(document.getElementById('accuracy'));
 })();
 
 // "Measured at" marks open the stamp that holds the measured release.
-const stampFor = (v) => (RELEASES.find(([rv]) => rv === v) ?? RELEASES.find(([, , , fixes]) => fixes.some(([fv]) => fv === v)) ?? RELEASES[RELEASES.length - 1])[0];
 document.querySelectorAll('[data-measured]').forEach((a) => {
-  const source = SITE.accuracy;
+  const source = a.dataset.measured === 'resources' ? SITE.resources : SITE.accuracy;
   a.lastElementChild.textContent = `Measured at ${source.version}, ${fmtDate(source.date)}`;
-  a.addEventListener('click', () => selectRelease(stampFor(source.version), false));
+  // The link itself jumps to the release; this opens it.
+  a.href = `#release-${stampFor(source.version)}`;
+  a.addEventListener('click', () => selectRelease(source.version, false));
 });
-if (SITE.accuracy.languageToolVersion) document.querySelectorAll('[data-lt]').forEach((n) => { n.textContent = `LanguageTool ${SITE.accuracy.languageToolVersion}`; });
 drawHistory();
-selectRelease(RELEASES[RELEASES.length - 1][0], false);
+// Open the release a link points at, or else the newest.
+if (/^#release-/u.test(location.hash)) openFromHash(); else selectRelease(latest, false);
 let resizeFrame = 0;
 new ResizeObserver(() => { cancelAnimationFrame(resizeFrame); resizeFrame = requestAnimationFrame(drawHistory); }).observe(document.getElementById('history-plot'));
 matchMedia('(prefers-color-scheme: dark)').addEventListener('change', drawHistory);

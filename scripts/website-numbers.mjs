@@ -62,16 +62,24 @@ function accuracy() {
 function resources() {
   const ours = report.wordwarden ?? {};
   const theirs = report.languageTool ?? {};
+  const harper = report.harper ?? null;
+  const machine = report.machine ?? {};
+  const extension = (numbers) => ({
+    oneTabMb: Math.round(numbers.oneTabMb), manyTabsMb: Math.round(numbers.manyTabsMb), startCpuS: round(numbers.startCpu),
+    checkCpuMs: Math.round(numbers.checkCpuMs), checkMs: Math.round(numbers.checkMs), diskMb: Math.round(numbers.diskMb),
+  });
   return {
     version,
     date: String(report.measuredAt ?? new Date().toISOString()).slice(0, 10),
+    machine: machine.platform === 'linux' ? `GitHub's Linux machine (${machine.cpus} cores)`
+      : `a ${{ win32: 'Windows', darwin: 'Mac' }[machine.platform] ?? machine.platform} PC (${machine.cpus} threads)`,
     words: report.words,
     tabs: ours.manyTabs,
-    wordwarden: {
-      oneTabMb: Math.round(ours.oneTabMb), manyTabsMb: Math.round(ours.manyTabsMb), startCpuS: round(ours.startCpu),
-      checkCpuMs: Math.round(ours.checkCpuMs), checkMs: Math.round(ours.checkMs), diskMb: Math.round(ours.diskMb),
-    },
+    wordwarden: extension(ours),
+    // Harper's browser extension, when the report has it.
+    harper: harper === null ? null : { version: harper.version ?? null, ...extension(harper) },
     languageTool: {
+      version: typeof theirs.version === 'string' ? theirs.version : null,
       memoryMb: Math.round(theirs.memoryMb), startCpuS: round(theirs.startCpu),
       checkCpuMs: Math.round(theirs.checkCpuMs), checkMs: Math.round(theirs.checkMs), diskMb: Math.round(theirs.diskMb),
     },

@@ -24,7 +24,11 @@ const SETTLE_MS = 5000;
 const LT_PORT = 8097;
 const PARAGRAPH = 'I recieve alot of questions about hiking, so here is my advice. Their is no need for expensive gear when you start. A good pair of boots and a warm jacket goes a long way. Always check the weather befor you leave, and tell a friend were you are going. Me and my friend was going to the mountains last year, but we doesnt know the trail. We walked for nearly two hour before someone tell us the path had already closed.';
 const TEXT = Array.from({ length: 6 }, () => PARAGRAPH).join(' ');
-const WORDS = TEXT.split(/\s+/u).length;
+// Each timed check numbers every sentence afresh, so neither checker has seen any sentence before: Wordwarden keeps
+// the findings of text that did not change, and this measures checking new text.
+let serial = 0;
+const freshText = () => TEXT.replace(/[.?!](?= |$)/gu, (mark) => ` ${(serial += 1)}${mark}`);
+const WORDS = freshText().split(/\s+/u).length;
 
 const sleep = (ms) => new Promise((done) => setTimeout(done, ms));
 const median = (values) => [...values].sort((a, b) => a - b)[Math.floor(values.length / 2)];
@@ -120,11 +124,11 @@ async function measureExtensionChecks() {
     if (!answer.ok) throw new Error(answer.error);
     return { ms: performance.now() - started, issues: answer.issues.length };
   }, text);
-  for (let run = 0; run < WARM_UP; run += 1) await lint(TEXT);
+  for (let run = 0; run < WARM_UP; run += 1) await lint(freshText());
   await sleep(SETTLE_MS);
   const before = total(browserProcesses());
   const times = [];
-  for (let run = 0; run < RUNS; run += 1) times.push((await lint(TEXT)).ms);
+  for (let run = 0; run < RUNS; run += 1) times.push((await lint(freshText())).ms);
   const after = total(browserProcesses());
   await context.close();
   return { checkMs: median(times), checkCpuMs: ((after.cpu - before.cpu) * 1000) / RUNS };
@@ -137,7 +141,7 @@ async function measureLanguageTool() {
   const ownProcess = () => processes((command) => command.includes('org.languagetool.server.HTTPServer') && command.includes(String(LT_PORT)))
     .sort((a, b) => b.bytes - a.bytes).slice(0, 1); // On Windows, java.exe can be a small launcher for the real one.
   const check = async () => {
-    const response = await fetch(`http://127.0.0.1:${LT_PORT}/v2/check`, { method: 'POST', body: new URLSearchParams({ language: 'en-US', text: TEXT }) });
+    const response = await fetch(`http://127.0.0.1:${LT_PORT}/v2/check`, { method: 'POST', body: new URLSearchParams({ language: 'en-US', text: freshText() }) });
     if (!response.ok) throw new Error(`LanguageTool answered ${response.status}.`);
     return (await response.json()).matches.length;
   };
@@ -173,7 +177,8 @@ async function measure() {
     machine: { platform: process.platform, cpus: os.cpus().length },
     words: WORDS,
     wordwarden: { oneTabMb: oneTab.addedMb, manyTabsMb: manyTabs.addedMb, manyTabs: MANY_TABS, startCpu: oneTab.startCpu, ...extensionChecks, diskMb: folderMb(extensionDir) },
-    languageTool: { ...languageTool, diskMb: folderMb(languageToolDir) },
+    // The version, for the website, from the folder the download unpacks to (LanguageTool-<version>).
+    languageTool: { version: /LanguageTool-([\d.]+)/u.exec(languageToolDir)?.[1] ?? null, ...languageTool, diskMb: folderMb(languageToolDir) },
   };
 }
 const report = redrawOnly ? JSON.parse(readFileSync(languageToolArg, 'utf8')) : await measure();
@@ -234,7 +239,7 @@ ${parts.join('\n')}
 <text x="${left + 18}" y="${y + 34}" font-size="12.5" fill="${INK}">LanguageTool server</text>
 <line x1="24" y1="${footer}" x2="776" y2="${footer}" stroke="${RULE}"/>
 <text x="24" y="${footer + 22}" font-size="12" fill="${MUTED}">Measured on ${machine}. Memory is private memory; CPU time is summed over all cores. Check times are</text>
-<text x="24" y="${footer + 38}" font-size="12" fill="${MUTED}">the median of ${RUNS} checks of the same text. LanguageTool also needs its own browser extension, which is not counted.</text>
+<text x="24" y="${footer + 38}" font-size="12" fill="${MUTED}">the median of ${RUNS} checks of new text each time. LanguageTool also needs its own browser extension, which is not counted.</text>
 <text x="24" y="${footer + 54}" font-size="12" fill="${MUTED}">Generated automatically for every release except small bug fixes.</text>
 </svg>
 `;

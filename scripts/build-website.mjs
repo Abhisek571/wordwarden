@@ -1,6 +1,6 @@
 // Fills website/index.html with the current release notes and benchmark numbers, so the page updates with
-// each release. Reads CHANGELOG.md, docs/accuracy-history.json and docs/accuracy-latest.json, and rewrites
-// the data block between the SITE DATA markers in the page.
+// each release. Reads CHANGELOG.md, docs/accuracy-history.json, docs/accuracy-latest.json and
+// docs/resources-latest.json, and rewrites the data block between the SITE DATA markers in the page.
 // Usage: node scripts/build-website.mjs [page]   (default website/index.html)
 import { readFileSync, writeFileSync } from 'node:fs';
 
@@ -57,6 +57,7 @@ const site = {
   releases: stamps(parseChangelog(read('CHANGELOG.md'))),
   history: readJson('docs/accuracy-history.json').rows,
   accuracy: readJson('docs/accuracy-latest.json'),
+  resources: readJson('docs/resources-latest.json'),
 };
 
 const page = readFileSync(pagePath, 'utf8');
@@ -67,4 +68,4 @@ const to = page.indexOf(end);
 if (from < 0 || to < from) throw new Error(`${pagePath} has no SITE DATA block.`);
 const block = `${start}\nconst SITE = ${JSON.stringify(site, null, 1)};\n`;
 writeFileSync(pagePath, page.slice(0, from) + block + page.slice(to));
-process.stdout.write(`Wrote ${pagePath}: ${site.releases.length} release stamps, ${site.history.length} measured releases, accuracy ${site.accuracy.version}.\n`);
+process.stdout.write(`Wrote ${pagePath}: ${site.releases.length} release stamps, ${site.history.length} measured releases, accuracy ${site.accuracy.version}, resources ${site.resources.version}.\n`);

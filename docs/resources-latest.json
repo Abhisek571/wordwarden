@@ -1,21 +1,32 @@
 {
-  "version": "1.5.0",
-  "date": "2026-10-12",
-  "words": 492,
+  "version": "1.5.2",
+  "date": "2026-10-15",
+  "machine": "a Windows PC (12 threads)",
+  "words": 528,
   "tabs": 20,
   "wordwarden": {
-    "oneTabMb": 255,
-    "manyTabsMb": 515,
-    "startCpuS": 4,
-    "checkCpuMs": 297,
-    "checkMs": 214,
-    "diskMb": 23
+    "oneTabMb": 170,
+    "manyTabsMb": 264,
+    "startCpuS": 1.7,
+    "checkCpuMs": 34,
+    "checkMs": 27,
+    "diskMb": 14
+  },
+  "harper": {
+    "version": "2.12.0",
+    "oneTabMb": 277,
+    "manyTabsMb": 544,
+    "startCpuS": 2.8,
+    "checkCpuMs": 131,
+    "checkMs": 113,
+    "diskMb": 17
   },
   "languageTool": {
-    "memoryMb": 847,
-    "startCpuS": 19.5,
-    "checkCpuMs": 628,
-    "checkMs": 294,
+    "version": "6.6",
+    "memoryMb": 1282,
+    "startCpuS": 13.1,
+    "checkCpuMs": 336,
+    "checkMs": 130,
     "diskMb": 386
   }
 }
