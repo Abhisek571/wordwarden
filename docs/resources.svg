@@ -1,44 +1,58 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="800" height="634" viewBox="0 0 800 634" font-family="Segoe UI, system-ui, -apple-system, sans-serif" role="img" aria-label="Resource use chart">
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="798" viewBox="0 0 800 798" font-family="Segoe UI, system-ui, -apple-system, sans-serif" role="img" aria-label="Resource use chart">
 <rect width="100%" height="100%" rx="8" fill="#fbfaf7"/>
 <text x="24" y="38" font-size="20" font-weight="700" fill="#1d1d1b">Resource use</text>
-<text x="24" y="60" font-size="13" fill="#6b6a66">The newest Wordwarden release against the newest LanguageTool server, on the same machine. Shorter is better.</text>
+<text x="24" y="60" font-size="13" fill="#6b6a66">The newest Wordwarden release against the newest Harper extension and the newest LanguageTool server, on the same machine. Shorter is better.</text>
 <line x1="24" y1="80" x2="776" y2="80" stroke="#e4e2dc"/>
 <text x="258" y="126" font-size="14" font-weight="600" fill="#1d1d1b" text-anchor="end">Memory while checking, 1 tab</text>
-<rect x="272" y="104" width="113.7" height="16" rx="2" fill="#1e6fd9"/>
-<text x="391.7" y="116.5" font-size="12" font-weight="600" fill="#1d1d1b">255 MB <tspan font-weight="400" fill="#6b6a66">3.3× less</tspan></text>
-<rect x="272" y="124" width="378.0" height="16" rx="2" fill="#9a9893"/>
-<text x="656.0" y="136.5" font-size="12" font-weight="600" fill="#1d1d1b">847 MB</text>
-<text x="258" y="192" font-size="14" font-weight="600" fill="#1d1d1b" text-anchor="end">Memory while checking, 20 tabs</text>
-<rect x="272" y="170" width="229.8" height="16" rx="2" fill="#1e6fd9"/>
-<text x="507.8" y="182.5" font-size="12" font-weight="600" fill="#1d1d1b">515 MB <tspan font-weight="400" fill="#6b6a66">1.6× less</tspan></text>
-<rect x="272" y="190" width="378.0" height="16" rx="2" fill="#9a9893"/>
-<text x="656.0" y="202.5" font-size="12" font-weight="600" fill="#1d1d1b">847 MB</text>
-<text x="258" y="258" font-size="14" font-weight="600" fill="#1d1d1b" text-anchor="end">CPU time to start</text>
-<rect x="272" y="236" width="77.8" height="16" rx="2" fill="#1e6fd9"/>
-<text x="355.8" y="248.5" font-size="12" font-weight="600" fill="#1d1d1b">4 s <tspan font-weight="400" fill="#6b6a66">4.9× less</tspan></text>
-<rect x="272" y="256" width="378.0" height="16" rx="2" fill="#9a9893"/>
-<text x="656.0" y="268.5" font-size="12" font-weight="600" fill="#1d1d1b">19 s</text>
-<text x="258" y="324" font-size="14" font-weight="600" fill="#1d1d1b" text-anchor="end">CPU time per check</text>
-<rect x="272" y="302" width="178.7" height="16" rx="2" fill="#1e6fd9"/>
-<text x="456.7" y="314.5" font-size="12" font-weight="600" fill="#1d1d1b">297 ms <tspan font-weight="400" fill="#6b6a66">2.1× less</tspan></text>
-<rect x="272" y="322" width="378.0" height="16" rx="2" fill="#9a9893"/>
-<text x="656.0" y="334.5" font-size="12" font-weight="600" fill="#1d1d1b">628 ms</text>
-<text x="258" y="390" font-size="14" font-weight="600" fill="#1d1d1b" text-anchor="end">Size on disk</text>
-<rect x="272" y="368" width="22.4" height="16" rx="2" fill="#1e6fd9"/>
-<text x="300.4" y="380.5" font-size="12" font-weight="600" fill="#1d1d1b">23 MB <tspan font-weight="400" fill="#6b6a66">17× smaller</tspan></text>
-<rect x="272" y="388" width="378.0" height="16" rx="2" fill="#9a9893"/>
-<text x="656.0" y="400.5" font-size="12" font-weight="600" fill="#1d1d1b">386 MB + Java</text>
-<text x="258" y="456" font-size="14" font-weight="600" fill="#1d1d1b" text-anchor="end">Time to check 492 words</text>
-<rect x="272" y="434" width="274.7" height="16" rx="2" fill="#1e6fd9"/>
-<text x="552.7" y="446.5" font-size="12" font-weight="600" fill="#1d1d1b">214 ms <tspan font-weight="400" fill="#6b6a66">1.4× faster</tspan></text>
-<rect x="272" y="454" width="378.0" height="16" rx="2" fill="#9a9893"/>
-<text x="656.0" y="466.5" font-size="12" font-weight="600" fill="#1d1d1b">294 ms</text>
-<rect x="272" y="504" width="12" height="12" rx="2" fill="#1e6fd9"/>
-<text x="290" y="514" font-size="12.5" fill="#1d1d1b">Wordwarden</text>
-<rect x="272" y="524" width="12" height="12" rx="2" fill="#9a9893"/>
-<text x="290" y="534" font-size="12.5" fill="#1d1d1b">LanguageTool server</text>
-<line x1="24" y1="568" x2="776" y2="568" stroke="#e4e2dc"/>
-<text x="24" y="590" font-size="12" fill="#6b6a66">Measured on GitHub's Linux machine (2 cores). Memory is private memory; CPU time is summed over all cores. Check times are</text>
-<text x="24" y="606" font-size="12" fill="#6b6a66">the median of 30 checks of the same text. LanguageTool also needs its own browser extension, which is not counted.</text>
-<text x="24" y="622" font-size="12" fill="#6b6a66">Generated automatically for every release except small bug fixes.</text>
+<rect x="272" y="104" width="44.2" height="16" rx="2" fill="#1e6fd9"/>
+<text x="322.2" y="116.5" font-size="12" font-weight="600" fill="#1d1d1b">134 MB <tspan font-weight="400" fill="#6b6a66">8.5× less than LanguageTool</tspan></text>
+<rect x="272" y="124" width="75.9" height="16" rx="2" fill="#2a9d8f"/>
+<text x="353.9" y="136.5" font-size="12" font-weight="600" fill="#1d1d1b">230 MB</text>
+<rect x="272" y="144" width="378.0" height="16" rx="2" fill="#9a9893"/>
+<text x="656.0" y="156.5" font-size="12" font-weight="600" fill="#1d1d1b">1,148 MB</text>
+<text x="258" y="216" font-size="14" font-weight="600" fill="#1d1d1b" text-anchor="end">Memory while checking, 20 tabs</text>
+<rect x="272" y="194" width="63.2" height="16" rx="2" fill="#1e6fd9"/>
+<text x="341.2" y="206.5" font-size="12" font-weight="600" fill="#1d1d1b">192 MB <tspan font-weight="400" fill="#6b6a66">6× less than LanguageTool</tspan></text>
+<rect x="272" y="214" width="154.6" height="16" rx="2" fill="#2a9d8f"/>
+<text x="432.6" y="226.5" font-size="12" font-weight="600" fill="#1d1d1b">470 MB</text>
+<rect x="272" y="234" width="378.0" height="16" rx="2" fill="#9a9893"/>
+<text x="656.0" y="246.5" font-size="12" font-weight="600" fill="#1d1d1b">1,148 MB</text>
+<text x="258" y="306" font-size="14" font-weight="600" fill="#1d1d1b" text-anchor="end">CPU time to start</text>
+<rect x="272" y="284" width="41.5" height="16" rx="2" fill="#1e6fd9"/>
+<text x="319.5" y="296.5" font-size="12" font-weight="600" fill="#1d1d1b">2 s <tspan font-weight="400" fill="#6b6a66">9.1× less than LanguageTool</tspan></text>
+<rect x="272" y="304" width="73.0" height="16" rx="2" fill="#2a9d8f"/>
+<text x="351.0" y="316.5" font-size="12" font-weight="600" fill="#1d1d1b">3.5 s</text>
+<rect x="272" y="324" width="378.0" height="16" rx="2" fill="#9a9893"/>
+<text x="656.0" y="336.5" font-size="12" font-weight="600" fill="#1d1d1b">18 s</text>
+<text x="258" y="396" font-size="14" font-weight="600" fill="#1d1d1b" text-anchor="end">CPU time per check</text>
+<rect x="272" y="374" width="27.8" height="16" rx="2" fill="#1e6fd9"/>
+<text x="305.8" y="386.5" font-size="12" font-weight="600" fill="#1d1d1b">48 ms <tspan font-weight="400" fill="#6b6a66">14× less than LanguageTool</tspan></text>
+<rect x="272" y="394" width="107.3" height="16" rx="2" fill="#2a9d8f"/>
+<text x="385.3" y="406.5" font-size="12" font-weight="600" fill="#1d1d1b">187 ms</text>
+<rect x="272" y="414" width="378.0" height="16" rx="2" fill="#9a9893"/>
+<text x="656.0" y="426.5" font-size="12" font-weight="600" fill="#1d1d1b">658 ms</text>
+<text x="258" y="486" font-size="14" font-weight="600" fill="#1d1d1b" text-anchor="end">Size on disk</text>
+<rect x="272" y="464" width="13.7" height="16" rx="2" fill="#1e6fd9"/>
+<text x="291.7" y="476.5" font-size="12" font-weight="600" fill="#1d1d1b">14 MB <tspan font-weight="400" fill="#6b6a66">28× smaller than LanguageTool</tspan></text>
+<rect x="272" y="484" width="16.2" height="16" rx="2" fill="#2a9d8f"/>
+<text x="294.2" y="496.5" font-size="12" font-weight="600" fill="#1d1d1b">17 MB</text>
+<rect x="272" y="504" width="378.0" height="16" rx="2" fill="#9a9893"/>
+<text x="656.0" y="516.5" font-size="12" font-weight="600" fill="#1d1d1b">386 MB + Java</text>
+<text x="258" y="576" font-size="14" font-weight="600" fill="#1d1d1b" text-anchor="end">Time to check 528 words</text>
+<rect x="272" y="554" width="63.6" height="16" rx="2" fill="#1e6fd9"/>
+<text x="341.6" y="566.5" font-size="12" font-weight="600" fill="#1d1d1b">37 ms <tspan font-weight="400" fill="#6b6a66">5.9× faster than LanguageTool</tspan></text>
+<rect x="272" y="574" width="279.2" height="16" rx="2" fill="#2a9d8f"/>
+<text x="557.2" y="586.5" font-size="12" font-weight="600" fill="#1d1d1b">163 ms</text>
+<rect x="272" y="594" width="378.0" height="16" rx="2" fill="#9a9893"/>
+<text x="656.0" y="606.5" font-size="12" font-weight="600" fill="#1d1d1b">221 ms</text>
+<rect x="272" y="648" width="12" height="12" rx="2" fill="#1e6fd9"/>
+<text x="290" y="658" font-size="12.5" fill="#1d1d1b">Wordwarden</text>
+<rect x="272" y="668" width="12" height="12" rx="2" fill="#2a9d8f"/>
+<text x="290" y="678" font-size="12.5" fill="#1d1d1b">Harper 2.12.0 extension</text>
+<rect x="272" y="688" width="12" height="12" rx="2" fill="#9a9893"/>
+<text x="290" y="698" font-size="12.5" fill="#1d1d1b">LanguageTool 6.6 server</text>
+<line x1="24" y1="732" x2="776" y2="732" stroke="#e4e2dc"/>
+<text x="24" y="754" font-size="12" fill="#6b6a66">Measured on GitHub's Linux machine (4 cores). Memory is private memory: for an extension, what it adds to the browser. CPU time is summed</text>
+<text x="24" y="770" font-size="12" fill="#6b6a66">over all cores. Check times are the median of 30 checks of new text. LanguageTool's own browser extension is not counted.</text>
+<text x="24" y="786" font-size="12" fill="#6b6a66">Generated automatically for every release except small bug fixes.</text>
 </svg>
