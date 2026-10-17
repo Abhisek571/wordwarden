@@ -1,58 +1,58 @@
 {
-  "version": "1.6.1",
+  "version": "1.6.2",
   "date": "2026-10-17",
   "languageToolVersion": "6.6",
   "harperVersion": "2.13.0",
   "spelling": {
     "aalto": {
-      "caught": 67.5,
-      "topOne": 52.8,
-      "topThree": 58.4,
+      "caught": 67.6,
+      "topOne": 53.1,
+      "topThree": 58.5,
       "languageTool": 50.2,
       "harper": 39.5
     },
     "twitter": {
-      "caught": 88.8,
-      "topOne": 66.3,
-      "topThree": 74.4,
+      "caught": 88.6,
+      "topOne": 66.8,
+      "topThree": 74.3,
       "languageTool": 59.4,
       "harper": 34.3
     },
     "wikipedia": {
       "caught": 98.8,
-      "topOne": 90.8,
+      "topOne": 91.5,
       "topThree": 96.3,
       "languageTool": 84.8,
       "harper": 80.3
     },
     "birkbeck": {
-      "caught": 91.5,
-      "topOne": 45,
+      "caught": 91.4,
+      "topOne": 45.3,
       "topThree": 53.6,
       "languageTool": 37.3,
       "harper": 35.6
     },
     "holbrook": {
-      "caught": 59.4,
-      "topOne": 30.4,
-      "topThree": 37.7,
+      "caught": 59.2,
+      "topOne": 30.8,
+      "topThree": 38,
       "languageTool": 25.3,
       "harper": 12.2
     }
   },
   "grammar": {
     "fixes": {
-      "wordwarden": 67.1,
+      "wordwarden": 69,
       "languageTool": 60.2,
       "harper": 55.2
     },
     "falseAlarms": {
-      "wordwarden": 5.9,
+      "wordwarden": 5.7,
       "languageTool": 12.8,
       "harper": 11.7
     },
     "recall": {
-      "wordwarden": 64.6,
+      "wordwarden": 64.4,
       "languageTool": 72.7,
       "harper": 66.9
     }
