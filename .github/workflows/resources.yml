@@ -1,10 +1,10 @@
 name: Resources
 
 # Measures the memory and CPU of the built extension against the newest Harper extension and LanguageTool server,
-# and redraws docs/resources.svg. Runs for bigger releases only (v1.1.0, v2.0.0; not bug-fix tags like v1.0.1), or by hand.
+# and redraws docs/resources.svg. Runs for every Wordwarden release (each v* tag), or by hand.
 on:
   push:
-    tags: ['v*.*.0']
+    tags: ['v*']
   workflow_dispatch:
 
 permissions:

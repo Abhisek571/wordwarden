@@ -2,10 +2,10 @@ name: Accuracy
 
 # Runs the real-world benchmarks and redraws docs/accuracy.svg. The datasets are downloaded from
 # their original sites on each run and are never committed (see docs/BENCHMARKS.md for licences).
-# Runs for bigger releases only (v1.1.0, v2.0.0; not bug-fix tags like v1.0.1), or by hand.
+# Runs for every Wordwarden release (each v* tag), or by hand. New Harper or LanguageTool releases do not start it.
 on:
   push:
-    tags: ['v*.*.0']
+    tags: ['v*']
   workflow_dispatch:
     inputs:
       branch:

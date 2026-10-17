@@ -54,7 +54,7 @@ inside `harper.js` is used. The Accuracy workflow downloads the newest release o
 (`npm run build`), Harper's browser extension and the LanguageTool server on the same machine, with the same
 528-word text full of mistakes, and redraws `docs/resources.svg`. Harper is included when
 `WORDWARDEN_HARPER_EXTENSION` names the unpacked `harper-chrome-plugin.zip` of its newest release. The Resources
-workflow runs it on GitHub's Linux machine with the newest Harper and LanguageTool, for bigger releases or by hand.
+workflow runs it on GitHub's Linux machine with the newest Harper and LanguageTool, for every release or by hand.
 
 - **Extension memory:** each extension in Playwright's Chromium, against the same browser with no extension:
   private memory of all browser processes once every tab's text box has been focused and underlined, with 1 and
