@@ -1,32 +1,32 @@
 {
-  "version": "1.6.0",
-  "date": "2026-10-15",
+  "version": "1.6.1",
+  "date": "2026-10-17",
   "machine": "GitHub's Linux machine (4 cores)",
   "words": 528,
   "tabs": 20,
   "wordwarden": {
-    "oneTabMb": 134,
-    "manyTabsMb": 192,
-    "startCpuS": 2,
-    "checkCpuMs": 48,
-    "checkMs": 37,
+    "oneTabMb": 140,
+    "manyTabsMb": 155,
+    "startCpuS": 1.3,
+    "checkCpuMs": 35,
+    "checkMs": 27,
     "diskMb": 14
   },
   "harper": {
-    "version": "2.12.0",
-    "oneTabMb": 230,
-    "manyTabsMb": 470,
-    "startCpuS": 3.5,
-    "checkCpuMs": 187,
-    "checkMs": 163,
+    "version": "2.13.0",
+    "oneTabMb": 235,
+    "manyTabsMb": 415,
+    "startCpuS": 2.5,
+    "checkCpuMs": 120,
+    "checkMs": 104,
     "diskMb": 17
   },
   "languageTool": {
     "version": "6.6",
-    "memoryMb": 1148,
-    "startCpuS": 18.4,
-    "checkCpuMs": 658,
-    "checkMs": 221,
+    "memoryMb": 1183,
+    "startCpuS": 14.2,
+    "checkCpuMs": 442,
+    "checkMs": 147,
     "diskMb": 386
   }
 }
