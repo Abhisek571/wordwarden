@@ -1,8 +1,8 @@
 {
-  "version": "1.6.0",
-  "date": "2026-10-15",
+  "version": "1.6.1",
+  "date": "2026-10-17",
   "languageToolVersion": "6.6",
-  "harperVersion": "2.12.0",
+  "harperVersion": "2.13.0",
   "spelling": {
     "aalto": {
       "caught": 67.5,
@@ -13,14 +13,14 @@
     },
     "twitter": {
       "caught": 88.8,
-      "topOne": 65,
-      "topThree": 74.5,
+      "topOne": 66.3,
+      "topThree": 74.4,
       "languageTool": 59.4,
       "harper": 34.3
     },
     "wikipedia": {
       "caught": 98.8,
-      "topOne": 90.7,
+      "topOne": 90.8,
       "topThree": 96.3,
       "languageTool": 84.8,
       "harper": 80.3
@@ -34,7 +34,7 @@
     },
     "holbrook": {
       "caught": 59.4,
-      "topOne": 30.5,
+      "topOne": 30.4,
       "topThree": 37.7,
       "languageTool": 25.3,
       "harper": 12.2
@@ -42,7 +42,7 @@
   },
   "grammar": {
     "fixes": {
-      "wordwarden": 66.4,
+      "wordwarden": 67.1,
       "languageTool": 60.2,
       "harper": 55.2
     },
