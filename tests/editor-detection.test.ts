@@ -16,6 +16,14 @@ describe('editor privacy filtering', () => {
     expect(closestSupportedEditor(editable)).toBe(editable);
   });
 
+  // They hold addresses, and the browser cannot select inside them, so a fix could not be applied.
+  it.each(['email', 'url'])('leaves %s fields alone', (type) => {
+    const input = document.createElement('input');
+    input.type = type;
+    document.body.append(input);
+    expect(closestSupportedEditor(input)).toBeNull();
+  });
+
   it.each(['section-checkout billing cc-number', 'SECTION-PAYMENT SHIPPING CC-CSC', 'section-login one-time-code'])('rejects tokenized sensitive autocomplete: %s', (autocomplete) => {
     const input = document.createElement('input');
     input.setAttribute('autocomplete', autocomplete);

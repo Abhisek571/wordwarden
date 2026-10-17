@@ -71,10 +71,29 @@ function issueOut(issue: WritingIssue) {
   };
 }
 
-async function spell(engine: WordwardenCore, word: string) {
-  const issues = await engine.lint(word);
-  const typo = issues.find((issue) => issue.category === 'spelling' && issue.range.start === 0 && issue.range.end === word.length);
-  return typo === undefined ? { valid: true, suggestions: [] } : { valid: false, suggestions: typo.replacements };
+// Writer asks about a word with what follows it ("freind.", or "teh dog" when it checks two words together), and stops
+// at the first answer of valid. So any misspelling inside the string makes it wrong, and the suggestions are the
+// whole string with the misspelling replaced.
+async function spell(dialect: EnglishDialect, word: string) {
+  const issues = await lintWithRecovery(dialect, word);
+  const typo = issues.find((issue) => issue.category === 'spelling');
+  if (typo === undefined) return { valid: true, suggestions: [] };
+  const before = word.slice(0, typo.range.start);
+  const after = word.slice(typo.range.end);
+  return { valid: false, suggestions: typo.replacements.map((replacement) => `${before}${replacement}${after}`) };
+}
+
+// An engine whose check failed is not used again (the core may have aborted); one more try uses a new one.
+async function lintWithRecovery(dialect: EnglishDialect, text: string, retry = true): Promise<readonly WritingIssue[]> {
+  const engine = engineFor(dialect);
+  try {
+    return await (await engine).lint(text);
+  } catch (error) {
+    if (engines.get(dialect) === engine) engines.delete(dialect);
+    await engine.then((started) => started.dispose()).catch(() => undefined);
+    if (!retry) throw error;
+    return lintWithRecovery(dialect, text, false);
+  }
 }
 
 async function handle(request: Record<string, unknown>): Promise<unknown> {
@@ -87,12 +106,11 @@ async function handle(request: Record<string, unknown>): Promise<unknown> {
     return {};
   }
   const dialect = DIALECTS.includes(request.dialect as EnglishDialect) ? request.dialect as EnglishDialect : 'american';
-  const engine = await engineFor(dialect);
-  if (request.type === 'check') return { issues: (await engine.lint(String(request.text))).map(issueOut) };
+  if (request.type === 'check') return { issues: (await lintWithRecovery(dialect, String(request.text))).map(issueOut) };
   if (request.type === 'spell') {
     const words = (request.words as unknown[]).map(String);
     const results = [];
-    for (const word of words) results.push(await spell(engine, word));
+    for (const word of words) results.push(await spell(dialect, word));
     return { results };
   }
   throw new Error(`Unknown request: ${String(request.type)}`);

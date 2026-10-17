@@ -1,6 +1,7 @@
+import { MAX_DICTIONARY_WORD_LENGTH as MAX_WORD_LENGTH } from './settings';
+
 export const MAX_DICTIONARY_IMPORT_BYTES = 1_000_000;
 export const MAX_DICTIONARY_WORDS = 10_000;
-const MAX_WORD_LENGTH = 80;
 const WORD = /^\p{L}[\p{L}\p{M}\p{N}'’-]*$/u;
 
 export type DictionaryImportPreview = Readonly<{ words: readonly string[]; addedCount: number }>;

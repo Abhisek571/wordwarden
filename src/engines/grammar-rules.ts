@@ -402,7 +402,10 @@ export function lintSupplementalGrammar(
     const verb = match[1];
     if (verb === undefined) continue;
     const replacements = INDEFINITE_SUBJECT_VERBS.get(verb.toLocaleLowerCase('en'));
-    if (replacements === undefined) continue;
+    if (replacements === undefined || match.index === undefined) continue;
+    // "Does anyone know", "let everyone know", "Should anyone need": the base verb is right there.
+    const before = previousWord(text, match.index);
+    if (before !== undefined && BASE_VERB_CONTEXT.has(before)) continue;
     const range = verbRange(match, verb);
     const context = sentenceContext(text, match.index ?? 0);
     // At a sentence start "Somebody tell him!" can be a command; "Everyone know" cannot.

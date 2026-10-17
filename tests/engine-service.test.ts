@@ -78,4 +78,28 @@ describe('shared engine service', () => {
     await expect(service.lint('x', DEFAULT_SETTINGS)).resolves.toEqual([]);
     expect(attempts).toBe(2);
   });
+
+  it('drops an engine whose check failed and checks again with a new one', async () => {
+    const log: string[] = [];
+    let made = 0;
+    const service = createEngineService(() => {
+      made += 1;
+      const engine = fakeEngine(log);
+      if (made === 1) (engine.lint as ReturnType<typeof vi.fn>).mockRejectedValueOnce(new Error('unreachable'));
+      return engine;
+    });
+    await expect(service.lint('x', DEFAULT_SETTINGS)).resolves.toEqual([]);
+    await expect(service.lint('y', DEFAULT_SETTINGS)).resolves.toEqual([]);
+    expect(made).toBe(2);
+    expect(log).toEqual(['setup american ', 'dispose american', 'setup american ', 'lint american x', 'lint american y']);
+  });
+
+  it('reports the failure when the new engine fails too', async () => {
+    const service = createEngineService(() => {
+      const engine = fakeEngine([]);
+      (engine.lint as ReturnType<typeof vi.fn>).mockRejectedValue(new Error('unreachable'));
+      return engine;
+    });
+    await expect(service.lint('x', DEFAULT_SETTINGS)).rejects.toThrow('unreachable');
+  });
 });

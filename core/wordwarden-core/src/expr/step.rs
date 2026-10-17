@@ -20,7 +20,8 @@ where
     P: Pattern,
 {
     fn step(&self, tokens: &[Token], cursor: usize, source: &[char]) -> Option<isize> {
-        self.matches(&tokens[cursor..], source).map(|i| i as isize)
+        // A step can run at the end of the text, where no tokens are left.
+        self.matches(tokens.get(cursor..)?, source).map(|i| i as isize)
     }
 
     fn first_words(&self) -> Option<FirstWords> {

@@ -2,7 +2,7 @@
 // that loads it. Needs Rust with the wasm32-unknown-unknown target, and wasm-pack (see core/README.md).
 // Usage: node scripts/build-core.mjs
 import { execFileSync } from 'node:child_process';
-import { readdirSync, rmSync } from 'node:fs';
+import { readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { homedir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -24,4 +24,26 @@ const keep = new Set(['wordwarden_core.js', 'wordwarden_core.d.ts', 'wordwarden_
 for (const file of readdirSync(dist)) {
   if (!keep.has(file)) rmSync(join(dist, file));
 }
+// A panic aborts the engine and leaves it unusable, and the generated loader keeps it for good. resetCore lets the
+// next start make a new one (src/engines/wordwarden-core.ts).
+const loader = join(dist, 'wordwarden_core.js');
+const loaderText = readFileSync(loader, 'utf8');
+if (!loaderText.includes('let wasmModule, wasmInstance, wasm;') || !loaderText.includes('cachedUint8ArrayMemory0 = null;')) {
+  throw new Error('The generated loader changed; check that resetCore still clears all of its engine state.');
+}
+writeFileSync(loader, `${loaderText}
+/** Forgets the engine, so the next initialisation starts a new one. Added by scripts/build-core.mjs. */
+export function resetCore() {
+    wasm = undefined;
+    wasmModule = undefined;
+    wasmInstance = undefined;
+    cachedDataViewMemory0 = null;
+    cachedUint8ArrayMemory0 = null;
+}
+`);
+const types = join(dist, 'wordwarden_core.d.ts');
+writeFileSync(types, `${readFileSync(types, 'utf8')}
+/** Forgets the engine, so the next initialisation starts a new one. Added by scripts/build-core.mjs. */
+export function resetCore(): void;
+`);
 console.log('Wrote core/dist');

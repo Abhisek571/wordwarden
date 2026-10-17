@@ -561,3 +561,12 @@ async function __wbg_init(module_or_path) {
 }
 
 export { initSync, __wbg_init as default };
+
+/** Forgets the engine, so the next initialisation starts a new one. Added by scripts/build-core.mjs. */
+export function resetCore() {
+    wasm = undefined;
+    wasmModule = undefined;
+    wasmInstance = undefined;
+    cachedDataViewMemory0 = null;
+    cachedUint8ArrayMemory0 = null;
+}

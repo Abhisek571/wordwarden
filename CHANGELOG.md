@@ -3,6 +3,24 @@
 Each release's section is also its release notes on GitHub. Accuracy and resource numbers are in the
 README charts; method in [docs/BENCHMARKS.md](docs/BENCHMARKS.md).
 
+## 1.6.1 — 2026-10-17
+
+- **Checking no longer stops.** Text such as "I want both 3" or "THERE'S PEOPLE" crashed the engine, and checking
+  then stopped in every tab. Both are fixed, and if the engine ever fails it now restarts by itself.
+- **Fixes that add a word keep yours.** "a lot people" now becomes "a lot of people", not "a  of people".
+- **Better spelling suggestions.** Lowercase names get their capitals ("london" → "London", "i'm" → "I'm"), lowercase
+  typos get lowercase fixes, and another dialect's spelling gets your dialect's word first ("colour" → "color",
+  "gray" → "grey"). Slurs and sexual words are no longer offered as guesses.
+- Specific fixes such as "1960's" → "1960s" and "atall" → "at all" are no longer hidden behind a spelling guess.
+- "Does anyone know the answer?" and similar questions are no longer flagged.
+- Fields inside frames, such as embedded comment boxes, are checked.
+- Alt+1–3 now works only in the field being checked, and is off on macOS, where Option with a digit types a character.
+- A fix is never written into another field, such as a password box, after its own field was removed.
+- Email and web address fields are no longer checked.
+- Dictionary words are limited to 80 characters; a pasted very long "word" stopped checking everywhere.
+- LibreOffice: misspellings before a full stop or another word are underlined again, and the engine recovers after a
+  failure.
+
 ## 1.6.0 — 2026-10-15
 
 - **Wordwarden's own engine.** Spelling and grammar are now checked by Wordwarden core, our own engine. It

@@ -8,7 +8,7 @@ import {
 import type { PageStatus } from '#/core/diagnostics';
 import { createEditorEffectQueue } from '#/core/effect-queue';
 import { issueMatchesText, rebaseIssuesAfterReplacement } from '#/core/issue-ranges';
-import { mergeSettings, parseSettings, type TypeCheckSettings } from '#/core/settings';
+import { MAX_DICTIONARY_WORD_LENGTH, mergeSettings, parseSettings, type TypeCheckSettings } from '#/core/settings';
 import type { EditorAdapter, EditorSnapshot, WritingIssue } from '#/core/types';
 import { caretOffset, createEditorAdapter } from '#/editors/editor-adapter';
 import { isCapitalsWord } from '#/core/popular-vocabulary';
@@ -34,9 +34,18 @@ const CARET_KEYS = new Set(['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', '
 
 const SHORTCUT_LABELS = Object.freeze({ alt: 'Alt', 'alt-shift': 'Alt+Shift', off: null });
 
+// On macOS, Option with a digit types a character (¡ ™ £, or # and @ on other layouts), so it cannot be a shortcut.
+function isMac(): boolean {
+  return /^Mac/u.test(navigator.platform);
+}
+
+function shortcutLabel(shortcut: TypeCheckSettings['applyShortcut']): string | null {
+  return isMac() ? null : SHORTCUT_LABELS[shortcut];
+}
+
 function matchesApplyShortcut(event: KeyboardEvent, shortcut: TypeCheckSettings['applyShortcut']): boolean {
   // AltGr reports Ctrl+Alt on Windows, so a held Ctrl never counts.
-  if (shortcut === 'off' || !event.altKey || event.ctrlKey || event.metaKey) return false;
+  if (shortcut === 'off' || isMac() || !event.altKey || event.ctrlKey || event.metaKey) return false;
   return event.shiftKey === (shortcut === 'alt-shift');
 }
 
@@ -164,6 +173,12 @@ export async function startTypeCheck(context: Readonly<{
       Object.freeze({
         apply: (issue: WritingIssue, replacement: string): void => {
           if (activeAdapter === null) return;
+          // The field was removed or re-rendered (a chat box, a page change); its marks are stale.
+          if (!activeAdapter.element.isConnected) {
+            currentIssues = Object.freeze([]);
+            overlay.clear();
+            return;
+          }
           const currentText = activeAdapter.capture(revision).text;
           if (!issueMatchesText(issue, currentText)) {
             overlay.clear();
@@ -218,6 +233,10 @@ export async function startTypeCheck(context: Readonly<{
           const snapshot = activeAdapter.capture(revision);
           const word = snapshot.text.slice(issue.range.start, issue.range.end).trim();
           if (word.length === 0) return;
+          if (word.length > MAX_DICTIONARY_WORD_LENGTH) {
+            overlay.showStatus(`A dictionary word can be at most ${MAX_DICTIONARY_WORD_LENGTH} characters long.`);
+            return;
+          }
           const words = new Set(settings.dictionary);
           words.add(word);
           const next = mergeSettings(settings, { dictionary: [...words].sort() });
@@ -229,7 +248,7 @@ export async function startTypeCheck(context: Readonly<{
       }),
     );
     overlay.setColorVision(settings.colorVision, settings.customUnderlines);
-    overlay.setApplyShortcut(SHORTCUT_LABELS[settings.applyShortcut]);
+    overlay.setApplyShortcut(shortcutLabel(settings.applyShortcut));
     overlay.setFixEffect(settings.fixEffect);
 
     function visibleIssues(issues: readonly WritingIssue[]): readonly WritingIssue[] {
@@ -257,7 +276,7 @@ export async function startTypeCheck(context: Readonly<{
     function applySettings(next: TypeCheckSettings): Promise<void> {
       settings = next;
       overlay.setColorVision(next.colorVision, next.customUnderlines);
-      overlay.setApplyShortcut(SHORTCUT_LABELS[next.applyShortcut]);
+      overlay.setApplyShortcut(shortcutLabel(next.applyShortcut));
       overlay.setFixEffect(next.fixEffect);
       ignoredIssueHashes = new Set(next.ignoredIssueHashes);
       const nextConfiguration = writingConfigurationKey(next);
@@ -393,6 +412,13 @@ export async function startTypeCheck(context: Readonly<{
       overlay.hideBadge();
     }
 
+    // Keys typed in another field, a button or a password box are not for the card, even while it is open.
+    function isForActiveEditor(event: KeyboardEvent): boolean {
+      if (activeAdapter === null) return false;
+      return editorFromEvent(event) === activeAdapter.element ||
+        event.composedPath().some((node) => node instanceof Element && node.id === 'typecheck-root');
+    }
+
     function onKeyDown(event: KeyboardEvent): void {
       if (event.key === 'Escape') {
         const issueClosed = overlay.closeIssuePopover();
@@ -402,7 +428,7 @@ export async function startTypeCheck(context: Readonly<{
       // Digit codes keep the shortcut on the same keys in every keyboard layout.
       const option = /^Digit([1-3])$/u.exec(event.code)?.[1];
       if (option !== undefined && matchesApplyShortcut(event, settings.applyShortcut) &&
-          overlay.applyOption(Number(option) - 1)) {
+          isForActiveEditor(event) && overlay.applyOption(Number(option) - 1)) {
         event.preventDefault();
         event.stopPropagation();
       }
@@ -483,8 +509,32 @@ export async function startTypeCheck(context: Readonly<{
     });
 }
 
+type ContentContext = Parameters<typeof startTypeCheck>[0];
+
+// Fields inside frames (comment boxes, embedded editors) are checked too. A frame starts checking only when one of its
+// fields gets focus, so the many frames that hold no field (adverts, videos) never wake the background.
+async function startInFrame(context: ContentContext): Promise<void> {
+  if (window === window.top) return startTypeCheck(context);
+  const focused = document.activeElement === null ? null : closestSupportedEditor(document.activeElement);
+  if (focused === null) {
+    await new Promise<void>((resolve) => {
+      const onFocus = (event: Event): void => {
+        if (editorFromEvent(event) === null) return;
+        document.removeEventListener('focusin', onFocus, true);
+        resolve();
+      };
+      document.addEventListener('focusin', onFocus, true);
+      context.onInvalidated(() => document.removeEventListener('focusin', onFocus, true));
+    });
+  }
+  return startTypeCheck(context);
+}
+
 export default defineContentScript({
   matches: ['<all_urls>'],
+  allFrames: true,
+  matchAboutBlank: true,
+  matchOriginAsFallback: true,
   runAt: 'document_idle',
-  main: startTypeCheck,
+  main: startInFrame,
 });

@@ -63,9 +63,23 @@ export function createEngineService(createEngine: () => WordwardenCore = createW
     return engine;
   }
 
+  // An engine whose check failed is not used again: the core may have aborted (see restartCore). One more try with a
+  // new engine usually succeeds, since the text that aborted it is skipped from then on.
+  async function lintWith(text: string, settings: TypeCheckSettings, retry: boolean): Promise<readonly WritingIssue[]> {
+    const engine = await engineFor(settings);
+    try {
+      return await engine.lint(text);
+    } catch (error) {
+      if (current?.engine === engine) current = null;
+      await engine.dispose().catch(() => undefined);
+      if (!retry) throw error;
+      return lintWith(text, settings, false);
+    }
+  }
+
   return Object.freeze({
     lint(text: string, settings: TypeCheckSettings): Promise<readonly WritingIssue[]> {
-      const result = queue.then(async () => (await engineFor(settings)).lint(text));
+      const result = queue.then(() => lintWith(text, settings, true));
       queue = result.then(() => undefined, () => undefined);
       return result;
     },

@@ -5,7 +5,9 @@ const SENSITIVE_AUTOCOMPLETE = new Set([
   'transaction-amount',
   'transaction-currency',
 ]);
-const ALLOWED_INPUT_TYPES = new Set(['text', 'search', 'email', 'url', '']);
+// Not email or url fields: they hold addresses, not writing, and the browser cannot select text inside them to apply
+// a fix.
+const ALLOWED_INPUT_TYPES = new Set(['text', 'search', '']);
 
 // Every cc-* autofill token is payment data, so match the prefix.
 function isSensitiveAutocompleteToken(token: string): boolean {

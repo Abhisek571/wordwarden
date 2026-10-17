@@ -597,6 +597,24 @@ const SITE = {
     "The website compares resource use with Harper and LanguageTool again."
    ],
    []
+  ],
+  [
+   "1.6.1",
+   "2026-10-17",
+   [
+    "**Checking no longer stops.** Text such as \"I want both 3\" or \"THERE'S PEOPLE\" crashed the engine, and checking then stopped in every tab. Both are fixed, and if the engine ever fails it now restarts by itself.",
+    "**Fixes that add a word keep yours.** \"a lot people\" now becomes \"a lot of people\", not \"a  of people\".",
+    "**Better spelling suggestions.** Lowercase names get their capitals (\"london\" → \"London\", \"i'm\" → \"I'm\"), lowercase typos get lowercase fixes, and another dialect's spelling gets your dialect's word first (\"colour\" → \"color\", \"gray\" → \"grey\"). Slurs and sexual words are no longer offered as guesses.",
+    "Specific fixes such as \"1960's\" → \"1960s\" and \"atall\" → \"at all\" are no longer hidden behind a spelling guess.",
+    "\"Does anyone know the answer?\" and similar questions are no longer flagged.",
+    "Fields inside frames, such as embedded comment boxes, are checked.",
+    "Alt+1–3 now works only in the field being checked, and is off on macOS, where Option with a digit types a character.",
+    "A fix is never written into another field, such as a password box, after its own field was removed.",
+    "Email and web address fields are no longer checked.",
+    "Dictionary words are limited to 80 characters; a pasted very long \"word\" stopped checking everywhere.",
+    "LibreOffice: misspellings before a full stop or another word are underlined again, and the engine recovers after a failure."
+   ],
+   []
   ]
  ],
  "history": [
@@ -669,57 +687,72 @@ const SITE = {
     "fixes": 65.6,
     "falseAlarms": 6.5
    }
+  },
+  {
+   "version": "v1.6.0",
+   "date": "2026-10-15",
+   "wordwarden": {
+    "wikipedia": 90.7,
+    "twitter": 65,
+    "aalto": 52.8,
+    "birkbeck": 45,
+    "holbrook": 30.5,
+    "recall": 64.6,
+    "fixes": 66.4,
+    "falseAlarms": 5.9
+   }
   }
  ],
  "accuracy": {
-  "version": "1.5.0",
-  "date": "2026-10-12",
+  "version": "1.6.0",
+  "date": "2026-10-15",
   "languageToolVersion": "6.6",
+  "harperVersion": "2.12.0",
   "spelling": {
    "aalto": {
-    "caught": 68,
-    "topOne": 51.8,
-    "topThree": 58.2,
+    "caught": 67.5,
+    "topOne": 52.8,
+    "topThree": 58.4,
     "languageTool": 50.2,
-    "harper": 39
+    "harper": 39.5
    },
    "twitter": {
     "caught": 88.8,
-    "topOne": 64.6,
-    "topThree": 73.1,
+    "topOne": 65,
+    "topThree": 74.5,
     "languageTool": 59.4,
-    "harper": 33.8
+    "harper": 34.3
    },
    "wikipedia": {
     "caught": 98.8,
     "topOne": 90.7,
-    "topThree": 96,
+    "topThree": 96.3,
     "languageTool": 84.8,
-    "harper": 79.5
+    "harper": 80.3
    },
    "birkbeck": {
     "caught": 91.5,
-    "topOne": 44.8,
-    "topThree": 52.1,
+    "topOne": 45,
+    "topThree": 53.6,
     "languageTool": 37.3,
-    "harper": 35.3
+    "harper": 35.6
    },
    "holbrook": {
-    "caught": 59.7,
-    "topOne": 30.1,
-    "topThree": 36.5,
+    "caught": 59.4,
+    "topOne": 30.5,
+    "topThree": 37.7,
     "languageTool": 25.3,
-    "harper": 12
+    "harper": 12.2
    }
   },
   "grammar": {
    "fixes": {
-    "wordwarden": 65.6,
+    "wordwarden": 66.4,
     "languageTool": 60.2,
-    "harper": 54.3
+    "harper": 55.2
    },
    "falseAlarms": {
-    "wordwarden": 6.5,
+    "wordwarden": 5.9,
     "languageTool": 12.8,
     "harper": 11.7
    },
@@ -728,38 +761,37 @@ const SITE = {
     "languageTool": 72.7,
     "harper": 66.9
    }
-  },
-  "harperVersion": "2.10.0"
+  }
  },
  "resources": {
-  "version": "1.5.2",
+  "version": "1.6.0",
   "date": "2026-10-15",
-  "machine": "a Windows PC (12 threads)",
+  "machine": "GitHub's Linux machine (4 cores)",
   "words": 528,
   "tabs": 20,
   "wordwarden": {
-   "oneTabMb": 170,
-   "manyTabsMb": 264,
-   "startCpuS": 1.7,
-   "checkCpuMs": 34,
-   "checkMs": 27,
+   "oneTabMb": 134,
+   "manyTabsMb": 192,
+   "startCpuS": 2,
+   "checkCpuMs": 48,
+   "checkMs": 37,
    "diskMb": 14
   },
   "harper": {
    "version": "2.12.0",
-   "oneTabMb": 277,
-   "manyTabsMb": 544,
-   "startCpuS": 2.8,
-   "checkCpuMs": 131,
-   "checkMs": 113,
+   "oneTabMb": 230,
+   "manyTabsMb": 470,
+   "startCpuS": 3.5,
+   "checkCpuMs": 187,
+   "checkMs": 163,
    "diskMb": 17
   },
   "languageTool": {
    "version": "6.6",
-   "memoryMb": 1282,
-   "startCpuS": 13.1,
-   "checkCpuMs": 336,
-   "checkMs": 130,
+   "memoryMb": 1148,
+   "startCpuS": 18.4,
+   "checkCpuMs": 658,
+   "checkMs": 221,
    "diskMb": 386
   }
  }

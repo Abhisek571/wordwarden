@@ -3,7 +3,7 @@ import { createRoot } from 'react-dom/client';
 import { browser } from 'wxt/browser';
 import type { EnglishDialect } from '#/core/types';
 import {
-  DEFAULT_CUSTOM_UNDERLINES, MAX_UNDERLINE_THICKNESS, MIN_UNDERLINE_THICKNESS, UNDERLINE_KINDS,
+  DEFAULT_CUSTOM_UNDERLINES, MAX_DICTIONARY_WORD_LENGTH, MAX_UNDERLINE_THICKNESS, MIN_UNDERLINE_THICKNESS, UNDERLINE_KINDS,
   type ApplyShortcut, type ColorVision, type CustomUnderlines, type FixEffect, type TypeCheckSettings, type UnderlineLine, type UnderlineMark,
 } from '#/core/settings';
 import { isSafeHostname } from '#/core/diagnostics';
@@ -291,6 +291,10 @@ function Options(): React.JSX.Element {
   async function addWord(): Promise<void> {
     const word = newWord.trim();
     if (word.length === 0 || settings === null) return;
+    if (word.length > MAX_DICTIONARY_WORD_LENGTH) {
+      showMessage(`A dictionary word can be at most ${MAX_DICTIONARY_WORD_LENGTH} characters long.`, true);
+      return;
+    }
     if (await save({ ...settings, dictionary: [...new Set([...settings.dictionary, word])].sort() })) setNewWord('');
   }
 

@@ -133,6 +133,10 @@ fn match_to_lint<D: Dictionary>(
     src: &[char],
     ctx: Option<(&[Token], &[Token])>,
 ) -> Option<super::Lint> {
+    // The handlers read up to five tokens; a match can be shorter than the handler expects.
+    if toks.len() < 3 {
+        return None;
+    }
     let first = toks[0].span.get_content(src);
     let second = toks[2].span.get_content(src);
 
@@ -143,7 +147,8 @@ fn match_to_lint<D: Dictionary>(
         first.last(),
     ) {
         (false, _) if second.eq_str("there") => handle_question(toks, src, ctx, dict),
-        (true, Some(&'s')) => handle_theres(toks, src, ctx, dict),
+        // "THERE'S" ends in a capital S.
+        (true, Some('s' | 'S')) => handle_theres(toks, src, ctx, dict),
         (true, _) => handle_statement(toks, src, ctx, dict),
         _ => None, // unreachable
     }
@@ -238,6 +243,10 @@ fn handle_statement<D: Dictionary>(
             // to allow "there are bug in ..." to be corrected
             || t.get_ch(src).eq_any_ignore_ascii_case_str(&["and", "or"])
     }) {
+        return None;
+    }
+
+    if toks.len() < 5 {
         return None;
     }
 
@@ -403,6 +412,10 @@ fn handle_question<D: Dictionary>(
         return None;
     }
 
+    if toks.len() < 5 {
+        return None;
+    }
+
     // NOTE - for a question we must replace three words!
     // NOTE - "are there man" -> "is there (a) man"
     //                        -> "are there men"
@@ -489,7 +502,10 @@ mod tests {
     use crate::{
         linting::{
             create_test_pool,
-            tests::{assert_good_and_bad_suggestions, assert_no_lints, assert_suggestion_result},
+            tests::{
+                assert_good_and_bad_suggestions, assert_lint_count, assert_no_lints,
+                assert_suggestion_result,
+            },
         },
         spell::FstDictionary,
     };
@@ -1471,5 +1487,12 @@ mod tests {
             "I’ve inspected the browser console for JavaScript errors, and there are none related to WooCommerce or the product variation functionality.",
             test_linter(),
         );
+    }
+
+    // Used to panic: an upper-case S was read as a statement and its tokens past the match end.
+    #[test]
+    fn upper_case_theres() {
+        assert_suggestion_result("THERE'S PEOPLE", test_linter(), "THERE ARE PEOPLE");
+        assert_lint_count("There'S children", test_linter(), 1);
     }
 }

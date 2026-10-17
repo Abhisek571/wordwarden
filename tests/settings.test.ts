@@ -58,6 +58,12 @@ describe('settings validation', () => {
     expect(parseSettings({ fixEffect: 'fireworks' }).fixEffect).toBe('waves');
   });
 
+  it('drops personal words too long to be words', () => {
+    const long = 'x'.repeat(100_000);
+    expect(parseSettings({ dictionary: ['Wordwarden', long, 'y'.repeat(80)] }).dictionary)
+      .toEqual(['Wordwarden', 'y'.repeat(80)]);
+  });
+
   it('requires complete settings at live message boundaries', () => {
     expect(isTypeCheckSettings(DEFAULT_SETTINGS)).toBe(true);
     expect(isTypeCheckSettings({ ...DEFAULT_SETTINGS, enabled: 'yes' })).toBe(false);

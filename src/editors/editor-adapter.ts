@@ -125,6 +125,15 @@ function textControlRects(
   return rects;
 }
 
+function hasFocus(element: HTMLElement): boolean {
+  const active = (element.getRootNode() as Document | ShadowRoot).activeElement;
+  // In nested rich editors focus sits on the outermost editable element.
+  return element.isConnected && active !== null && (
+    active === element || element.contains(active) ||
+    (active instanceof HTMLElement && active.isContentEditable && active.contains(element))
+  );
+}
+
 function applyTextControl(
   element: HTMLInputElement | HTMLTextAreaElement,
   range: TextRange,
@@ -132,6 +141,8 @@ function applyTextControl(
   revision: number,
 ): ApplyResult {
   element.focus();
+  // A field that was removed or hidden cannot take focus, and the text would go to whatever field has it.
+  if (!hasFocus(element)) return Object.freeze({ applied: false, revision });
   element.setSelectionRange(range.start, range.end);
   // Native insertion preserves undo history and emits the host's input event.
   // Do not fall back to setRangeText: it can corrupt the existing undo stack.
@@ -194,6 +205,7 @@ async function applyContentEditable(
   const selection = element.ownerDocument.getSelection();
   if (selection === null) return declined;
   element.focus();
+  if (!hasFocus(element)) return declined;
   // Editors such as Twitch's put their old cursor back a moment after getting focus, over the word just selected.
   // Select the word again until it stays selected.
   let selected = false;
@@ -261,7 +273,8 @@ export function createEditorAdapter(element: SupportedEditor): EditorAdapter {
       revision: number,
     ): Promise<ApplyResult> =>
       element instanceof HTMLInputElement || element instanceof HTMLTextAreaElement
-        ? Promise.resolve(applyTextControl(element, range, replacement, revision))
+        // A throw (a field type that cannot select) becomes a failed promise, which the caller recovers from.
+        ? new Promise((resolve) => { resolve(applyTextControl(element, range, replacement, revision)); })
         : applyContentEditable(element, range, replacement, revision),
   });
 }

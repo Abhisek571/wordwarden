@@ -5,6 +5,7 @@ import { isPopularVocabularyWord } from '#/core/popular-vocabulary';
 import { DELETION, DOUBLE_DROP, INSERTION, SUBSTITUTION, SWAP } from '#/engines/edit-costs';
 import { phoneticKey } from '#/engines/phonetic-key';
 import { EMPTY_WORD_PAIRS, parseWordPairs, type WordPairs } from '#/engines/word-pairs';
+import { SLURS, VULGAR_WORDS } from '#/engines/offensive-words';
 
 /** The words either side of a misspelling, lower-cased, when only spaces separate them from it. */
 export type WordContext = Readonly<{
@@ -20,15 +21,24 @@ export type SpellingRanker = Readonly<{
   wordPairs: WordPairs;
 }>;
 
+/**
+ * `otherDialect`: the core knows the word as another dialect's spelling (`grey` in American English). Its first fix
+ * is then this dialect's spelling, which the ranker's typo signals would push down (`grey` → `grew`), so it stays first.
+ */
 export function rankIssueReplacements(
   category: IssueCategory,
   token: string,
   coreCandidates: readonly string[],
   spellingRanker: SpellingRanker,
   context: WordContext = Object.freeze({}),
+  otherDialect = false,
 ): readonly string[] {
-  if (category === 'spelling') return spellingRanker.rank(token, coreCandidates, context);
-  return Object.freeze([...coreCandidates]);
+  if (category !== 'spelling') return Object.freeze([...coreCandidates]);
+  const ranked = spellingRanker.rank(token, coreCandidates, context);
+  const variant = otherDialect ? coreCandidates[0] : undefined;
+  if (variant === undefined) return ranked;
+  const key = variant.toLocaleLowerCase('en');
+  return Object.freeze([variant, ...ranked.filter((word) => word.toLocaleLowerCase('en') !== key)].slice(0, 3));
 }
 
 type FrequencyEntry = Readonly<{
@@ -272,6 +282,11 @@ function preserveCase(token: string, replacement: string): string {
   return replacement;
 }
 
+// A slur is never offered, and a vulgar word only for a typo of that word (`peniss`), not as a guess further away.
+function isOffensiveGuess(normalizedToken: string, candidate: string): boolean {
+  return SLURS.has(candidate) || (VULGAR_WORDS.has(candidate) && editDistance(normalizedToken, candidate) > 1);
+}
+
 function structuralMatch(token: string, replacement: string): boolean {
   return replacement.replace(/[\s'-]/gu, '') === token.replace(/[\s'-]/gu, '');
 }
@@ -438,6 +453,14 @@ export function createSpellingRankerFromData(
     return frequencies.counts.get(word) ?? wordPairs.wordCount(word);
   }
 
+  // The frequency list spells a word as it is most often written, which can be the capital at the start of a
+  // subtitle line (`Excuse`). A lowercase typo gets the lowercase word when the dictionary has it.
+  function displayFor(normalizedWord: string, lowercaseToken: boolean): string {
+    const display = frequencies.displayWords.get(normalizedWord);
+    if (display === undefined) return normalizedWord;
+    return lowercaseToken && checker.correct(normalizedWord) ? normalizedWord : display;
+  }
+
   function rank(
     token: string,
     coreCandidates: readonly string[],
@@ -462,6 +485,7 @@ export function createSpellingRankerFromData(
     context: WordContext,
   ): readonly string[] {
     const normalizedToken = token.toLocaleLowerCase('en');
+    const lowercaseToken = token === normalizedToken;
     const ending = inflectionEnding(normalizedToken);
     const prefixCandidates: string[] = [];
     for (
@@ -471,7 +495,9 @@ export function createSpellingRankerFromData(
     ) {
       const normalizedWord = frequencies.sortedWords[index];
       if (normalizedWord === undefined || !normalizedWord.startsWith(normalizedToken)) break;
-      prefixCandidates.push(frequencies.displayWords.get(normalizedWord) ?? normalizedWord);
+      const display = displayFor(normalizedWord, lowercaseToken);
+      // The frequency list has every dialect's spellings; `colours` is no fix for `colour` in American English.
+      if (checker.correct(display)) prefixCandidates.push(display);
     }
     // The frequency list has no words with apostrophes, so contractions ("don;t" → "don't") need only be in the
     // dictionary.
@@ -501,15 +527,28 @@ export function createSpellingRankerFromData(
       ...nearPersonal,
       ...prefixCandidates,
       ...coreCandidates,
-      ...editCandidates.map((edit) => frequencies.displayWords.get(edit) ?? edit),
-      ...soundCandidates.map((word) => frequencies.displayWords.get(word) ?? word),
+      ...editCandidates.map((edit) => displayFor(edit, lowercaseToken)),
+      ...soundCandidates.map((word) => displayFor(word, lowercaseToken)),
     ];
     const unique = new Map<string, string>();
+    // The token with its capitals put right (`london` → `London`, `i'm` → `I'm`) goes first, as it is, when the core
+    // puts it first or it is a personal word. Taken from anywhere else it costs more than it gives: "brian" was
+    // usually "brain".
+    let caseFix: string | undefined;
     for (const candidate of candidates) {
       const trimmed = candidate.trim();
       if (trimmed.length === 0) continue;
       const key = trimmed.toLocaleLowerCase('en');
-      if (key === normalizedToken || unique.has(key) || isShortFragment(token, trimmed)) continue;
+      if (key === normalizedToken) {
+        if (
+          caseFix === undefined && lowercaseToken && trimmed !== token &&
+          (coreCandidates[0] === trimmed || nearPersonal.includes(trimmed))
+        ) {
+          caseFix = trimmed;
+        }
+        continue;
+      }
+      if (unique.has(key) || isShortFragment(token, trimmed) || isOffensiveGuess(normalizedToken, key)) continue;
       unique.set(key, trimmed);
     }
 
@@ -562,7 +601,8 @@ export function createSpellingRankerFromData(
     if (mostCommon !== undefined && shown.length === 3 && !shown.includes(mostCommon)) {
       shown[2] = mostCommon;
     }
-    return Object.freeze(shown.map((item) => preserveCase(token, item.candidate)));
+    const words = shown.map((item) => preserveCase(token, item.candidate));
+    return Object.freeze(caseFix === undefined ? words : [caseFix, ...words].slice(0, 3));
   }
 
   function hasPrefixCompletion(token: string): boolean {

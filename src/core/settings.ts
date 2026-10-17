@@ -140,6 +140,12 @@ export function isTypeCheckSettings(value: unknown): value is TypeCheckSettings 
   );
 }
 
+/**
+ * The longest personal word kept. The spelling ranker stores every beginning of a personal word, so its memory grows
+ * with the square of the length; a pasted 100,000-letter "word" ran the background out of memory on every check.
+ */
+export const MAX_DICTIONARY_WORD_LENGTH = 80;
+
 function stringArray(value: unknown): readonly string[] {
   if (!Array.isArray(value)) return [];
   return Object.freeze(
@@ -154,7 +160,7 @@ export function parseSettings(value: unknown): TypeCheckSettings {
     enabled: typeof record.enabled === 'boolean' ? record.enabled : DEFAULT_SETTINGS.enabled,
     dialect: isDialect(record.dialect) ? record.dialect : DEFAULT_SETTINGS.dialect,
     disabledSites: stringArray(record.disabledSites),
-    dictionary: stringArray(record.dictionary),
+    dictionary: Object.freeze(stringArray(record.dictionary).filter((word) => word.length <= MAX_DICTIONARY_WORD_LENGTH)),
     ignoredIssueHashes: stringArray(record.ignoredIssueHashes),
     googleDocsWarningDismissed:
       typeof record.googleDocsWarningDismissed === 'boolean'

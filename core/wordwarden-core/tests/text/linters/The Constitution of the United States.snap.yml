@@ -25,7 +25,7 @@ Message: |
 Lint:    Spelling (63 priority)
 Message: |
        6 | establish Justice, insure domestic Tranquility, provide for the common defence,
-         |                                                                        ^~~~~~~ Did you mean to spell `defence` this way?
+         |                                                                        ^~~~~~~ `defence` is spelled this way in another variety of English.
        7 | promote the general Welfare, and secure the Blessings of Liberty to ourselves
 Suggest:
   - Replace with: “defense”
@@ -416,7 +416,7 @@ Lint:    Spelling (63 priority)
 Message: |
      139 | Each House may determine the Rules of its Proceedings, punish its Members for
      140 | disorderly Behaviour, and, with the Concurrence of two thirds, expel a Member.
-         |            ^~~~~~~~~ Did you mean to spell `Behaviour` this way?
+         |            ^~~~~~~~~ `Behaviour` is spelled this way in another variety of English.
 Suggest:
   - Replace with: “Behavior”
   - Replace with: “Behaviors”
@@ -630,7 +630,7 @@ Suggest:
 Lint:    Spelling (63 priority)
 Message: |
      203 | Imposts and Excises, to pay the Debts and provide for the common Defence and
-         |                                                                  ^~~~~~~ Did you mean to spell `Defence` this way?
+         |                                                                  ^~~~~~~ `Defence` is spelled this way in another variety of English.
      204 | general Welfare of the United States; but all Duties, Imposts and Excises shall
 Suggest:
   - Replace with: “Defense”
@@ -683,7 +683,7 @@ Lint:    Spelling (63 priority)
 Message: |
      229 | 9. To define and punish Piracies and Felonies committed on the high Seas, and
      230 | Offences against the Law of Nations;
-         | ^~~~~~~~ Did you mean to spell `Offences` this way?
+         | ^~~~~~~~ `Offences` is spelled this way in another variety of English.
 Suggest:
   - Replace with: “Offenses”
   - Replace with: “Offense's”
@@ -1487,7 +1487,7 @@ Message: |
 Lint:    Spelling (63 priority)
 Message: |
      481 | have Power to grant Reprieves and Pardons for Offences against the United
-         |                                               ^~~~~~~~ Did you mean to spell `Offences` this way?
+         |                                               ^~~~~~~~ `Offences` is spelled this way in another variety of English.
      482 | States, except in Cases of Impeachment.
 Suggest:
   - Replace with: “Offenses”
@@ -1561,7 +1561,7 @@ Lint:    Spelling (63 priority)
 Message: |
      525 | time ordain and establish. The Judges, both of the supreme and inferior Courts,
      526 | shall hold their Offices during good Behaviour, and shall, at stated Times,
-         |                                      ^~~~~~~~~ Did you mean to spell `Behaviour` this way?
+         |                                      ^~~~~~~~~ `Behaviour` is spelled this way in another variety of English.
      527 | receive for their Services, a Compensation, which shall not be diminished
 Suggest:
   - Replace with: “Behavior”
@@ -1761,7 +1761,7 @@ Lint:    Spelling (63 priority)
 Message: |
      627 | States, or any place subject to their jurisdiction. No Person held to Service
      628 | or Labour in one State, under the Laws thereof, escaping into another, shall,
-         |    ^~~~~~ Did you mean to spell `Labour` this way?
+         |    ^~~~~~ `Labour` is spelled this way in another variety of English.
 Suggest:
   - Replace with: “Labor”
   - Replace with: “Layout”
@@ -1780,7 +1780,7 @@ Lint:    Spelling (63 priority)
 Message: |
      629 | in Consequence of any Law or Regulation therein, be discharged from such
      630 | Service or Labour, but shall be delivered up on Claim of the Party to whom such
-         |            ^~~~~~ Did you mean to spell `Labour` this way?
+         |            ^~~~~~ `Labour` is spelled this way in another variety of English.
 Suggest:
   - Replace with: “Labor”
   - Replace with: “Layout”
@@ -1799,7 +1799,7 @@ Lint:    Spelling (63 priority)
 Message: |
      630 | Service or Labour, but shall be delivered up on Claim of the Party to whom such
      631 | Service or Labour may be due.
-         |            ^~~~~~ Did you mean to spell `Labour` this way?
+         |            ^~~~~~ `Labour` is spelled this way in another variety of English.
 Suggest:
   - Replace with: “Labor”
   - Replace with: “Layout”

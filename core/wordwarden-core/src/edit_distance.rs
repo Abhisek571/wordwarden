@@ -9,8 +9,10 @@ pub fn edit_distance_min_alloc(
     previous_row: &mut Vec<u8>,
     current_row: &mut Vec<u8>,
 ) -> u8 {
-    if cfg!(debug_assertions) {
-        assert!(source.len() <= 255 && target.len() <= 255);
+    // Distances are kept in bytes. Words this long are never a close match for anything, and counting them would
+    // run past the end of the rows.
+    if source.len() > 255 || target.len() > 255 {
+        return u8::MAX;
     }
 
     let row_width = source.len();
@@ -88,5 +90,12 @@ mod tests {
         let source: Vec<_> = "hello".chars().collect();
         let target: Vec<_> = "hello".chars().collect();
         assert_eq!(edit_distance(&source, &target), 0);
+    }
+
+    // Used to read past the end of its rows.
+    #[test]
+    fn words_over_255_characters_are_never_close() {
+        assert_edit_dist(&"a".repeat(300), "a", u8::MAX);
+        assert_edit_dist("a", &"a".repeat(256), u8::MAX);
     }
 }

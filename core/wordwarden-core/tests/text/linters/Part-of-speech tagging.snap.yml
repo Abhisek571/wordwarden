@@ -667,7 +667,7 @@ Suggest:
 Lint:    Spelling (63 priority)
 Message: |
      166 | dissertation at Brown University included analyses of the specific error types,
-         |                                           ^~~~~~~~ Did you mean to spell `analyses` this way?
+         |                                           ^~~~~~~~ `analyses` is spelled this way in another variety of English.
      167 | probabilities, and other related data, and replicated his work for Greek, where
 Suggest:
   - Replace with: “analyzes”

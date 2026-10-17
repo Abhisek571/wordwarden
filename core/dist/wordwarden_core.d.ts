@@ -77,3 +77,6 @@ export function initSync(module: { module: SyncInitInput } | SyncInitInput): Ini
  * @returns {Promise<InitOutput>}
  */
 export default function __wbg_init (module_or_path: { module_or_path: InitInput | Promise<InitInput> } | InitInput | Promise<InitInput>): Promise<InitOutput>;
+
+/** Forgets the engine, so the next initialisation starts a new one. Added by scripts/build-core.mjs. */
+export function resetCore(): void;

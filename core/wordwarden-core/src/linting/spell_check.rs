@@ -100,13 +100,17 @@ impl<T: Dictionary> Linter for SpellCheck<T> {
                 continue;
             }
 
-            if let Some(metadata) = word.kind.as_word().unwrap()
+            let known = self.dictionary.contains_exact_word(word_chars)
+                || self.dictionary.contains_exact_word(&word_chars.to_lower());
+            let metadata = word.kind.as_word().unwrap();
+            if let Some(metadata) = metadata
                 && metadata.dialects.is_dialect_enabled(self.dialect)
-                && (self.dictionary.contains_exact_word(word_chars)
-                    || self.dictionary.contains_exact_word(&word_chars.to_lower()))
+                && known
             {
                 continue;
             };
+            // A word of another dialect (`colour` in American English) is a different spelling, not a typo.
+            let other_dialect = metadata.is_some() && known;
 
             let mut possibilities = self.suggest_correct_spelling(word_chars);
 
@@ -133,7 +137,12 @@ impl<T: Dictionary> Linter for SpellCheck<T> {
                 .collect();
 
             // If there's only one suggestion, save the user a step in the GUI
-            let message = if suggestions.len() == 1 {
+            let message = if other_dialect {
+                format!(
+                    "`{}` is spelled this way in another variety of English.",
+                    document.get_span_content_str(&word.span)
+                )
+            } else if suggestions.len() == 1 {
                 format!(
                     "Did you mean `{}`?",
                     possibilities.first().unwrap().iter().collect::<String>()
@@ -212,6 +221,18 @@ mod tests {
             SpellCheck::new(FstDictionary::curated(), Dialect::British),
             1,
         );
+    }
+
+    // Wordwarden's ranker keeps the dialect's own spelling first for these, so they must be told apart from typos.
+    #[test]
+    fn other_dialect_spelling_says_so() {
+        let document = Document::new_markdown_default_curated("Do you like the color?");
+        let mut linter = SpellCheck::new(FstDictionary::curated(), Dialect::British);
+        let lints = linter.lint(&document);
+        assert_eq!(lints.len(), 1);
+        assert_eq!(lints[0].message, "`color` is spelled this way in another variety of English.");
+        let typo = linter.lint(&Document::new_markdown_default_curated("Do you like the colorr?"));
+        assert!(typo[0].message.starts_with("Did you mean"));
     }
 
     #[test]

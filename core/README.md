@@ -47,6 +47,13 @@ License 2.0 (see `NOTICE` and `LICENSE`).
   word frequency, typing slips and context.
 - `RegularIrregulars` gave its fixes for a verb ("chose", "chosen") in random order; the core gives the simple past
   first.
+- Fixes for three panics that also abort Harper 2.12.0: a text ending in "both" and a number, an upper-case
+  "THERE'S" before a plural, and a word over 255 letters in the edit distance.
+- `checker.check` returns an insertion ("lot" + " of") as the whole replacement ("lot of"), so every fix replaces its
+  span.
+- SpellCheck says when a word is another dialect's spelling ("`colour` is spelled this way in another variety of
+  English."), so Wordwarden's ranker can keep the dialect's own word first.
+- Harper's later fix for SplitWords (f41bec48: short words that are not function words no longer anchor a split).
 
 In Node, the core's memory, which never shrinks, is 39 MB after start-up instead of Harper's 161 MB, and 45 MB
 instead of 225 MB after checking 300 learner sentences. Start-up takes 0.4 s instead of 0.9 s, and checking 500

@@ -46,7 +46,7 @@ Suggest:
 Lint:    Spelling (63 priority)
 Message: |
       10 | “Whenever you feel like criticising any one,” he told me, “just remember that
-         |                         ^~~~~~~~~~~ Did you mean `criticizing`?
+         |                         ^~~~~~~~~~~ `criticising` is spelled this way in another variety of English.
 Suggest:
   - Replace with: “criticizing”
 
@@ -93,7 +93,7 @@ Message: |
 Lint:    Spelling (63 priority)
 Message: |
       27 | snobbishly repeat, a sense of the fundamental decencies is parcelled out
-         |                                                            ^~~~~~~~~ Did you mean `parceled`?
+         |                                                            ^~~~~~~~~ `parcelled` is spelled this way in another variety of English.
       28 | unequally at birth.
 Suggest:
   - Replace with: “parceled”
@@ -203,7 +203,7 @@ Suggest:
 Lint:    Spelling (63 priority)
 Message: |
       61 | restless. Instead of being the warm centre of the world, the Middle West now
-         |                                     ^~~~~~ Did you mean to spell `centre` this way?
+         |                                     ^~~~~~ `centre` is spelled this way in another variety of English.
       62 | seemed like the ragged edge of the universe—so I decided to go East and learn
 Suggest:
   - Replace with: “center”
@@ -630,7 +630,7 @@ Lint:    Spelling (63 priority)
 Message: |
      479 | thinking, but I doubt if even Miss Baker, who seemed to have mastered a certain
      480 | hardy scepticism, was able utterly to put this fifth guest’s shrill metallic
-         |       ^~~~~~~~~~ Did you mean to spell `scepticism` this way?
+         |       ^~~~~~~~~~ `scepticism` is spelled this way in another variety of English.
 Suggest:
   - Replace with: “skepticism”
   - Replace with: “asceticism”
@@ -1022,7 +1022,7 @@ Lint:    Spelling (63 priority)
 Message: |
      730 | beauty, but there was an immediately perceptible vitality about her as if the
      731 | nerves of her body were continually smouldering. She smiled slowly and, walking
-         |                                     ^~~~~~~~~~~ Did you mean to spell `smouldering` this way?
+         |                                     ^~~~~~~~~~~ `smouldering` is spelled this way in another variety of English.
 Suggest:
   - Replace with: “smoldering”
   - Replace with: “shouldering”
@@ -1209,7 +1209,7 @@ Lint:    Spelling (63 priority)
 Message: |
      923 | “I should change the light,” he said after a moment. “I’d like to bring out the
      924 | modelling of the features. And I’d try to get hold of all the back hair.”
-         | ^~~~~~~~~ Did you mean to spell `modelling` this way?
+         | ^~~~~~~~~ `modelling` is spelled this way in another variety of English.
 Suggest:
   - Replace with: “modeling”
   - Replace with: “modelings”
@@ -1625,7 +1625,7 @@ Lint:    Spelling (63 priority)
 Message: |
     1202 | confident girls who weave here and there among the stouter and more stable,
     1203 | become for a sharp, joyous moment the centre of a group, and then, excited with
-         |                                       ^~~~~~ Did you mean to spell `centre` this way?
+         |                                       ^~~~~~ `centre` is spelled this way in another variety of English.
     1204 | triumph, glide on through the sea-change of faces and voices and color under the
 Suggest:
   - Replace with: “center”
@@ -1725,7 +1725,7 @@ Suggest:
 Lint:    Spelling (63 priority)
 Message: |
     1310 | “I don’t think it’s so much that,” argued Lucille sceptically; “it’s more that
-         |                                                   ^~~~~~~~~~~ Did you mean to spell `sceptically` this way?
+         |                                                   ^~~~~~~~~~~ `sceptically` is spelled this way in another variety of English.
 Suggest:
   - Replace with: “skeptically”
   - Replace with: “scenically”
@@ -1753,7 +1753,7 @@ Lint:    Spelling (63 priority)
 Message: |
     1347 | chance we tried an important-looking door, and walked into a high Gothic
     1348 | library, panelled with carved English oak, and probably transported complete
-         |          ^~~~~~~~ Did you mean to spell `panelled` this way?
+         |          ^~~~~~~~ `panelled` is spelled this way in another variety of English.
 Suggest:
   - Replace with: “paneled”
   - Replace with: “palled”
@@ -1765,7 +1765,7 @@ Suggest:
 Lint:    Spelling (63 priority)
 Message: |
     1373 | Taking our scepticism for granted, he rushed to the bookcases and returned with
-         |            ^~~~~~~~~~ Did you mean to spell `scepticism` this way?
+         |            ^~~~~~~~~~ `scepticism` is spelled this way in another variety of English.
 Suggest:
   - Replace with: “skepticism”
   - Replace with: “asceticism”
@@ -2262,7 +2262,7 @@ Lint:    Spelling (63 priority)
 Message: |
     1764 | Again at eight o’clock, when the dark lanes of the Forties were lined five deep
     1765 | with throbbing taxicabs, bound for the theatre district, I felt a sinking in my
-         |                                        ^~~~~~~ Did you mean to spell `theatre` this way?
+         |                                        ^~~~~~~ `theatre` is spelled this way in another variety of English.
     1766 | heart. Forms leaned together in the taxis as they waited, and voices sang, and
 Suggest:
   - Replace with: “theater”
@@ -3611,7 +3611,7 @@ Suggest:
 Lint:    Spelling (63 priority)
 Message: |
     2011 | “Major Jay Gatsby,” I read, “For Valour Extraordinary.”
-         |                                  ^~~~~~ Did you mean to spell `Valour` this way?
+         |                                  ^~~~~~ `Valour` is spelled this way in another variety of English.
 Suggest:
   - Replace with: “Valor”
   - Replace with: “Velour”
@@ -3692,7 +3692,7 @@ Lint:    Spelling (63 priority)
 Message: |
     2076 | Europe, and I was glad that the sight of Gatsby’s splendid car was included in
     2077 | their sombre holiday. As we crossed Blackwell’s Island a limousine passed us,
-         |       ^~~~~~ Did you mean to spell `sombre` this way?
+         |       ^~~~~~ `sombre` is spelled this way in another variety of English.
 Suggest:
   - Replace with: “somber”
   - Replace with: “hombre”
@@ -4142,16 +4142,6 @@ Suggest:
 
 
 
-Lint:    Typo (31 priority)
-Message: |
-    2319 | That was nineteen-seventeen. By the next year I had a few beaux myself, and I
-         |                                                           ^~~~~ `beaux` should probably be written as `be aux`.
-    2320 | began to play in tournaments, so I didn’t see Daisy very often. She went with a
-Suggest:
-  - Replace with: “be aux”
-
-
-
 Lint:    Spelling (63 priority)
 Message: |
     2329 | By the next autumn she was gay again, gay as ever. She had a début after the
@@ -4322,7 +4312,7 @@ Suggest:
 Lint:    Spelling (63 priority)
 Message: |
     2401 | > “I’m the Sheik of Araby. Your love belongs to me. At night when you’re asleep
-         |            ^~~~~ Did you mean to spell `Sheik` this way?
+         |            ^~~~~ `Sheik` is spelled this way in another variety of English.
 Suggest:
   - Replace with: “Sheikh”
   - Replace with: “She'd”
@@ -4355,7 +4345,7 @@ Message: |
 Lint:    Spelling (63 priority)
 Message: |
     2455 | hard, limited person, who dealt in universal scepticism, and who leaned back
-         |                                              ^~~~~~~~~~ Did you mean to spell `scepticism` this way?
+         |                                              ^~~~~~~~~~ `scepticism` is spelled this way in another variety of English.
     2456 | jauntily just within the circle of my arm. A phrase began to beat in my ears
 Suggest:
   - Replace with: “skepticism”
@@ -4500,16 +4490,6 @@ Suggest:
   - Replace with: “beaded”
   - Replace with: “beaked”
   - Replace with: “beamed”
-
-
-
-Lint:    Typo (31 priority)
-Message: |
-    2607 | Clay’s “Economics,” starting at the Finnish tread that shook the kitchen floor,
-    2608 | and peering toward the bleared windows from time to time as if a series of
-         |                        ^~~~~~~ `bleared` should probably be written as `bl eared`.
-Suggest:
-  - Replace with: “bl eared”
 
 
 
@@ -4722,7 +4702,7 @@ Suggest:
 Lint:    Spelling (63 priority)
 Message: |
     2842 | sunken baths—intruding into one chamber where a dishevelled man in pajamas was
-         |                                                 ^~~~~~~~~~~ Did you mean `disheveled`?
+         |                                                 ^~~~~~~~~~~ `dishevelled` is spelled this way in another variety of English.
     2843 | doing liver exercises on the floor. It was Mr. Klipspringer, the ‘‘boarder.” I
 Suggest:
   - Replace with: “disheveled”
@@ -5270,7 +5250,7 @@ Message: |
 Lint:    Spelling (63 priority)
 Message: |
     3254 | “I’m looking around. I’m having a marvellous—”
-         |                                   ^~~~~~~~~~ Did you mean `marvelous`?
+         |                                   ^~~~~~~~~~ `marvellous` is spelled this way in another variety of English.
 Suggest:
   - Replace with: “marvelous”
 
@@ -5322,7 +5302,7 @@ Suggest:
 Lint:    Spelling (63 priority)
 Message: |
     3319 | at the local club to-morrow, spoke in Miss Baedeker’s defence:
-         |                                                       ^~~~~~~ Did you mean to spell `defence` this way?
+         |                                                       ^~~~~~~ `defence` is spelled this way in another variety of English.
 Suggest:
   - Replace with: “defense”
   - Replace with: “decency”
@@ -5397,7 +5377,7 @@ Lint:    Spelling (63 priority)
 Message: |
     3414 | dim, incalculable hours? Perhaps some unbelievable guest would arrive, a person
     3415 | infinitely rare and to be marvelled at, some authentically radiant young girl
-         |                           ^~~~~~~~~ Did you mean `marveled`?
+         |                           ^~~~~~~~~ `marvelled` is spelled this way in another variety of English.
 Suggest:
   - Replace with: “marveled”
 
@@ -5588,7 +5568,7 @@ Suggest:
 Lint:    Spelling (63 priority)
 Message: |
     3599 | Gatsby stood in the centre of the crimson carpet and gazed around with
-         |                     ^~~~~~ Did you mean to spell `centre` this way?
+         |                     ^~~~~~ `centre` is spelled this way in another variety of English.
 Suggest:
   - Replace with: “center”
   - Replace with: “cent's”
@@ -6110,7 +6090,7 @@ Suggest:
 Lint:    Spelling (63 priority)
 Message: |
     3975 | could invent a protest the coupé came to a stop, and Daisy signalled us to draw
-         |                                                            ^~~~~~~~~ Did you mean to spell `signalled` this way?
+         |                                                            ^~~~~~~~~ `signalled` is spelled this way in another variety of English.
     3976 | up alongside.
 Suggest:
   - Replace with: “signaled”
@@ -6155,7 +6135,7 @@ Suggest:
 Lint:    Spelling (63 priority)
 Message: |
     4016 | “Well, we’d better telephone for an axe———”
-         |                                     ^~~ Did you mean to spell `axe` this way?
+         |                                     ^~~ `axe` is spelled this way in another variety of English.
 Suggest:
   - Replace with: “ace”
   - Replace with: “age”
@@ -9012,7 +8992,7 @@ Suggest:
 Lint:    Spelling (63 priority)
 Message: |
     5633 | looked around. It was the man with owl-eyed glasses whom I had found marvelling
-         |                                                                      ^~~~~~~~~~ Did you mean `marveling`?
+         |                                                                      ^~~~~~~~~~ `marvelling` is spelled this way in another variety of English.
     5634 | over Gatsby’s books in the library one night three months before.
 Suggest:
   - Replace with: “marveling”
@@ -9282,7 +9262,7 @@ Lint:    Spelling (63 priority)
 Message: |
     5693 | hundred houses, at once conventional and grotesque, crouching under a sullen,
     5694 | overhanging sky and a lustreless moon. In the foreground four solemn men in
-         |                       ^~~~~~~~~~ Did you mean `lusterless`?
+         |                       ^~~~~~~~~~ `lustreless` is spelled this way in another variety of English.
 Suggest:
   - Replace with: “lusterless”
 

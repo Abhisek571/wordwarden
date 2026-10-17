@@ -26,6 +26,29 @@ describe('editor adapter contract', () => {
     expect(inputListener).not.toHaveBeenCalled();
   });
 
+  it('writes nothing when the field was removed, so the text cannot land in the field that has focus', async () => {
+    const textarea = document.createElement('textarea');
+    textarea.value = 'I recieve mail';
+    const password = document.createElement('input');
+    password.type = 'password';
+    document.body.append(textarea, password);
+    const adapter = createEditorAdapter(textarea);
+    textarea.remove();
+    password.focus();
+    password.value = 'secret1';
+    expect(await adapter.applySuggestion({ start: 2, end: 9 }, 'receive', 1)).toEqual({ applied: false, revision: 1 });
+    expect(password.value).toBe('secret1');
+    expect(document.execCommand).not.toHaveBeenCalled();
+  });
+
+  it('turns a field that cannot select into a failed fix instead of a throw', async () => {
+    const input = document.createElement('input');
+    input.value = 'recieve';
+    document.body.append(input);
+    input.setSelectionRange = () => { throw new DOMException('no selection', 'InvalidStateError'); };
+    await expect(createEditorAdapter(input).applySuggestion({ start: 0, end: 7 }, 'receive', 0)).rejects.toThrow();
+  });
+
   it('captures and replaces textarea content with an input event', async () => {
     const textarea = document.createElement('textarea');
     textarea.value = 'This are wrong.';

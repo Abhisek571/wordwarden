@@ -172,4 +172,11 @@ mod tests {
             QuantifierNumeralConflict::default(),
         );
     }
+
+    // Used to panic: the noun phrase after "both" was looked for past the end of the text.
+    #[test]
+    fn both_number_at_end_of_text() {
+        assert_lint_count("I want both 3", QuantifierNumeralConflict::default(), 1);
+        assert_lint_count("Both two", QuantifierNumeralConflict::default(), 1);
+    }
 }

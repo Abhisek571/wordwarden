@@ -104,4 +104,24 @@ describe('spelling-first issue filtering', () => {
       punctuation,
     ]);
   });
+
+  it('keeps a specific rule and drops the spelling guess inside it', () => {
+    // "Back in the 1960's": PluralDecades fixes "1960's", SpellCheck guesses at its "s".
+    const decades = Object.freeze({ ...issue('decades', 12, 18, 'grammar'), ruleId: 'PluralDecades' });
+    const guess = issue('guess', 17, 18);
+    expect(excludeIssuesOverlappingSpelling([decades, guess])).toEqual([decades]);
+  });
+
+  it('keeps the spelling guess over a capitalisation rule on the same word ("brian" is usually "brain")', () => {
+    const capital = Object.freeze({ ...issue('capital', 5, 10, 'capitalization'), ruleId: 'OrthographicConsistency' });
+    const spelling = issue('word', 5, 10);
+    expect(excludeIssuesOverlappingSpelling([capital, spelling])).toEqual([spelling]);
+  });
+
+  it('still lets the spelling guess win over other rules and over a specific rule that only partly covers it', () => {
+    const spelling = issue('spelling', 4, 10);
+    const other = Object.freeze({ ...issue('other', 4, 10, 'grammar'), ruleId: 'WrongNegative' });
+    const partial = Object.freeze({ ...issue('partial', 0, 6, 'grammar'), ruleId: 'SplitWords' });
+    expect(excludeIssuesOverlappingSpelling([spelling, other, partial])).toEqual([spelling]);
+  });
 });

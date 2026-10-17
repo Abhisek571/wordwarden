@@ -1,5 +1,5 @@
 import { browser } from 'wxt/browser';
-import loadCoreModule, { Checker, Dialect } from '../../core/dist/wordwarden_core.js';
+import loadCoreModule, { Checker, Dialect, resetCore } from '../../core/dist/wordwarden_core.js';
 import type { EnglishDialect, IssueCategory, WritingIssue } from '#/core/types';
 import { issueHash } from '#/core/hash';
 import { excludeIssuesOverlappingSpelling, resolveOverlappingIssues } from '#/core/issue-ranges';
@@ -72,6 +72,29 @@ type CoreFinding = Readonly<{
 
 // The core's code is loaded once per page or worker, and every checker shares it. A failed load is tried again.
 let coreModule: Promise<unknown> | null = null;
+// Raised each time the core is started again after aborting; checkers made before it belong to the dead one.
+let coreRun = 0;
+const liveCheckers = new Set<Checker>();
+// Sections whose check aborted the core are skipped from then on, so one text cannot abort it on every keystroke.
+const abortingSections = new Set<string>();
+const ABORTING_SECTIONS_LIMIT = 100;
+
+/**
+ * A panic aborts the core and leaves it unusable. Every checker made with it is let go without calling into it (the
+ * old ones must never reach the new core, and freeing them would call into the dead one), and the next setup loads
+ * a new core.
+ */
+function restartCore(abortingSection?: string): void {
+  if (abortingSection !== undefined) {
+    if (abortingSections.size >= ABORTING_SECTIONS_LIMIT) abortingSections.clear();
+    abortingSections.add(abortingSection);
+  }
+  for (const checker of liveCheckers) (checker as unknown as { __destroy_into_raw(): number }).__destroy_into_raw();
+  liveCheckers.clear();
+  resetCore();
+  coreModule = null;
+  coreRun += 1;
+}
 
 function loadCore(wasmUrl: string): Promise<unknown> {
   coreModule ??= loadCoreModule({ module_or_path: wasmUrl }).catch((error: unknown) => {
@@ -120,6 +143,9 @@ const SUPERSEDING_RULES = new Set(['LoseNotLoose']);
 const MUTED_CORE_RULES: Readonly<Record<string, boolean>> = Object.freeze({
   AvoidAndAlso: false,
   CompoundNouns: false,
+  // Its fixes used to be lost with the other insertions; once kept, most were a comma after "Therefore" in correct text.
+  // Wordwarden's own IntroductoryComma rule covers the cases that matter.
+  DiscourseMarkers: false,
   DisjointPrefixes: false,
   Excellent: false,
   // Sections used to cut long sentences, so it never fired; it only says a sentence is long.
@@ -141,6 +167,10 @@ function matchShoutedCase(original: string, replacement: string): string {
     replacement !== replacement.toLocaleLowerCase('en');
   const originalShouted = original.length > 1 && original === original.toLocaleUpperCase('en');
   if (!shouted || originalShouted) return replacement;
+  // An acronym put right ("ceo" → "CEO") or kept ("PIN number" → "PIN") is meant in capitals.
+  if (replacement.toLocaleLowerCase('en') === original.toLocaleLowerCase('en') || original.includes(replacement)) {
+    return replacement;
+  }
   const lower = replacement.toLocaleLowerCase('en');
   const first = original[0];
   return first !== undefined && first !== first.toLocaleLowerCase('en')
@@ -189,6 +219,9 @@ function wordContext(source: string, start: number, end: number): WordContext {
   });
 }
 
+// The core's SpellCheck says this of a word it knows in another dialect only (`colour` in American English).
+const OTHER_DIALECT_MESSAGE = /is spelled this way in another variety of English\.$/u;
+
 // Only findings in the section's own part are kept: the text around it is there for context, and findings in it
 // belong to the neighbouring sections. Those are skipped before their suggestions are ranked.
 function normalizeFinding(
@@ -210,6 +243,7 @@ function normalizeFinding(
     finding.suggestions,
     spellingRanker,
     wordContext(source, span.start, span.end),
+    OTHER_DIALECT_MESSAGE.test(finding.message),
   );
   const original = source.slice(span.start, span.end);
   const replacements = category === 'punctuation'
@@ -235,6 +269,8 @@ const SECTION_CACHE_SIZE = 256;
 
 export function createWordwardenCore(runtime: WordwardenCoreRuntime = Object.freeze({})): WordwardenCore {
   let checker: Checker | null = null;
+  // The core run the checker was made in.
+  let checkerRun = coreRun;
   let spellingRanker: SpellingRanker | null = null;
   // Most recently used last.
   const sectionCache = new Map<string, readonly WritingIssue[]>();
@@ -246,10 +282,42 @@ export function createWordwardenCore(runtime: WordwardenCoreRuntime = Object.fre
     sectionCache.clear();
   }
 
+  // A checker of a core that has since been restarted was already let go by restartCore.
+  function freeChecker(): void {
+    if (checker !== null && checkerRun === coreRun) {
+      liveCheckers.delete(checker);
+      checker.free();
+    }
+    checker = null;
+  }
+
+  function readyChecker(): Readonly<{ checker: Checker; spellingRanker: SpellingRanker }> {
+    if (checker !== null && checkerRun !== coreRun) {
+      freeChecker();
+      throw new Error('The checking engine stopped and was restarted. Check again.');
+    }
+    if (checker === null || spellingRanker === null) {
+      throw new Error('Writing correction engine is not initialized.');
+    }
+    return Object.freeze({ checker, spellingRanker });
+  }
+
+  // Runs a call into the core. If the core aborts, it is restarted and this engine must be set up again.
+  function guarded<T>(call: () => T, abortingSection?: string): T {
+    try {
+      return call();
+    } catch (error) {
+      checker = null;
+      spellingRanker = null;
+      forgetFindings();
+      restartCore(abortingSection);
+      throw error;
+    }
+  }
+
   async function setup(dialect: EnglishDialect, dictionary: readonly string[]): Promise<void> {
     forgetFindings();
-    checker?.free();
-    checker = null;
+    freeChecker();
     spellingRanker = null;
     const wasmUrl = runtime.wasmUrl ?? (browser.runtime.getURL as (path: string) => string)(
       'wordwarden_core_bg.wasm',
@@ -261,6 +329,8 @@ export function createWordwardenCore(runtime: WordwardenCoreRuntime = Object.fre
       loadCore(wasmUrl),
     ]);
     const nextChecker = new Checker(coreDialect(dialect));
+    const nextRun = coreRun;
+    liveCheckers.add(nextChecker);
     try {
       // The first check sets up what the core builds on first use, so the user's first check is not slower.
       nextChecker.check('');
@@ -268,23 +338,23 @@ export function createWordwardenCore(runtime: WordwardenCoreRuntime = Object.fre
       nextChecker.add_words([...recognitionVocabulary, ...extraWords]);
       nextChecker.set_rules(MUTED_CORE_RULES);
     } catch (error) {
-      nextChecker.free();
+      // These calls fail only when the core aborts, and then the checker cannot be freed.
+      restartCore();
       throw error;
     }
     checker = nextChecker;
+    checkerRun = nextRun;
     spellingRanker = nextRanker;
   }
 
   // Popular vocabulary is already known, and a word is added only once, as `mergePopularVocabulary` does in `setup`.
   async function addWords(words: readonly string[]): Promise<void> {
-    if (checker === null || spellingRanker === null) {
-      throw new Error('Writing correction engine is not initialized.');
-    }
+    const ready = readyChecker();
     const added = words.filter((word) => !isPopularVocabularyWord(word));
     if (added.length === 0) return;
     forgetFindings();
-    spellingRanker.addWords(added);
-    checker.add_words([...added]);
+    ready.spellingRanker.addWords(added);
+    guarded(() => ready.checker.add_words([...added]));
   }
 
   function sectionIssues(
@@ -299,8 +369,9 @@ export function createWordwardenCore(runtime: WordwardenCoreRuntime = Object.fre
       sectionCache.set(key, cached);
       return cached;
     }
+    if (abortingSections.has(section.text)) return Object.freeze([]);
     const startedGeneration = generation;
-    const findings = activeChecker.check(section.text) as readonly CoreFinding[];
+    const findings = guarded(() => activeChecker.check(section.text) as readonly CoreFinding[], section.text);
     const issues = Object.freeze(findings.flatMap((finding) => {
       const issue = normalizeFinding(finding, section, activeSpellingRanker);
       return issue === null ? [] : [issue];
@@ -313,11 +384,7 @@ export function createWordwardenCore(runtime: WordwardenCoreRuntime = Object.fre
   }
 
   async function lint(text: string): Promise<readonly WritingIssue[]> {
-    if (checker === null || spellingRanker === null) {
-      throw new Error('Writing correction engine is not initialized.');
-    }
-    const activeChecker = checker;
-    const activeSpellingRanker = spellingRanker;
+    const { checker: activeChecker, spellingRanker: activeSpellingRanker } = readyChecker();
     const coreIssues = createAnalysisSections(text).flatMap((section) => (
       sectionIssues(activeChecker, activeSpellingRanker, section).flatMap((localIssue) => {
         const range = rebaseSectionRange(section, localIssue.range);
@@ -350,8 +417,7 @@ export function createWordwardenCore(runtime: WordwardenCoreRuntime = Object.fre
   async function dispose(): Promise<void> {
     forgetFindings();
     // The core's memory never shrinks, but what the checker held is reused by the next one.
-    checker?.free();
-    checker = null;
+    freeChecker();
     spellingRanker = null;
   }
 

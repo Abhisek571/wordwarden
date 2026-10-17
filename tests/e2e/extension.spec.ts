@@ -513,3 +513,49 @@ test('opens the packaged typing test from the popup', async () => {
 
   await playground.close();
 });
+
+test('checks a field inside a frame', async () => {
+  if (context === null) throw new Error('Extension browser context did not start.');
+  const page = await context.newPage();
+  const cdp = await context.newCDPSession(page);
+  await cdp.send('DOM.enable');
+  await page.route('http://127.0.0.1:4173/framed', (route) => route.fulfill({
+    contentType: 'text/html',
+    body: '<!doctype html><iframe id="frame" srcdoc="<textarea id=inner style=\'width:400px;height:80px\'></textarea>"></iframe>',
+  }));
+  await page.goto('http://127.0.0.1:4173/framed');
+  const inner = page.frameLocator('#frame').locator('#inner');
+  await inner.fill('wrods and teh');
+  await expect
+    .poll(async () => (await shadowNodes(cdp, 'issue-mark')).length, { timeout: 10_000 })
+    .toBeGreaterThanOrEqual(2);
+  await page.close();
+});
+
+test('leaves Alt+digit typed in another control alone while a card is open', async () => {
+  if (context === null) throw new Error('Extension browser context did not start.');
+  const page = await context.newPage();
+  const cdp = await context.newCDPSession(page);
+  await cdp.send('DOM.enable');
+  await page.goto('http://127.0.0.1:4173');
+  await page.evaluate(() => {
+    const other = document.createElement('input');
+    other.id = 'other';
+    document.body.append(other);
+  });
+  const editor = page.locator('#editor');
+  await editor.fill('wrods and text');
+  await expect.poll(async () => (await shadowNodes(cdp, 'issue-mark'))
+    .some((node) => attributes(node)['aria-label']?.includes('wrods')), { timeout: 10_000 }).toBe(true);
+  const mark = (await shadowNodes(cdp, 'issue-mark'))
+    .find((node) => attributes(node)['aria-label']?.includes('wrods'));
+  if (!mark) throw new Error('Missing word marker.');
+  await clickShadowNode(page, cdp, mark);
+  await expect.poll(async () => (await shadowNodes(cdp, 'apply-suggestion')).length).toBeGreaterThan(0);
+  await page.locator('#other').focus();
+  await page.keyboard.press('Alt+1');
+  await page.waitForTimeout(300);
+  await expect(editor).toHaveValue('wrods and text');
+  expect(await page.evaluate(() => document.activeElement?.id)).toBe('other');
+  await page.close();
+});

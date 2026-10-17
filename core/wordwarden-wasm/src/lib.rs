@@ -125,7 +125,11 @@ impl Checker {
                     end: js_index(lint.span.end, source),
                     kind: lint.lint_kind.to_string_key(),
                     message: lint.message,
-                    suggestions: lint.suggestions.iter().map(replacement_text).collect(),
+                    suggestions: lint
+                        .suggestions
+                        .iter()
+                        .map(|suggestion| replacement_text(suggestion, &source[lint.span.start..lint.span.end]))
+                        .collect(),
                 })
             })
             .collect();
@@ -141,11 +145,13 @@ fn merged_dictionary(user_dictionary: &MutableDictionary) -> Arc<MergedDictionar
     Arc::new(dictionary)
 }
 
-/// The text a suggestion puts in: empty for a removal.
-fn replacement_text(suggestion: &Suggestion) -> String {
+/// The text that replaces the finding's span: empty for a removal, and the span followed by the inserted text for an
+/// insertion, so every suggestion can be applied the same way.
+fn replacement_text(suggestion: &Suggestion, span_text: &[char]) -> String {
     match suggestion {
         Suggestion::Remove => String::new(),
-        Suggestion::ReplaceWith(chars) | Suggestion::InsertAfter(chars) => chars.iter().collect(),
+        Suggestion::ReplaceWith(chars) => chars.iter().collect(),
+        Suggestion::InsertAfter(chars) => span_text.iter().chain(chars).collect(),
     }
 }
 
