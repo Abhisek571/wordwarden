@@ -85,12 +85,15 @@ jobs:
           unzip -q "$RUNNER_TEMP/languagetool.zip" -d "$RUNNER_TEMP/benchmarks/languagetool"
           rm "$RUNNER_TEMP/languagetool.zip"
       # Harper, for the comparison: the browser extension from its newest GitHub release, whose engine file the
-      # benchmark runs through harper.js (Harper's npm package stopped at 2.10.0).
+      # benchmark runs through harper.js. The engine only loads with the harper.js of the same version, so that one is
+      # installed for the run when npm has it.
       - name: Download the latest Harper
         run: |
           curl -fsSL "https://github.com/Automattic/harper/releases/latest/download/harper-chrome-plugin.zip" -o "$RUNNER_TEMP/harper.zip"
           unzip -q "$RUNNER_TEMP/harper.zip" -d "$RUNNER_TEMP/benchmarks/harper"
           rm "$RUNNER_TEMP/harper.zip"
+          version=$(node -p "require('$RUNNER_TEMP/benchmarks/harper/manifest.json').version")
+          if npm view "harper.js@$version" version > /dev/null 2>&1; then npm install --no-save "harper.js@$version"; fi
       - name: Run benchmarks
         run: npm run evaluate:benchmarks
         env:
