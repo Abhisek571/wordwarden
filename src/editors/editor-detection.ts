@@ -25,8 +25,14 @@ export function closestSupportedEditor(element: Element): SupportedEditor | null
   if (element instanceof HTMLInputElement) return isSafeInput(element) ? element : null;
   if (element instanceof HTMLTextAreaElement) return isSafeElement(element) ? element : null;
 
-  const editable = element.closest<HTMLElement>('[contenteditable="true"], [contenteditable=""]');
-  if (editable === null || !isSafeElement(editable)) return null;
+  // "true" in any case, "", and "plaintext-only" are all editable; the nearest attribute decides, so a
+  // contenteditable="false" part of an editor is left alone.
+  const editable = element.closest<HTMLElement>('[contenteditable]');
+  const value = editable?.getAttribute('contenteditable')?.toLowerCase();
+  if (editable === null || editable === undefined || !(value === '' || value === 'true' || value === 'plaintext-only')) {
+    return null;
+  }
+  if (!isSafeElement(editable)) return null;
   return editable;
 }
 
@@ -49,7 +55,15 @@ export function isSafeElement(element: HTMLElement): boolean {
   return style.display !== 'none' && style.visibility !== 'hidden';
 }
 
+// Fields that were password fields stay private after a "show password" button turns them into text fields.
+const passwordFields = new WeakSet<HTMLInputElement>();
+
+export function rememberPasswordField(input: HTMLInputElement): void {
+  passwordFields.add(input);
+}
+
 function isSafeInput(input: HTMLInputElement): boolean {
-  if (!ALLOWED_INPUT_TYPES.has(input.type)) return false;
+  if (!ALLOWED_INPUT_TYPES.has(input.type) || passwordFields.has(input)) return false;
+  if (/pass(?:word)?|pwd/iu.test(`${input.name} ${input.id}`)) return false;
   return isSafeElement(input);
 }

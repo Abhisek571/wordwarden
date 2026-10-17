@@ -15,6 +15,14 @@ import '#/ui/app.css';
 const LIMITED_SITES = Object.freeze(['docs.google.com', 'word.cloud.microsoft', 'excel.cloud.microsoft',
   'powerpoint.cloud.microsoft', 'officeapps.live.com']);
 
+// Sites where browsers never run extensions' scripts: their stores and, in Firefox, Mozilla's account and add-on sites.
+const RESTRICTED_HOSTS: ReadonlySet<string> = new Set([
+  'chromewebstore.google.com', 'microsoftedge.microsoft.com',
+  'accounts-static.cdn.mozilla.net', 'accounts.firefox.com', 'addons.cdn.mozilla.net', 'addons.mozilla.org',
+  'api.accounts.firefox.com', 'content.cdn.mozilla.net', 'discovery.addons.mozilla.org', 'install.mozilla.org',
+  'oauth.accounts.firefox.com', 'profile.accounts.firefox.com', 'support.mozilla.org', 'sync.services.mozilla.com',
+]);
+
 function isLimitedSite(hostname: string): boolean {
   return LIMITED_SITES.some((site) => hostname === site || hostname.endsWith(`.${site}`));
 }
@@ -90,7 +98,8 @@ function Popup(): React.JSX.Element {
         const parsedUrl = new URL(url);
         const parsedHostname = parsedUrl.hostname.toLowerCase();
         setHostname(
-          (parsedUrl.protocol === 'http:' || parsedUrl.protocol === 'https:') && isSafeHostname(parsedHostname)
+          (parsedUrl.protocol === 'http:' || parsedUrl.protocol === 'https:') && isSafeHostname(parsedHostname) &&
+            !RESTRICTED_HOSTS.has(parsedHostname)
             ? parsedHostname
             : null,
         );
@@ -137,8 +146,8 @@ function Popup(): React.JSX.Element {
         throw new Error(response.ok ? 'Missing settings response.' : response.error);
       }
       setSettings(response.settings);
-      // Turning a site off applies live; a page that never started needs a reload to start.
-      setMessage(enabled ? 'On for this site. Reload the page to start checking.' : 'Off for this site.');
+      // Both directions apply to open pages at once.
+      setMessage(enabled ? 'On for this site.' : 'Off for this site.');
     } catch (error) {
       reportError(error);
     } finally {
@@ -166,8 +175,9 @@ function Popup(): React.JSX.Element {
   if (settings === null) {
     return (
       <main className="shell popup">
-        <p>Loading local settings…</p>
-        {loadError === null ? null : <div role="alert">{loadError}</div>}
+        {loadError === null
+          ? <p>Loading local settings…</p>
+          : <div role="alert">Wordwarden did not answer ({loadError}). It may be starting up; try again in a moment.</div>}
         {loadError === null ? null : (
           <button type="button" className="secondary" aria-label="Retry loading settings" onClick={() => void load()}>
             Retry
@@ -211,17 +221,17 @@ function Popup(): React.JSX.Element {
           <div><h2>Corrections</h2><p className="muted">Better spelling and grammar suggestions while you type.</p></div>
           <Toggle
             enabled={settings.enabled}
-            label="Wordwarden globally"
+            label="Corrections"
             disabled={isSaving}
             onToggle={() => void replaceSettings(
               { ...settings, enabled: !settings.enabled },
-              settings.enabled ? 'Turned off.' : 'Turned on. Reload open pages to start checking.',
+              settings.enabled ? 'Turned off.' : 'Turned on.',
             )}
           />
         </div>
         <div className="row">
           <div className="site" title={hostname ?? undefined}>{hostname ?? 'Unavailable on this website'}</div>
-          <Toggle enabled={siteEnabled} disabled={siteControlDisabled} label="Current site" onToggle={() => void toggleSite()} />
+          <Toggle enabled={siteEnabled} disabled={siteControlDisabled} label={hostname === null ? 'Unavailable on this website' : `Check ${hostname}`} onToggle={() => void toggleSite()} />
         </div>
         <p className="muted" data-testid="page-status">{pageStatus}</p>
       </section>

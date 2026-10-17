@@ -46,21 +46,22 @@ describe('background settings writes', () => {
     expect(stored.disabledSites).toEqual(['one.example', 'two.example']);
   });
 
-  it('rejects stale array edits without overwriting intervening dictionary additions', async () => {
-    const stored = { ...DEFAULT_SETTINGS, dictionary: ['newword'] };
-    storage.loadSettings.mockResolvedValue(stored);
+  it('keeps changes made in another tab when a stale list arrives', async () => {
+    let stored: TypeCheckSettings = { ...DEFAULT_SETTINGS, dictionary: ['newword'] };
+    storage.loadSettings.mockImplementation(async () => stored);
+    storage.saveSettings.mockImplementation(async (settings) => {
+      stored = settings;
+    });
     const { handleRequest } = await import('../entrypoints/background');
-    await expect(handleRequest({
-      type: 'settings:update', patch: { dictionary: ['imported'] }, base: { dictionary: [] },
-    })).rejects.toThrow('Settings changed in another tab');
-    expect(storage.saveSettings).not.toHaveBeenCalled();
+    await handleRequest({ type: 'settings:update', patch: { dictionary: ['imported'] }, base: { dictionary: [] } });
+    expect(stored.dictionary).toEqual(['imported', 'newword']);
   });
 
   it.each([
-    ['dictionary', { dictionary: ['first'] }, { dictionary: ['second'] }, { dictionary: [] }],
-    ['ignored issue hashes', { ignoredIssueHashes: ['first'] }, { ignoredIssueHashes: ['second'] }, { ignoredIssueHashes: [] }],
-    ['disabled sites', { disabledSites: ['first.example'] }, { disabledSites: ['second.example'] }, { disabledSites: [] }],
-  ] as const)('rejects concurrent %s array edits with a conflict', async (_field, firstPatch, secondPatch, base) => {
+    ['dictionary', { dictionary: ['first'] }, { dictionary: ['second'] }, { dictionary: [] }, 'dictionary'],
+    ['ignored issue hashes', { ignoredIssueHashes: ['first'] }, { ignoredIssueHashes: ['second'] }, { ignoredIssueHashes: [] }, 'ignoredIssueHashes'],
+    ['disabled sites', { disabledSites: ['first.example'] }, { disabledSites: ['second.example'] }, { disabledSites: [] }, 'disabledSites'],
+  ] as const)('merges concurrent %s array edits from two tabs', async (_field, firstPatch, secondPatch, base, key) => {
     let stored: TypeCheckSettings = DEFAULT_SETTINGS;
     storage.loadSettings.mockImplementation(async () => stored);
     storage.saveSettings.mockImplementation(async (settings) => {
@@ -68,17 +69,21 @@ describe('background settings writes', () => {
     });
     const { handleRequest } = await import('../entrypoints/background');
 
-    const [first, second] = await Promise.allSettled([
+    await Promise.all([
       handleRequest({ type: 'settings:update', patch: firstPatch, base }),
       handleRequest({ type: 'settings:update', patch: secondPatch, base }),
     ]);
 
-    expect(first).toMatchObject({ status: 'fulfilled', value: { ok: true, settings: expect.any(Object) } });
-    expect(second).toMatchObject({
-      status: 'rejected',
-      reason: expect.objectContaining({ message: 'Settings changed in another tab. Reload this page and try again.' }),
-    });
-    expect(storage.saveSettings).toHaveBeenCalledTimes(1);
+    expect([...stored[key]].sort()).toEqual([...Object.values(firstPatch)[0], ...Object.values(secondPatch)[0]].sort());
+  });
+
+  it('refuses requests that wipe or replace settings from a web page', async () => {
+    const { handleRequest } = await import('../entrypoints/background');
+    for (const type of ['data:clear', 'settings:replace'] as const) {
+      const request = type === 'data:clear' ? { type } : { type, settings: DEFAULT_SETTINGS };
+      await expect(handleRequest(request, { tab: { id: 1 } })).resolves.toMatchObject({ ok: false });
+    }
+    expect(storage.saveSettings).not.toHaveBeenCalled();
   });
 
   it('returns authoritative settings without saving a no-op patch', async () => {

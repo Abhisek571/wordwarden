@@ -20,7 +20,9 @@ execFileSync('wasm-pack', [
   'build', 'wordwarden-wasm', '--release', '--target', 'web', '--out-name', 'wordwarden_core', '--out-dir', dist,
 ], { cwd: core, env, stdio: 'inherit' });
 // wasm-pack also writes an npm package file, a readme and a .gitignore that would hide the folder from git.
-const keep = new Set(['wordwarden_core.js', 'wordwarden_core.d.ts', 'wordwarden_core_bg.wasm', 'wordwarden_core_bg.wasm.d.ts']);
+const keep = new Set([
+  'wordwarden_core.js', 'wordwarden_core.d.ts', 'wordwarden_core_bg.wasm', 'wordwarden_core_bg.wasm.d.ts', 'rust-crates-licenses.txt',
+]);
 for (const file of readdirSync(dist)) {
   if (!keep.has(file)) rmSync(join(dist, file));
 }
@@ -46,4 +48,6 @@ writeFileSync(types, `${readFileSync(types, 'utf8')}
 /** Forgets the engine, so the next initialisation starts a new one. Added by scripts/build-core.mjs. */
 export function resetCore(): void;
 `);
+// The licences of the crates now inside the engine.
+execFileSync(process.execPath, [join(core, '..', 'scripts', 'crate-licenses.mjs')], { stdio: 'inherit' });
 console.log('Wrote core/dist');

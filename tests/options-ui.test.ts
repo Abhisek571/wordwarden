@@ -3,7 +3,9 @@ import { DEFAULT_CUSTOM_UNDERLINES } from '#/core/settings';
 
 const runtimeRequest = vi.hoisted(() => vi.fn());
 const updateSettings = vi.hoisted(() => vi.fn());
-vi.mock('wxt/browser', () => ({ browser: { tabs: { create: vi.fn() } } }));
+vi.mock('wxt/browser', () => ({
+  browser: { tabs: { create: vi.fn() }, storage: { onChanged: { addListener: vi.fn(), removeListener: vi.fn() } } },
+}));
 vi.mock('#/ui/runtime', () => ({ runtimeRequest }));
 vi.mock('#/ui/settings-update', () => ({ updateSettings }));
 

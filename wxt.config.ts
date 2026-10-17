@@ -20,7 +20,10 @@ const spellingRuntimeAssets = Object.freeze([
 ]);
 const packageNoticeAssets = Object.freeze([
   Object.freeze({ fileName: 'THIRD_PARTY_NOTICES.txt', path: './THIRD_PARTY_NOTICES.md' }),
+  Object.freeze({ fileName: 'licenses/Wordwarden-GPL-3.0.txt', path: './LICENSE' }),
   Object.freeze({ fileName: 'licenses/Apache-2.0.txt', path: './core/LICENSE' }),
+  Object.freeze({ fileName: 'licenses/Harper-NOTICE.txt', path: './core/NOTICE' }),
+  Object.freeze({ fileName: 'licenses/Rust-crates.txt', path: './core/dist/rust-crates-licenses.txt' }),
   Object.freeze({ fileName: 'licenses/React-MIT.txt', path: './node_modules/react/LICENSE' }),
   Object.freeze({ fileName: 'licenses/nspell-MIT.txt', path: './node_modules/nspell/license' }),
   Object.freeze({

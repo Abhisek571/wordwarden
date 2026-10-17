@@ -35,20 +35,29 @@ const NON_SINGULAR_NOUNS = new Set([
   'cattle',
   'children',
   'clergy',
+  'data',
   'elderly',
+  'feet',
   'few',
+  'geese',
   'i',
   'majority',
   'many',
   'media',
   'men',
+  'mice',
   'people',
   'personnel',
   'police',
   'poor',
   'rich',
+  'remainder',
+  'rest',
   'staff',
+  'teeth',
+  'these',
   'they',
+  'those',
   'we',
   'women',
   'you',
@@ -72,6 +81,7 @@ const SUBJECT_PRONOUNS = Object.freeze(new Map([['him', 'He'], ['her', 'She'], [
 const OBJECT_PRONOUNS = new Set(['him', 'her', 'them', 'he', 'she', 'they', 'us', 'we', 'you']);
 
 const WHOS_NON_NOUNS = new Set([
+  'anybody', 'anyone', 'everybody', 'everyone', 'nobody', 'somebody', 'someone',
   'a', 'already', 'also', 'an', 'at', 'been', 'he', 'her', 'here', 'his', 'i', 'in', 'it', 'just',
   'my', 'new', 'next', 'not', 'on', 'our', 'out', 'ready', 'really', 'she', 'still', 'that', 'the',
   'their', 'there', 'they', 'this', 'to', 'up', 'we', 'what', 'you', 'your',
@@ -120,8 +130,21 @@ const THIRD_PERSON_VERBS = Object.freeze(
 
 const SINGULAR_S_NOUNS = new Set([
   'alias', 'atlas', 'bias', 'canvas', 'chaos', 'christmas', 'gas', 'kudos', 'lens', 'means',
-  'news', 'series', 'species', 'texas', 'yes',
+  'news', 'series', 'species', 'texas', 'yes', 'headquarters', 'whereabouts', 'crossroads', 'barracks',
 ]);
+
+// "Is he seen as…", "Where were they seen?": a form of "be" makes "seen" passive.
+const BE_FORMS = new Set(['am', 'is', 'are', 'was', 'were', 'be', 'been', 'being', "isn't", "aren't", "wasn't", "weren't"]);
+
+// "you" is the subject only after a sentence break or a word that starts a clause; elsewhere ("Everything I told you
+// was") it is an object.
+const CLAUSE_OPENERS = new Set([
+  'and', 'but', 'so', 'because', 'if', 'when', 'while', 'that', 'then', 'now', 'maybe', 'since', 'although', 'though',
+  'unless', 'until', 'where', 'whether',
+]);
+
+// "However hard he tried" and "However you look at it" use "however" as "no matter how", without a comma.
+const HOWEVER_DEGREE = /^\s*(?:much|many|long|far|hard|often|big|small|good|bad|well|little|few|you|we|they|he|she|it|i)\b/iu;
 
 const COUNT_NOUNS = new Set([
   'calls', 'cars', 'cases', 'children', 'customers', 'days', 'emails', 'employees', 'errors',
@@ -175,7 +198,7 @@ function addIssue(
   if (issues.some((issue) => issue.range.start === start && issue.range.end === end)) return;
   const contextStart = Math.max(0, start - 32);
   const contextEnd = Math.min(text.length, end + 32);
-  const hash = issueHash(ruleId, text.slice(contextStart, contextEnd));
+  const hash = issueHash(ruleId, `${text.slice(start, end)}\u0000${text.slice(contextStart, contextEnd)}`);
   issues.push(
     Object.freeze({
       id: `${hash}-${start}-${end}`,
@@ -234,6 +257,16 @@ function isQuestion(sentence: string): boolean {
   return true;
 }
 
+const MODIFIER_DETERMINERS = new Set(['the', 'a', 'an', 'this', 'that', 'his', 'her', 'my', 'our', 'their', 'your', 'its']);
+
+// A compound subject ("me and my friend") opens a clause: at a sentence start or after a word that starts one, not after
+// a preposition or a verb whose object it is.
+function opensSubject(text: string, index: number): boolean {
+  if (sentenceContext(text, index).trim().length === 0) return true;
+  const before = previousWord(text, index);
+  return before !== undefined && CLAUSE_OPENERS.has(before);
+}
+
 function isPastNarrative(context: string): boolean {
   return /\b(?:yesterday|ago|was|were|had|did|last\s+(?:night|week|month|year)|[\p{L}]+ed)\b/iu.test(
     context,
@@ -259,6 +292,8 @@ export function lintSupplementalGrammar(
     const otherSubject = match[1];
     if (otherSubject === undefined || match.index === undefined) continue;
     if (OBJECT_PRONOUNS.has(otherSubject.toLocaleLowerCase('en'))) continue;
+    // "She gave the book to me and my sister was happy": "me" belongs to the clause before.
+    if (!opensSubject(text, match.index)) continue;
     addIssue(
       issues,
       text,
@@ -306,6 +341,7 @@ export function lintSupplementalGrammar(
   // "Therefore people will…" without one is accepted by human editors.
   for (const match of text.matchAll(/(?<=^|[.!?;]\s+)however\s+(?=[\p{Ll}])/giu)) {
     if (match.index === undefined) continue;
+    if (HOWEVER_DEGREE.test(text.slice(match.index + 'however'.length))) continue;
     const original = match[0].trimEnd();
     addIssue(issues, text, 'IntroductoryComma', match.index, match.index + original.length,
       'Use a comma after this introductory transition.', [`${original},`], 'punctuation');
@@ -318,11 +354,18 @@ export function lintSupplementalGrammar(
       'Do not separate a subject from its verb with a comma.', [''], 'punctuation');
   }
 
+  // Only the last line is judged: a sign-off ("Best,\nAlice"), a short chat line or a heading needs no full stop, and
+  // neither does a link or an address at the end.
   const trimmed = text.trimEnd();
-  const wordCount = trimmed.match(/[\p{L}\d]+(?:['’][\p{L}]+)*/gu)?.length ?? 0;
-  if (wordCount > 1 && !/[.!?…]$/u.test(trimmed) && /[\p{L}\d]$/u.test(trimmed)) {
+  const lastLine = trimmed.slice(trimmed.lastIndexOf('\n') + 1);
+  const wordCount = lastLine.match(/[\p{L}\d]+(?:['’][\p{L}]+)*/gu)?.length ?? 0;
+  const lastToken = lastLine.slice(lastLine.search(/\S+$/u));
+  if (
+    wordCount >= 4 && !/[.!?…]$/u.test(trimmed) && /[\p{L}\d]$/u.test(trimmed) &&
+    !/[@/:]|\.\S/u.test(lastToken) && !lastLine.includes(':')
+  ) {
     const end = trimmed.length;
-    const start = Math.max(trimmed.lastIndexOf(' ') + 1, 0);
+    const start = Math.max(trimmed.lastIndexOf(' ') + 1, trimmed.lastIndexOf('\n') + 1, 0);
     const original = text.slice(start, end);
     if (!hasPrefixCompletion(original)) {
       const sentenceStart = Math.max(
@@ -344,6 +387,8 @@ export function lintSupplementalGrammar(
     // "others and he has" starts a new clause: a subject pronoun right before the verb owns it.
     const beforeVerb = match[0].slice(0, -verb.length).trim().split(/\s+/u).at(-1)?.toLocaleLowerCase('en');
     if (beforeVerb !== undefined && CLAUSE_SUBJECTS.has(beforeVerb)) continue;
+    // "The photo of you and me is nice": the pair follows a preposition, so the subject is earlier.
+    if (match.index !== undefined && !opensSubject(text, match.index)) continue;
     const replacement = COMPOUND_SUBJECT_VERBS.get(verb.toLocaleLowerCase('en'));
     if (replacement === undefined) continue;
     const range = verbRange(match, verb);
@@ -359,10 +404,16 @@ export function lintSupplementalGrammar(
   }
 
   for (const match of text.matchAll(
-    /\b(?:we|they|you)\s+(was|is|has|does|doesn't|doesn’t)\b/giu,
+    /\b(we|they|you)\s+(was|is|has|does|doesn't|doesn’t)\b/giu,
   )) {
-    const verb = match[1];
-    if (verb === undefined) continue;
+    const subject = match[1]?.toLocaleLowerCase('en');
+    const verb = match[2];
+    if (verb === undefined || match.index === undefined) continue;
+    if (subject === 'you') {
+      const before = previousWord(text, match.index);
+      const atClauseStart = sentenceContext(text, match.index).trim().length === 0;
+      if (!atClauseStart && (before === undefined || !CLAUSE_OPENERS.has(before))) continue;
+    }
     const replacement = PLURAL_SUBJECT_VERBS.get(verb.toLocaleLowerCase('en'));
     if (replacement === undefined) continue;
     const range = verbRange(match, verb);
@@ -378,12 +429,14 @@ export function lintSupplementalGrammar(
   }
 
   for (const match of text.matchAll(
-    /\b(?:two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|[2-9]\d*)\s+(second|minute|hour|day|week|month|year)\b/giu,
+    /\b(?:two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|[2-9]|[1-9]\d+)\s+(second|minute|hour|day|week|month|year)\b/giu,
   )) {
     const unit = match[1];
     if (unit === undefined) continue;
-    // "a two week holiday" is a modifier; CompoundQuantityHyphen owns it.
-    if (/(?:^|[^\p{L}])an?\s+$/iu.test(text.slice(Math.max(0, (match.index ?? 0) - 4), match.index))) continue;
+    // "a two week holiday", "the three hour tour", "two year old": a modifier, not a count.
+    const before = previousWord(text, match.index ?? 0);
+    if (before !== undefined && MODIFIER_DETERMINERS.has(before)) continue;
+    if (/^[\s-]+old\b/iu.test(text.slice((match.index ?? 0) + match[0].length))) continue;
     const range = verbRange(match, unit);
     addIssue(
       issues,
@@ -489,7 +542,7 @@ export function lintSupplementalGrammar(
     const verb = match[1];
     if (verb === undefined || match.index === undefined) continue;
     const before = previousWord(text, match.index);
-    if (before !== undefined && PERFECT_AUXILIARIES.has(before)) continue;
+    if (before !== undefined && (PERFECT_AUXILIARIES.has(before) || BE_FORMS.has(before))) continue;
     const range = verbRange(match, verb);
     addIssue(issues, text, 'PastTenseSeen', range.start, range.end,
       'Use “saw”, or add “have” before “seen”.', [preserveCase(verb, 'saw')]);
@@ -521,6 +574,8 @@ export function lintSupplementalGrammar(
     const verb = match[2];
     if (noun === undefined || verb === undefined) continue;
     if (/(?:ss|us|is|ics)$/u.test(noun) || SINGULAR_S_NOUNS.has(noun)) continue;
+    // "The Netherlands has": a name ending in s is one thing.
+    if (/^\p{Lu}/u.test(match[1] ?? '')) continue;
     const replacement = THIRD_PERSON_VERBS.get(verb.toLocaleLowerCase('en'));
     if (replacement === undefined) continue;
     const range = verbRange(match, verb);
@@ -558,6 +613,9 @@ export function lintSupplementalGrammar(
 
   for (const match of text.matchAll(/\byour welcome\b(?=\s*(?:[.!,]|$))/giu)) {
     if (match.index === undefined) continue;
+    // "Thanks for your welcome." is the noun.
+    const before = previousWord(text, match.index);
+    if (before !== undefined && (PREPOSITIONS.has(before) || before === 'thank')) continue;
     addIssue(issues, text, 'YoureWelcome', match.index, match.index + match[0].length,
       'Use “you’re” (you are) here.', [preserveCase(match[0], "you're welcome")]);
   }
@@ -609,8 +667,13 @@ export function supplementGrammarIssues(
     );
     if (!duplicate) issues.push(issue);
   }
+  // "Add a full stop" never hides a real error on the last word ("the the", "for all intensive purposes").
+  const kept = issues.filter((issue) => issue.ruleId !== 'SentenceEndingPunctuation' || !issues.some((other) => (
+    other !== issue && other.category !== 'style' &&
+    other.range.start < issue.range.end && issue.range.start < other.range.end
+  )));
   return Object.freeze(
-    issues.sort(
+    kept.sort(
       (left, right) =>
         Number(left.category === 'style') - Number(right.category === 'style'),
     ),

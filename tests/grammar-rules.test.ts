@@ -115,13 +115,21 @@ describe('supplemental grammar rules', () => {
     expect(lintSupplementalGrammar('thta')).toEqual([]);
   });
 
-  it('still offers sentence-ending punctuation for multi-word text', () => {
-    const text = 'hello there';
+  it('still offers sentence-ending punctuation for a sentence of four or more words', () => {
+    const text = 'i went home very late';
     const issue = lintSupplementalGrammar(text).find(
       (finding) => finding.ruleId === 'SentenceEndingPunctuation',
     );
 
-    expect(issue?.replacements).toEqual(['there.']);
+    expect(issue?.replacements).toEqual(['late.']);
+  });
+
+  it('leaves chat lines, sign-offs, headings, links and addresses alone', () => {
+    for (const text of ['hello there', 'Thanks for the gift.\nBest,\nAlice', 'Figure 1: System overview of the app',
+      'Read more at https://example.com/about-us', 'Write to me at alice@example.com']) {
+      expect(lintSupplementalGrammar(text).some((finding) => finding.ruleId === 'SentenceEndingPunctuation'), text)
+        .toBe(false);
+    }
   });
 
   it('defers sentence-ending punctuation when the final token has a prefix completion', () => {
@@ -167,9 +175,9 @@ describe('sentence-ending punctuation', () => {
   });
 
   it('keeps a full stop for statements and commands', () => {
-    expect(ending('the file changed')).toBe('changed.');
-    expect(ending('Do it now')).toBe('now.');
-    expect(ending('Have a nice day')).toBe('day.');
-    expect(ending('What a great day')).toBe('day.');
+    expect(ending('the file has now changed')).toBe('changed.');
+    expect(ending('Do it right now')).toBe('now.');
+    expect(ending('Have a really nice day')).toBe('day.');
+    expect(ending('What a great day it was')).toBe('was.');
   });
 });

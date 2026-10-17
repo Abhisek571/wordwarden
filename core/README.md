@@ -54,13 +54,22 @@ License 2.0 (see `NOTICE` and `LICENSE`).
 - SpellCheck says when a word is another dialect's spelling ("`colour` is spelled this way in another variety of
   English."), so Wordwarden's ranker can keep the dialect's own word first.
 - Harper's later fix for SplitWords (f41bec48: short words that are not function words no longer anchor a split).
+- Everything Harper changed in its core from 2.10.0 to 2.12.0 is ported, with its tests: the new rules, the
+  dictionary curation, and the false-alarm fixes. Two commits are left out: 8612f3e1 (an internal rewrite of the
+  pattern loop, which the first-words optimisation above relies on) and 2064305b (rule priorities between MassNouns
+  and SplitWords, which Wordwarden settles in its own layer).
+- Four typo entries in the dictionary are corrected (preselect, soupçon, diachronic, bluefin), and "data center" and
+  "data centre" have their dialects the right way round.
+- `add_words` rebuilds the rules when any spelling is new, not only when the word count grows: adding "wordwarden"
+  after "Wordwarden" changes a spelling without adding a word.
 
 In Node, the core's memory, which never shrinks, is 39 MB after start-up instead of Harper's 161 MB, and 45 MB
 instead of 225 MB after checking 300 learner sentences. Start-up takes 0.4 s instead of 0.9 s, and checking 500
 words it has not seen about 20 ms instead of 60 ms. The engine file is 6.6 MB instead of 16.1 MB. Apart from the
-extra suggestions and the fixed order above, the core finds the same as Harper 2.10.0: on 5,002 texts (the JFLEG
-sentences and 2,000 Birkbeck misspellings) both return the same 9,959 results, with the same first three
-suggestions. Harper's snapshot tests in `wordwarden-core/tests` were updated for the extra suggestions.
+extra suggestions and the fixed order above, the core found the same as Harper 2.10.0 when it was made: on 5,002
+texts (the JFLEG sentences and 2,000 Birkbeck misspellings) both returned the same 9,959 results, with the same first
+three suggestions. Harper's snapshot tests in `wordwarden-core/tests` were updated for the extra suggestions, and
+again with the changes ported from Harper 2.11 and 2.12.
 
 ## Building
 

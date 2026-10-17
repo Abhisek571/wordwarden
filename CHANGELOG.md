@@ -3,6 +3,35 @@
 Each release's section is also its release notes on GitHub. Accuracy and resource numbers are in the
 README charts; method in [docs/BENCHMARKS.md](docs/BENCHMARKS.md).
 
+## 1.6.2 — 2026-10-17
+
+- **Harper's newer rules and dictionary.** The rules and fixes Harper added in 2.11 and 2.12 are in, such as
+  "comfortable of" → "comfortable with" and "such shame" → "such a shame", and about 40 modern words (worktree,
+  permalink, framerate) are no longer flagged. "its" after a preposition and "one of the latter" are no longer flagged.
+- **Better spelling.** "im" → "I'm", "beautifull" → "beautiful", "advices" → "advice", "thats" → "that's", and a
+  spelling that your dialect's dictionary accepts ("dreamed" in British English) is no longer flagged.
+- **Fewer false alarms from Wordwarden's own rules.** "Everything I told you was true", "The rest have gone", "Is he
+  seen as…" and similar sentences are no longer flagged. "Add a full stop" no longer fires on sign-offs, headings,
+  short chat lines, links or addresses, and never hides a real mistake on the last word.
+- Mistakes that cross the cut between two parts of a long text, and the last words of a long text, are found again.
+  Long links no longer get underlines inside them.
+- Fixes for stray spaces and quotes ("Hello , world", "said\"hello") are offered.
+- **Underlines stay right.** They follow the field when the page moves it or it is resized, disappear when it is
+  removed, and are drawn in right-to-left fields. Editors that change text without typing (undo in some editors,
+  Wikipedia's source editor) are checked again.
+- The card no longer closes on the way from the word to it, closes when you click elsewhere, and its underlines are
+  easier to see on white fields. Underlines are no longer in the Tab order.
+- After an update the old underlines are removed from open pages. Turning Wordwarden or a site back on works without
+  reloading. A page's own styles can no longer hide the underlines.
+- Fields that were password fields stay unchecked after "show password". "plaintext-only" rich text boxes are checked.
+- "Ignore" hides only the suggestion you chose. Note: suggestions ignored before this version show once more.
+- Settings: a pasted list of words is added word by word, importing a word list keeps changes made meanwhile, full
+  lists say so, and the page follows changes made on a web page. Two tabs saving at once no longer lose a change.
+- Browsers set to New Zealand, Irish, Indian, South African and other Commonwealth English start with that spelling.
+- LibreOffice: checking comes back a minute after the engine fails, English (Philippines) uses American spelling, and
+  the add-on ships all its licence texts.
+- The browser packages include Wordwarden's own licence and the licences of the engine's Rust libraries.
+
 ## 1.6.1 — 2026-10-17
 
 - **Checking no longer stops.** Text such as "I want both 3" or "THERE'S PEOPLE" crashed the engine, and checking
@@ -24,8 +53,9 @@ README charts; method in [docs/BENCHMARKS.md](docs/BENCHMARKS.md).
 ## 1.6.0 — 2026-10-15
 
 - **Wordwarden's own engine.** Spelling and grammar are now checked by Wordwarden core, our own engine. It
-  began from Harper's code and has been reworked into a separate engine: it uses about a quarter of the memory,
-  starts in half the time and checks new text about three times as fast, and finds the same mistakes.
+  began from Harper's code and has been reworked into a separate engine. On its own it uses about a quarter of
+  Harper's memory and starts in half the time; in the browser the extension uses about half the memory of 1.5.2
+  and checks new text many times as fast. It finds the same mistakes.
 - Typing in long rich editors is lighter: the text is read once you pause, not on every key.
 - Underlines in long text boxes are placed in one pass instead of one at a time.
 - Fixes for wrong verb forms such as "choosed" always offer "chose" before "chosen".

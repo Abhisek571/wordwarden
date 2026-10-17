@@ -11,5 +11,3 @@ publish = false
 wordwarden-pos-utils = { path = "../wordwarden-pos-utils" }
 serde_json = "1.0.150"
 
-[build-dependencies]
-serde_json = "1.0.150"

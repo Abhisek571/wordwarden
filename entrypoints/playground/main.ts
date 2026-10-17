@@ -201,7 +201,10 @@ function trackTest(): void {
     if (startButton !== null) startButton.textContent = 'Start another test';
     if (stopButton !== null) stopButton.hidden = true;
     const typing = meter.read();
-    recordBests(testElapsed, wordsPerMinute(typing.characters, typing.typingMs), accuracyPercent(testCompleted, testWrong), testWrong);
+    // A pasted paragraph finishes the test at once; only a typed, timed test counts toward the bests.
+    if (testElapsed > 0 && typing.characters > 0 && typing.typingMs > 0) {
+      recordBests(testElapsed, wordsPerMinute(typing.characters, typing.typingMs), accuracyPercent(testCompleted, testWrong), testWrong);
+    }
   }
 }
 

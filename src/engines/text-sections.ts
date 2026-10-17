@@ -28,7 +28,14 @@ function splitAtLogicalBoundaries(text: string): readonly TextRange[] {
       boundaryIndex += 1;
     }
     const wordBoundary = text.lastIndexOf(' ', idealEnd);
-    const end = boundary ?? (wordBoundary > start ? wordBoundary + 1 : idealEnd);
+    // The rest of the text fits: end there, not at its last space, or the last word is checked on its own.
+    // A run with no space in the window (a long link) is never cut, or the core would see half a link.
+    const nextSpace = text.slice(idealEnd).search(/\s/u);
+    const end = boundary ?? (
+      idealEnd === text.length ? text.length
+        : wordBoundary > start ? wordBoundary + 1
+          : nextSpace < 0 ? text.length : idealEnd + nextSpace + 1
+    );
     ranges.push(Object.freeze({ start, end }));
     start = end;
   }
@@ -54,7 +61,15 @@ export function createAnalysisSections(text: string): readonly AnalysisSection[]
   }));
 }
 
+// A finding belongs to the section it starts in. It may run on into the context after it ("could of" across a cut),
+// which the next section cannot report, since it starts before that section's own part.
+export function startsInSection(section: AnalysisSection, range: TextRange): boolean {
+  return range.start >= section.localRange.start &&
+    (range.start < section.localRange.end || (range.start === range.end && range.start === section.localRange.end)) &&
+    range.end <= section.text.length;
+}
+
 export function rebaseSectionRange(section: AnalysisSection, range: TextRange): TextRange | null {
-  if (range.start < section.localRange.start || range.end > section.localRange.end) return null;
+  if (!startsInSection(section, range)) return null;
   return Object.freeze({ start: section.sourceStart + range.start, end: section.sourceStart + range.end });
 }

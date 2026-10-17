@@ -6,6 +6,8 @@ import { createWordwardenCore, type WordwardenCore } from './wordwarden-core';
 export type EngineService = Readonly<{
   /** Checks text with an engine set up for these settings, building a new one when they changed. */
   lint(text: string, settings: TypeCheckSettings): Promise<readonly WritingIssue[]>;
+  /** Sets up the engine for these settings ahead of the first check. */
+  warm(settings: TypeCheckSettings): Promise<void>;
 }>;
 
 type CurrentEngine = Readonly<{ dialect: EnglishDialect; words: ReadonlySet<string>; engine: WordwardenCore }>;
@@ -80,6 +82,11 @@ export function createEngineService(createEngine: () => WordwardenCore = createW
   return Object.freeze({
     lint(text: string, settings: TypeCheckSettings): Promise<readonly WritingIssue[]> {
       const result = queue.then(() => lintWith(text, settings, true));
+      queue = result.then(() => undefined, () => undefined);
+      return result;
+    },
+    warm(settings: TypeCheckSettings): Promise<void> {
+      const result = queue.then(async () => { await engineFor(settings); });
       queue = result.then(() => undefined, () => undefined);
       return result;
     },

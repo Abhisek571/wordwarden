@@ -20,11 +20,11 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 90
     steps:
-      # The chart is saved to main, so the README shows it, even when a tag started the run. A manual
+      # A tag measures the release it names; the chart is then saved to main, so the README shows it. A manual
       # run can name another branch to measure that branch before it is merged.
       - uses: actions/checkout@v7
         with:
-          ref: ${{ inputs.branch || 'main' }}
+          ref: ${{ github.ref_type == 'tag' && github.ref || inputs.branch || 'main' }}
       - uses: actions/setup-node@v7
         with:
           node-version: 22
@@ -111,10 +111,18 @@ jobs:
       # The Resources workflow may push its chart at the same time, so take its commit first.
       - name: Commit the updated charts
         run: |
-          git diff --quiet docs/accuracy.svg docs/accuracy-history.svg docs/accuracy-history.json docs/accuracy-latest.json && exit 0
+          files="docs/accuracy.svg docs/accuracy-history.svg docs/accuracy-history.json docs/accuracy-latest.json"
+          git diff --quiet $files && exit 0
+          # A tag was checked out: carry the new charts over to the branch they are saved on.
+          if ! git symbolic-ref -q HEAD > /dev/null; then
+            branch="${{ inputs.branch || 'main' }}"
+            mkdir -p "$RUNNER_TEMP/charts" && cp --parents $files "$RUNNER_TEMP/charts"
+            git fetch --depth 1 origin "$branch" && git checkout -B "$branch" FETCH_HEAD
+            cp -r "$RUNNER_TEMP/charts/docs" .
+          fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add docs/accuracy.svg docs/accuracy-history.svg docs/accuracy-history.json docs/accuracy-latest.json
+          git add $files
           git commit -m "Update accuracy charts"
-          git pull --rebase
-          git push
+          git pull --rebase origin "$(git branch --show-current)"
+          git push origin HEAD

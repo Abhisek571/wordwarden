@@ -2,6 +2,7 @@
 
 import os
 import threading
+import time
 
 import uno
 import unohelper
@@ -27,6 +28,7 @@ COUNTRIES = ('US', 'GB', 'AU', 'CA', 'NZ', 'IE', 'ZA', 'IN', 'PH', 'NA', 'ZW', '
 EXTENSION_ROOT = os.path.dirname(os.path.abspath(__file__))
 # A checker that keeps failing is not retried on every keystroke.
 MAX_FAILURES = 3
+RETRY_SECONDS = 60
 SPELL_CACHE_LIMIT = 50000
 
 # The browser extension's palettes. Colour-blind ones keep grammar and style apart without relying on red-green
@@ -104,6 +106,7 @@ class Shared:
         self.lock = threading.Lock()
         self.engine = None
         self.failures = 0
+        self.failed_at = 0.0
         self.ctx = None
         self.dictionary_listener = None
         self.dictionary_changed = True
@@ -113,7 +116,14 @@ class Shared:
         with self.lock:
             self.ctx = self.ctx or ctx
             if self.failures >= MAX_FAILURES:
-                raise RuntimeError('the Wordwarden engine keeps failing')
+                # A short failure (a slow first start, a missing file) must not switch checking off for the whole
+                # session: after a pause, the engine is started again.
+                if time.monotonic() - self.failed_at < RETRY_SECONDS:
+                    raise RuntimeError('the Wordwarden engine keeps failing')
+                self.failures = 0
+                if self.engine is not None:
+                    self.engine.close()
+                    self.engine = None
             if self.engine is None or not self.engine.alive():
                 self.engine = wordwarden_engine.Engine(EXTENSION_ROOT)
                 self.dictionary_changed = True
@@ -125,6 +135,7 @@ class Shared:
 
     def failed(self):
         self.failures += 1
+        self.failed_at = time.monotonic()
 
     def succeeded(self):
         self.failures = 0

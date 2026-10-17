@@ -461,7 +461,7 @@ describe('issue popover', () => {
     expect(styles).toContain('var(--grammar-width, 2px) var(--grammar-line, solid) var(--grammar)');
     expect(styles).toContain('var(--style-width, 2px) var(--style-line, dotted) var(--style)');
     expect(styles).toContain('--spelling: #d32f2f');
-    expect(styles).toContain('--grammar: #e08a00');
+    expect(styles).toContain('--grammar: #c27600');
     expect(styles).toContain('--style: #1e6fd9');
     expect(styles).not.toContain('border-bottom: 2px wavy');
 

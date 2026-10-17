@@ -72,6 +72,10 @@ describe('diagnostics', () => {
     expect(isSafeHostname('https://example.com/private')).toBe(false);
     expect(isSafeHostname('example.com/path')).toBe(false);
     expect(isSafeHostname(null)).toBe(false);
+    // Browsers open these, so they must be switchable off.
+    expect(isSafeHostname('my_host.example')).toBe(true);
+    expect(isSafeHostname('example.org.')).toBe(true);
+    expect(isSafeHostname('.')).toBe(false);
   });
 });
 

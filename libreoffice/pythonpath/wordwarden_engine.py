@@ -10,7 +10,9 @@ import subprocess
 import sys
 import threading
 
-DIALECTS = {'US': 'american', 'GB': 'british', 'AU': 'australian', 'CA': 'canadian'}
+# The Philippines and Liberia follow American spelling, New Zealand is closest to Australia.
+DIALECTS = {'US': 'american', 'PH': 'american', 'LR': 'american', 'GB': 'british', 'AU': 'australian',
+            'NZ': 'australian', 'CA': 'canadian'}
 # The engine knows four kinds of English. Everything else follows British spelling.
 DEFAULT_DIALECT = 'british'
 TIMEOUT_SECONDS = 20
@@ -46,9 +48,11 @@ class Engine:
         self._lock = threading.Lock()
         self._replies = queue.Queue()
         self._next_id = 0
+        # NODE_OPTIONS set for other programs could open a debugger port, load code into the engine, or stop it.
+        environment = {key: value for key, value in os.environ.items() if key != 'NODE_OPTIONS'}
         self._process = subprocess.Popen(
             [executable, os.path.join(engine, 'engine-host.cjs'), os.path.join(engine, 'data')],
-            stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.DEVNULL,
+            stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.DEVNULL, env=environment,
             creationflags=getattr(subprocess, 'CREATE_NO_WINDOW', 0))
         threading.Thread(target=self._read_loop, daemon=True).start()
 

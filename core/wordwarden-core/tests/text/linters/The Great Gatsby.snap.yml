@@ -4091,6 +4091,8 @@ Suggest:
   - Replace with: “Where'd”
   - Replace with: “Where's”
   - Replace with: “Wherever”
+  - Replace with: “Here're”
+  - Replace with: “There're”
 
 
 
@@ -6459,19 +6461,6 @@ Suggest:
   - Replace with: “Papillae”
   - Replace with: “Papillary”
   - Replace with: “Capitoline”
-
-
-
-Lint:    Spelling (63 priority)
-Message: |
-    4265 | Why—there’re things between Daisy and me that you’ll never know, things that
-         |     ^~~~~~~~ Did you mean to spell `there’re` this way?
-Suggest:
-  - Replace with: “there's”
-  - Replace with: “there'd”
-  - Replace with: “there'll”
-  - Replace with: “they're”
-  - Replace with: “therefore”
 
 
 

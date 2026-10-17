@@ -86,8 +86,8 @@ describe('popup UI', () => {
     updateSettings.mockImplementationOnce(() => new Promise((resolve) => { resolveSave = resolve; }));
 
     await renderPopup();
-    const globalToggle = document.querySelector<HTMLButtonElement>('[aria-label="Wordwarden globally"]');
-    const siteToggle = document.querySelector<HTMLButtonElement>('[aria-label="Current site"]');
+    const globalToggle = document.querySelector<HTMLButtonElement>('[aria-label="Corrections"]');
+    const siteToggle = document.querySelector<HTMLButtonElement>('[aria-label^="Check "], [aria-label="Unavailable on this website"]');
 
     await act(async () => {
       globalToggle?.click();
@@ -132,7 +132,7 @@ describe('popup UI', () => {
 
     expect(document.querySelector('[data-testid="page-status"]')?.textContent)
       .toContain('browser-restricted');
-    expect(document.querySelector<HTMLButtonElement>('[aria-label="Current site"]')?.disabled).toBe(true);
+    expect(document.querySelector<HTMLButtonElement>('[aria-label^="Check "], [aria-label="Unavailable on this website"]')?.disabled).toBe(true);
     expect(document.body.textContent).not.toContain('checker is available');
   });
 
@@ -142,7 +142,7 @@ describe('popup UI', () => {
 
     await renderPopup();
 
-    const siteToggle = document.querySelector<HTMLButtonElement>('[aria-label="Current site"]');
+    const siteToggle = document.querySelector<HTMLButtonElement>('[aria-label^="Check "], [aria-label="Unavailable on this website"]');
     expect(siteToggle?.disabled).toBe(true);
     expect(document.querySelector('[data-testid="page-status"]')?.textContent)
       .toBe('Off everywhere. Turn on Corrections to check this site.');
@@ -153,7 +153,7 @@ describe('popup UI', () => {
     updateSettings.mockRejectedValueOnce(new Error('Storage is unavailable'));
 
     await renderPopup();
-    const globalToggle = document.querySelector<HTMLButtonElement>('[aria-label="Wordwarden globally"]');
+    const globalToggle = document.querySelector<HTMLButtonElement>('[aria-label="Corrections"]');
 
     await act(async () => {
       globalToggle?.click();

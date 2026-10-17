@@ -32,7 +32,7 @@ export type TypeCheckOverlay = Readonly<{
 const OVERLAY_STYLES = `
   :host { all: initial; color-scheme: light dark;
     --ink: #1d2433; --ink-2: #4f5768; --paper: #ffffff; --hair: #dde0e6; --wash: #eceef2;
-    --spelling: #d32f2f; --grammar: #e08a00; --grammar-ink: #9a5b00; --style: #1e6fd9; --clear: #2f7d5b;
+    --spelling: #d32f2f; --grammar: #c27600; --grammar-ink: #9a5b00; --style: #1e6fd9; --clear: #2f7d5b;
     --focus: #1d2433; --keyline: rgb(29 36 51 / .28); --shadow: 0 2px 6px rgb(17 22 33 / .12);
     --face: "Segoe UI Variable Text", "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif; }
   * { box-sizing: border-box; }
@@ -59,7 +59,7 @@ const OVERLAY_STYLES = `
   svg.icon { display: block; width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 1.75;
     stroke-linecap: round; stroke-linejoin: round; }
 
-  .popover { position: fixed; width: min(320px, calc(100vw - 24px)); max-height: min(400px, calc(100vh - 24px));
+  .popover { position: fixed; z-index: 2; width: min(320px, calc(100vw - 24px)); max-height: min(400px, calc(100vh - 24px));
     overflow-y: auto; pointer-events: auto; border: 1px solid var(--keyline); border-radius: 6px;
     background: var(--paper); color: var(--ink); box-shadow: var(--shadow); padding: 6px 6px 8px;
     font: 400 13px/1.45 var(--face); scrollbar-width: thin; scrollbar-color: var(--hair) transparent; }
@@ -160,9 +160,13 @@ const OVERLAY_STYLES = `
       --focus: #eceef3; --keyline: rgb(236 238 243 / .3); --shadow: 0 2px 8px rgb(0 0 0 / .45); }
     ::selection { background: rgb(121 168 255 / .3); }
   }
+  /* Underlines follow the field they are drawn on, not the system theme: a white field in dark mode needs the
+     darker colours to stay at 3:1 against it. */
+  :host([data-surface="light"]) { --spelling: #d32f2f; --grammar: #c27600; --style: #1e6fd9; }
+  :host([data-surface="dark"]) { --spelling: #ff6b6b; --grammar: #ffb340; --style: #79a8ff; }
   /* Colour-blind palettes: blue and orange stay apart without red-green vision; red and teal without
      blue-yellow vision. Grammar also gets a dashed underline, so the line shape alone tells them apart. */
-  :host([data-vision="red-green"]) { --spelling: #0072b2; --grammar: #e69f00; --grammar-ink: #8a5300; --style: #b8458f; }
+  :host([data-vision="red-green"]) { --spelling: #0072b2; --grammar: #b47d00; --grammar-ink: #8a5300; --style: #b8458f; }
   :host([data-vision="blue-yellow"]) { --spelling: #d32f2f; --grammar: #00838f; --grammar-ink: #00727c; --style: #5f6b7a; }
   @media (prefers-color-scheme: dark) {
     :host([data-vision="red-green"]) { --spelling: #56b4e9; --grammar: #e69f00; --grammar-ink: #f0b429; --style: #e08bc4; }
@@ -265,9 +269,29 @@ function previewContext(text: string, range: TextRange): Readonly<{ before: stri
   return before.trim().length === 0 && after.trim().length === 0 ? null : Object.freeze({ before, after });
 }
 
+// Whether a field's background is light, from its own colour or the first one behind it that is not transparent.
+function surfaceOf(element: Element): 'light' | 'dark' {
+  for (let node: Element | null = element; node !== null; node = node.parentElement) {
+    const match = /rgba?\(([\d.]+),\s*([\d.]+),\s*([\d.]+)(?:,\s*([\d.]+))?/u.exec(getComputedStyle(node).backgroundColor);
+    if (match === null || Number(match[4] ?? 1) < 0.5) continue;
+    const [red, green, blue] = [match[1], match[2], match[3]].map((value) => Number(value) / 255);
+    return 0.2126 * (red ?? 1) + 0.7152 * (green ?? 1) + 0.0722 * (blue ?? 1) > 0.4 ? 'light' : 'dark';
+  }
+  return 'light';
+}
+
+// A page's own styles must not hide the overlay ("html > div { display: none }"): inline !important wins over them.
+const HOST_STYLE = Object.freeze({
+  display: 'block', visibility: 'visible', opacity: '1', filter: 'none', transform: 'none', 'clip-path': 'none',
+  position: 'static', width: 'auto', height: 'auto', margin: '0', padding: '0', border: '0', zoom: '1',
+});
+
 export function createTypeCheckOverlay(actions: OverlayActions): TypeCheckOverlay {
+  // A copy of this script cut off by an extension update leaves its overlay behind; this one replaces it.
+  document.getElementById('typecheck-root')?.remove();
   const host = document.createElement('div');
   host.id = 'typecheck-root';
+  for (const [property, value] of Object.entries(HOST_STYLE)) host.style.setProperty(property, value, 'important');
   const shadow = host.attachShadow({ mode: 'closed' });
   const style = document.createElement('style');
   style.textContent = OVERLAY_STYLES;
@@ -291,6 +315,8 @@ export function createTypeCheckOverlay(actions: OverlayActions): TypeCheckOverla
   let hoverTimer: number | null = null;
   let popoverPinned = false;
   let popoverIssueId: string | null = null;
+  // The word the open card belongs to, for the path the pointer may take from the word to the card.
+  let popoverAnchor: DOMRect | null = null;
   let currentAdapter: EditorAdapter | null = null;
 
   function removeElements(elements: readonly HTMLElement[]): void {
@@ -305,6 +331,7 @@ export function createTypeCheckOverlay(actions: OverlayActions): TypeCheckOverla
     popoverElement = null;
     popoverPinned = false;
     popoverIssueId = null;
+    popoverAnchor = null;
     optionButtons = [];
   }
 
@@ -328,12 +355,14 @@ export function createTypeCheckOverlay(actions: OverlayActions): TypeCheckOverla
   function showPopover(issue: WritingIssue, anchor: DOMRect, pinned = false): void {
     if (popoverIssueId === issue.id && popoverElement !== null) {
       if (pinned) popoverPinned = true;
+      popoverAnchor = anchor;
       positionPopover(popoverElement, anchor);
       return;
     }
     closePopover();
     popoverPinned = pinned;
     popoverIssueId = issue.id;
+    popoverAnchor = anchor;
     for (const mark of issueElements) {
       mark.classList.toggle('underline-hidden', mark.dataset.issueId === issue.id);
     }
@@ -519,6 +548,9 @@ export function createTypeCheckOverlay(actions: OverlayActions): TypeCheckOverla
 
   function renderIssues(adapter: EditorAdapter, issues: readonly WritingIssue[]): void {
     currentAdapter = adapter;
+    host.dataset.surface = surfaceOf(adapter.element);
+    // A hover card belongs to where its word was; after a scroll or a new check it would cover the text.
+    if (popoverElement !== null && !popoverPinned) closePopover();
     removeElements(issueElements);
     issueElements = [];
     markTargets = [];
@@ -546,6 +578,8 @@ export function createTypeCheckOverlay(actions: OverlayActions): TypeCheckOverla
         if (issue.id === pinnedIssueId && pinnedRect === undefined) pinnedRect = rect;
         if (firstIssue === null) firstIssue = Object.freeze({ issue, rect });
         const mark = button('', `mark ${issue.category}`, 'issue-mark');
+        // Out of the Tab order: a field with many marks would otherwise need a Tab per mark to reach the card.
+        mark.tabIndex = -1;
         mark.dataset.issueId = issue.id;
         if (issue.id === pinnedIssueId) mark.classList.add('underline-hidden');
         mark.setAttribute('aria-label', issue.message);
@@ -572,6 +606,11 @@ export function createTypeCheckOverlay(actions: OverlayActions): TypeCheckOverla
     if (pinnedIssueId !== null && !pinnedIssueFound) closePopover();
   }
 
+  function isBetween(event: PointerEvent, word: DOMRect, card: DOMRect): boolean {
+    return event.clientX >= Math.min(word.left, card.left) && event.clientX <= Math.max(word.right, card.right) &&
+      event.clientY >= Math.min(word.top, card.top) && event.clientY <= Math.max(word.bottom, card.bottom);
+  }
+
   // The underlines take no pointer events, so hovering is worked out from their boxes.
   function onPointerMove(event: PointerEvent): void {
     // The card opens right under the word, so the word's box can overlap the card's top. While the pointer is on
@@ -590,6 +629,12 @@ export function createTypeCheckOverlay(actions: OverlayActions): TypeCheckOverla
     if (issueId === hoveredIssueId) return;
     hoveredIssueId = issueId;
     if (target === undefined) {
+      // On the way from the word to its card the pointer crosses a gap that is neither; that does not close it.
+      if (card !== undefined && popoverAnchor !== null && isBetween(event, popoverAnchor, card)) {
+        hoveredIssueId = null;
+        cancelHoverClose();
+        return;
+      }
       scheduleHoverClose();
       return;
     }

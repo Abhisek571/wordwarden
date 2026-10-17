@@ -3,13 +3,15 @@ import { createRoot } from 'react-dom/client';
 import { browser } from 'wxt/browser';
 import type { EnglishDialect } from '#/core/types';
 import {
-  DEFAULT_CUSTOM_UNDERLINES, MAX_DICTIONARY_WORD_LENGTH, MAX_UNDERLINE_THICKNESS, MIN_UNDERLINE_THICKNESS, UNDERLINE_KINDS,
+  DEFAULT_CUSTOM_UNDERLINES, MAX_DICTIONARY_WORD_LENGTH, MAX_SETTINGS_LIST_LENGTH, MAX_UNDERLINE_THICKNESS, parseSettings, MIN_UNDERLINE_THICKNESS, UNDERLINE_KINDS,
   type ApplyShortcut, type ColorVision, type CustomUnderlines, type FixEffect, type TypeCheckSettings, type UnderlineLine, type UnderlineMark,
 } from '#/core/settings';
 import { isSafeHostname } from '#/core/diagnostics';
 import { runtimeRequest } from '#/ui/runtime';
 import { updateSettings } from '#/ui/settings-update';
-import { exportSettings, parseSettingsImport, type SettingsImportPreview } from '#/core/settings-transfer';
+import {
+  exportSettings, parseSettingsImport, withImportedWords, type SettingsImportPreview,
+} from '#/core/settings-transfer';
 import { BrandMark, CloseIcon } from '#/ui/brand';
 import '#/ui/app.css';
 
@@ -191,6 +193,17 @@ function Options(): React.JSX.Element {
     void loadSettings();
   }, []);
 
+  // Words added or ignored on a web page show here at once, and a later save starts from them.
+  useEffect(() => {
+    const onChanged: Parameters<typeof browser.storage.onChanged.addListener>[0] = (changes, areaName) => {
+      const change = changes['typecheck.settings.v1'];
+      if (areaName !== 'local' || change === undefined || saveLock.current) return;
+      setSettings(parseSettings(change.newValue));
+    };
+    browser.storage.onChanged.addListener(onChanged);
+    return () => browser.storage.onChanged.removeListener(onChanged);
+  }, []);
+
   useEffect(() => {
     if (settings === null || !reportOpen) return;
     if (new URLSearchParams(window.location.search).get('report') === 'issue') {
@@ -288,20 +301,29 @@ function Options(): React.JSX.Element {
 
   const currentSettings = settings;
 
+  // One word, or a pasted list (spaces, commas or new lines between the words): a dictionary entry with a space in it
+  // could never match, since text is checked word by word.
   async function addWord(): Promise<void> {
-    const word = newWord.trim();
-    if (word.length === 0 || settings === null) return;
-    if (word.length > MAX_DICTIONARY_WORD_LENGTH) {
+    const words = newWord.split(/[\s,;]+/u).map((word) => word.trim()).filter(Boolean);
+    if (words.length === 0 || settings === null) return;
+    if (words.some((word) => word.length > MAX_DICTIONARY_WORD_LENGTH)) {
       showMessage(`A dictionary word can be at most ${MAX_DICTIONARY_WORD_LENGTH} characters long.`, true);
       return;
     }
-    if (await save({ ...settings, dictionary: [...new Set([...settings.dictionary, word])].sort() })) setNewWord('');
+    const dictionary = [...new Set([...settings.dictionary, ...words])].sort();
+    if (dictionary.length > MAX_SETTINGS_LIST_LENGTH) {
+      showMessage(`The dictionary is full: it holds at most ${MAX_SETTINGS_LIST_LENGTH.toLocaleString('en')} words.`, true);
+      return;
+    }
+    if (await save({ ...settings, dictionary })) setNewWord('');
   }
 
   async function importSettingsFile(file: File | undefined): Promise<void> {
     if (file === undefined) return;
     setImportPreview(null);
     setImportPreview(parseSettingsImport(await file.text(), currentSettings));
+    // An error from an earlier file no longer applies.
+    showMessage('');
   }
 
   function downloadSettings(): void {
@@ -440,7 +462,7 @@ function Options(): React.JSX.Element {
                 <div className="button-row"><button className="secondary" type="button" onClick={downloadSettings}>Export</button>
                   <label className="secondary">Import<input data-testid="settings-import" type="file" accept=".json,.txt,application/json,text/plain" disabled={saving} onChange={(event) => { void importSettingsFile(event.currentTarget.files?.[0]).catch(reportError); event.currentTarget.value = ''; }} /></label></div></div>
               {importPreview !== null ? <div className="warning"><p>{importPreview.summary}</p>
-                <button className="primary" type="button" disabled={saving} onClick={() => void save(importPreview.settings).then((saved) => { if (saved) setImportPreview(null); }).catch(reportError)}>Confirm import</button>
+                <button className="primary" type="button" disabled={saving} onClick={() => void save(importPreview.addWords === undefined ? importPreview.settings : withImportedWords(currentSettings, importPreview.addWords)).then((saved) => { if (saved) setImportPreview(null); }).catch(reportError)}>Confirm import</button>
                 <button className="secondary" type="button" disabled={saving} onClick={() => setImportPreview(null)}>Cancel</button></div> : null}
             </div>
           </section>

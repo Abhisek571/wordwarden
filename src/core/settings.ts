@@ -59,11 +59,16 @@ export const DEFAULT_SETTINGS: TypeCheckSettings = Object.freeze({
   fixEffect: 'waves',
 });
 
+// Commonwealth English is written with British spelling, New Zealand's closest to Australia's. American spelling is
+// for the US and the places that follow it (the Philippines, Liberia) and for other languages.
 export function detectDefaultDialect(locale: string): EnglishDialect {
   const normalized = locale.toLowerCase();
   if (normalized.includes('-gb')) return 'british';
-  if (normalized.includes('-au')) return 'australian';
+  if (normalized.includes('-au') || normalized.includes('-nz')) return 'australian';
   if (normalized.includes('-ca')) return 'canadian';
+  if (/^en-(?:ie|za|in|sg|hk|my|ng|ke|gh|pk|mt|jm|tt|bz|bs|zw|na|bw|zm|ug|tz|cy|gi|im|je|gg)(?![a-z])/u.test(normalized)) {
+    return 'british';
+  }
   return 'american';
 }
 
@@ -145,6 +150,9 @@ export function isTypeCheckSettings(value: unknown): value is TypeCheckSettings 
  * with the square of the length; a pasted 100,000-letter "word" ran the background out of memory on every check.
  */
 export const MAX_DICTIONARY_WORD_LENGTH = 80;
+
+/** The most dictionary words, ignored suggestions or turned-off sites kept. */
+export const MAX_SETTINGS_LIST_LENGTH = 10_000;
 
 function stringArray(value: unknown): readonly string[] {
   if (!Array.isArray(value)) return [];

@@ -27,9 +27,12 @@ export function isPopularVocabularyWord(word: string): boolean {
 export function mergePopularVocabulary(personalWords: readonly string[]): readonly string[] {
   const canonicalByKey = new Map<string, string>();
   for (const word of POPULAR_VOCABULARY) canonicalByKey.set(word.toLocaleLowerCase('en'), word);
+  const popularKeys = new Set(canonicalByKey.keys());
   for (const word of personalWords) {
     const key = word.toLocaleLowerCase('en');
-    if (!canonicalByKey.has(key)) canonicalByKey.set(key, word);
+    // The engine keeps one spelling per word. With both "Wordwarden" and "wordwarden" added, the lowercase one is
+    // kept: it accepts both, while the capitalised one would still flag "wordwarden".
+    if (!canonicalByKey.has(key) || (word === key && !popularKeys.has(key))) canonicalByKey.set(key, word);
   }
   return Object.freeze([...canonicalByKey.values()]);
 }

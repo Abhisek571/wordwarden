@@ -32,6 +32,7 @@ mod aspire_to;
 mod avoid_contractions;
 mod avoid_curses;
 mod back_in_the_day;
+mod bare_bones;
 mod barely_un;
 mod be_adjective_confusions;
 mod be_allowed;
@@ -58,6 +59,7 @@ mod claim_to_fame;
 mod close_tight_knit;
 mod closed_compounds;
 mod code_in_write_in;
+mod comfortable_with;
 mod comma_fixes;
 mod complain_as_noun;
 mod compound_nouns;
@@ -255,6 +257,7 @@ mod quote_spacing;
 mod reason_for_doing;
 mod redundant_acronyms;
 mod redundant_additive_adverbs;
+mod redundant_almost_nearly;
 mod redundant_firsts;
 mod redundant_progressive_comparative;
 mod redundant_self;
@@ -265,6 +268,7 @@ mod repeated_words;
 mod respond;
 mod right_click;
 mod rise_the_ranks;
+mod rogue_rouge;
 mod roller_skated;
 mod run_into_problems_or_trouble;
 mod safe_to_save;
@@ -286,7 +290,9 @@ mod spell_check;
 mod spelled_numbers;
 mod split_words;
 mod subject_pronoun;
+mod such_shame;
 mod suggestion;
+mod summary_summery;
 mod take_a_look_to;
 mod take_care_of;
 mod take_medicine;
@@ -337,6 +343,7 @@ mod way_too_adjective;
 mod web_scraping;
 mod weir_rules;
 mod well_educated;
+mod went_ahead_and_agreement;
 mod were_where;
 mod whereas;
 mod whom_subject_of_verb;
@@ -671,7 +678,14 @@ pub mod tests {
     /// See issue #950: https://github.com/Automattic/harper/issues/950
     #[track_caller]
     pub fn assert_suggestion_result(text: &str, mut linter: impl Linter, needle: &str) {
-        if search_for_suggestion(DocumentType::PlainEnglish, text, &mut linter, needle, 0) {
+        if search_for_suggestion(
+            DocumentType::PlainEnglish,
+            text,
+            &mut linter,
+            needle,
+            0,
+            SearchStrategy::AllSuggestions,
+        ) {
             return;
         }
 
@@ -681,12 +695,48 @@ pub mod tests {
         );
     }
 
+    /// Use this when you want to verify that the first suggestion is the most likely correct fix.
+    /// Handy for linters which offer multiple suggestions but prioritize their best guess.
+    #[track_caller]
+    pub fn assert_first_suggestion_result(text: &str, mut linter: impl Linter, needle: &str) {
+        if search_for_suggestion(
+            DocumentType::PlainEnglish,
+            text,
+            &mut linter,
+            needle,
+            0,
+            SearchStrategy::FirstSuggestionOnly,
+        ) {
+            return;
+        }
+
+        panic!(
+            "The primary suggestion sequence failed to produce the expected result.\n\
+            Expected: \"{needle}\""
+        );
+    }
+
     /// DFS implementation using markdown instead of plain English
     #[track_caller]
     pub fn assert_markdown_suggestion_result(text: &str, mut linter: impl Linter, needle: &str) {
-        if !search_for_suggestion(DocumentType::Markdown, text, &mut linter, needle, 0) {
+        if !search_for_suggestion(
+            DocumentType::Markdown,
+            text,
+            &mut linter,
+            needle,
+            0,
+            SearchStrategy::AllSuggestions,
+        ) {
             panic!("No suggestion sequence produced the expected result.\nExpected: {needle}");
         }
+    }
+
+    #[derive(Copy, Clone, PartialEq, Eq)]
+    enum SearchStrategy {
+        /// Explores all suggestion sequences (the current default behavioral standard).
+        AllSuggestions,
+        /// Only explores the very first suggestion path (for validating primary/best fixes).
+        FirstSuggestionOnly,
     }
 
     /// Recursively searches all suggestion combinations using depth-first search.
@@ -697,6 +747,7 @@ pub mod tests {
         linter: &mut impl Linter,
         needle: &str,
         depth: usize,
+        strategy: SearchStrategy,
     ) -> bool {
         // Prevent infinite recursion (e.g. cycles in suggestions)
         if depth > super::MAX_SUGGESTION_TRANSFORMATION_DEPTH {
@@ -709,7 +760,14 @@ pub mod tests {
 
         // Check if we've reached the expected result
         if text == needle {
+            // When tests are made via cut & paste it's easy to miss editing some of the corrections
+            // and the test will silently pass
+            if depth == 0 {
+                eprintln!("⚠️  Input and expected are both '{needle}' - is the test correct?");
+            }
             return true;
+        } else if cfg!(debug_assertions) {
+            eprintln!(" 🔎 Checking... \"{text}\"");
         }
 
         // Lint current text and try each suggestion branch
@@ -725,8 +783,13 @@ pub mod tests {
                 let next: String = chars_copy.iter().collect();
 
                 // Recursively search this branch
-                if search_for_suggestion(doc_type, &next, linter, needle, depth + 1) {
+                if search_for_suggestion(doc_type, &next, linter, needle, depth + 1, strategy) {
                     return true;
+                }
+
+                // If we're only checking the first suggestion, stop after the first one
+                if strategy == SearchStrategy::FirstSuggestionOnly {
+                    break;
                 }
             }
         }
@@ -790,6 +853,7 @@ pub mod tests {
             &mut linter,
             bad_suggestion,
             0,
+            SearchStrategy::AllSuggestions,
         ) {
             return;
         }

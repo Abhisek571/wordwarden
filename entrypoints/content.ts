@@ -8,12 +8,16 @@ import {
 import type { PageStatus } from '#/core/diagnostics';
 import { createEditorEffectQueue } from '#/core/effect-queue';
 import { issueMatchesText, rebaseIssuesAfterReplacement } from '#/core/issue-ranges';
-import { MAX_DICTIONARY_WORD_LENGTH, mergeSettings, parseSettings, type TypeCheckSettings } from '#/core/settings';
+import {
+  MAX_DICTIONARY_WORD_LENGTH, MAX_SETTINGS_LIST_LENGTH, mergeSettings, parseSettings, type TypeCheckSettings,
+} from '#/core/settings';
 import type { EditorAdapter, EditorSnapshot, WritingIssue } from '#/core/types';
 import { caretOffset, createEditorAdapter } from '#/editors/editor-adapter';
 import { isCapitalsWord } from '#/core/popular-vocabulary';
 import { createTypingMeter, typedCharacterCount } from '#/core/typing-stats';
-import { closestSupportedEditor, editorFromEvent, type SupportedEditor } from '#/editors/editor-detection';
+import {
+  closestSupportedEditor, editorFromEvent, rememberPasswordField, type SupportedEditor,
+} from '#/editors/editor-detection';
 import { updateSettings } from '#/ui/settings-update';
 import { createTypeCheckOverlay, type TypeCheckOverlay } from '#/ui/overlay';
 
@@ -21,6 +25,8 @@ const LINT_DEBOUNCE_MS = 260;
 // Browsers stop an idle extension background after about 30 seconds, and with it the checking engine.
 const ENGINE_KEEP_ALIVE_MS = 20_000;
 const TYPING_STATS_FLUSH_MS = 10_000;
+// How often the field being checked is looked at for being removed, hidden, moved or resized.
+const FIELD_WATCH_MS = 300;
 // A mistake counts toward typing accuracy only inside the text typed since the last check, not older text.
 const TYPED_MISTAKE_SLACK = 2;
 // Text still being typed has no full stop yet; that is not a typing mistake.
@@ -104,7 +110,8 @@ export async function startTypeCheck(context: Readonly<{
     };
     browser.runtime.onMessage.addListener(onStatusRequest);
     context.onInvalidated(() => browser.runtime.onMessage.removeListener(onStatusRequest));
-    if (!isAvailable()) return;
+    // A page opened while Wordwarden or its site is off still listens, so switching back on works without a reload;
+    // every handler checks isAvailable first.
 
     const effects = createEditorEffectQueue();
     let keepAliveTimer: number | null = null;
@@ -157,8 +164,13 @@ export async function startTypeCheck(context: Readonly<{
       if (unsentMistakes > 0) scheduleTypingStats();
     }
 
+    let checkWhenVisible = false;
     function onPageHidden(): void {
-      if (document.visibilityState !== 'hidden') return;
+      if (document.visibilityState !== 'hidden') {
+        if (checkWhenVisible && activeAdapter !== null) scheduleAnalysis(activeAdapter);
+        checkWhenVisible = false;
+        return;
+      }
       flushTypingStats();
       stopKeepingEngineAlive();
     }
@@ -214,6 +226,10 @@ export async function startTypeCheck(context: Readonly<{
         },
         ignoreAlways: (issue: WritingIssue): void => {
           const hashes = new Set(ignoredIssueHashes);
+          if (hashes.size >= MAX_SETTINGS_LIST_LENGTH) {
+            overlay.showStatus('The ignore list is full. Reset ignored suggestions in Settings to add more.');
+            return;
+          }
           hashes.add(issue.issueHash);
           const next = mergeSettings(settings, { ignoredIssueHashes: [...hashes] });
           void persistSettings(next)
@@ -238,6 +254,10 @@ export async function startTypeCheck(context: Readonly<{
             return;
           }
           const words = new Set(settings.dictionary);
+          if (!words.has(word) && words.size >= MAX_SETTINGS_LIST_LENGTH) {
+            overlay.showStatus('The dictionary is full. Remove some words in Settings to add more.');
+            return;
+          }
           words.add(word);
           const next = mergeSettings(settings, { dictionary: [...words].sort() });
           void persistSettings(next).catch((error: unknown) => {
@@ -293,10 +313,22 @@ export async function startTypeCheck(context: Readonly<{
       await applySettings(saved);
     }
 
+    // A background that the browser stopped mid-check drops the answer; asking once more starts it again.
+    async function requestLint(text: string): Promise<RuntimeResponse> {
+      try {
+        return await sendRequest(Object.freeze({ type: 'engine:lint', text }));
+      } catch (error) {
+        if (!/message channel closed|Receiving end does not exist|Could not establish connection/iu.test(errorText(error))) {
+          throw error;
+        }
+        return sendRequest(Object.freeze({ type: 'engine:lint', text }));
+      }
+    }
+
     async function lintText(text: string): Promise<readonly WritingIssue[]> {
       if (checkerState !== 'ready') checkerState = 'starting';
       try {
-        const answer = await sendRequest(Object.freeze({ type: 'engine:lint', text }));
+        const answer = await requestLint(text);
         if (!answer.ok) throw new Error(answer.error);
         if (!('issues' in answer)) throw new Error('Checker response is missing data.');
         checkerState = 'ready';
@@ -307,9 +339,20 @@ export async function startTypeCheck(context: Readonly<{
       }
     }
 
+    // After an update or reload of the extension this script is cut off from it; it then removes what it drew.
+    function isCutOff(): boolean {
+      return (browser.runtime as { id?: string } | undefined)?.id === undefined;
+    }
+
     function keepEngineAlive(): void {
       if (keepAliveTimer !== null) return;
+      // The first ping also starts the engine, so the first check after an idle spell is not slow.
+      void sendRequest(Object.freeze({ type: 'engine:keep-alive' })).catch(() => undefined);
       keepAliveTimer = window.setInterval(() => {
+        if (isCutOff()) {
+          teardown();
+          return;
+        }
         void sendRequest(Object.freeze({ type: 'engine:keep-alive' })).catch(() => undefined);
       }, ENGINE_KEEP_ALIVE_MS);
     }
@@ -335,6 +378,7 @@ export async function startTypeCheck(context: Readonly<{
           overlay.showBadge(adapter.element.getBoundingClientRect(), 'clear', 0);
           return;
         }
+        lastCheckedText = snapshot.text;
         try {
           const started = performance.now();
           const issues = await lintText(snapshot.text);
@@ -359,7 +403,7 @@ export async function startTypeCheck(context: Readonly<{
     }
 
     function scheduleAnalysis(adapter: EditorAdapter): void {
-      if (invalidated) return;
+      if (invalidated || !isAvailable()) return;
       effects.cancel();
       currentIssues = Object.freeze([]);
       overlay.showBadge(adapter.element.getBoundingClientRect(), 'checking', 0);
@@ -373,23 +417,98 @@ export async function startTypeCheck(context: Readonly<{
     }
 
     function activateEditor(editor: SupportedEditor): void {
+      if (!isAvailable()) return;
       if (activeAdapter?.element !== editor) {
         activeAdapter = createEditorAdapter(editor);
         revision = 0;
         typedFrom = null;
         currentIssues = Object.freeze([]);
         overlay.clear();
+        watchEditorText(editor);
       }
       keepEngineAlive();
+      watchField();
       scheduleAnalysis(activeAdapter);
     }
 
+    // Drops everything drawn for a field that was removed or hidden (a chat box re-rendered, a page change), and
+    // redraws when the field moves or changes size without a scroll (an image loading above it, a resize handle).
+    let fieldTimer: number | null = null;
+    let fieldBox = '';
+    function watchField(): void {
+      if (fieldTimer !== null) return;
+      fieldTimer = window.setInterval(() => {
+        if (isCutOff()) {
+          teardown();
+          return;
+        }
+        const element = activeAdapter?.element;
+        if (element === undefined) return;
+        if (!element.isConnected || element.getClientRects().length === 0) {
+          forgetField();
+          return;
+        }
+        const box = element.getBoundingClientRect();
+        const key = `${box.left},${box.top},${box.width},${box.height}`;
+        if (key !== fieldBox) {
+          fieldBox = key;
+          reposition();
+        }
+      }, FIELD_WATCH_MS);
+    }
+
+    function forgetField(): void {
+      effects.cancel();
+      currentIssues = Object.freeze([]);
+      overlay.clear();
+      overlay.hideBadge();
+      activeAdapter = null;
+      textObserver?.disconnect();
+      stopKeepingEngineAlive();
+      if (fieldTimer !== null) window.clearInterval(fieldTimer);
+      fieldTimer = null;
+    }
+
+    // Rich editors can change their text without an input event: undo in some editors, a page's own autocorrect,
+    // editors that use EditContext. Their DOM changes are watched, and the text is checked again when it really
+    // changed (syntax highlighting rewrites the DOM but not the text).
+    let textObserver: MutationObserver | null = null;
+    let mutationTimer: number | null = null;
+    let lastInputAt = 0;
+    let lastCheckedText: string | null = null;
+    function watchEditorText(editor: SupportedEditor): void {
+      textObserver?.disconnect();
+      textObserver = null;
+      lastCheckedText = null;
+      if (editor instanceof HTMLInputElement || editor instanceof HTMLTextAreaElement) return;
+      textObserver = new MutationObserver(() => {
+        if (mutationTimer !== null) window.clearTimeout(mutationTimer);
+        mutationTimer = window.setTimeout(() => {
+          mutationTimer = null;
+          const adapter = activeAdapter;
+          if (adapter === null || adapter.element !== editor || applying || invalidated) return;
+          // Typing already starts a check.
+          if (performance.now() - lastInputAt < LINT_DEBOUNCE_MS * 2) return;
+          const text = adapter.capture(revision).text;
+          if (lastCheckedText === null || text === lastCheckedText) return;
+          revision += 1;
+          overlay.clear();
+          scheduleAnalysis(adapter);
+        }, LINT_DEBOUNCE_MS);
+      });
+      textObserver.observe(editor, { characterData: true, childList: true, subtree: true });
+    }
+
     function onInput(event: Event): void {
+      if (!isAvailable()) return;
       const editor = editorFromEvent(event);
       if (editor === null) return;
+      lastInputAt = performance.now();
       if (activeAdapter?.element !== editor) {
         activeAdapter = createEditorAdapter(editor);
         typedFrom = null;
+        watchEditorText(editor);
+        watchField();
       }
       const typed = settings.typingStats ? typedCharacterCount(event) : 0;
       if (typed > 0) {
@@ -400,6 +519,11 @@ export async function startTypeCheck(context: Readonly<{
       }
       revision += 1;
       overlay.clear();
+      // A script typing into a field of a hidden tab must not hold up checks in the tab being used.
+      if (document.visibilityState === 'hidden') {
+        checkWhenVisible = true;
+        return;
+      }
       scheduleAnalysis(activeAdapter);
     }
 
@@ -420,6 +544,7 @@ export async function startTypeCheck(context: Readonly<{
     }
 
     function onKeyDown(event: KeyboardEvent): void {
+      if (!isAvailable()) return;
       if (event.key === 'Escape') {
         const issueClosed = overlay.closeIssuePopover();
         if (issueClosed) event.preventDefault();
@@ -441,6 +566,27 @@ export async function startTypeCheck(context: Readonly<{
       overlay.followCaret(caretOffset(activeAdapter.element));
     }
 
+    // A click inside a selection moves the caret only after the mouse is released, so read it a moment later.
+    function followClick(event: Event): void {
+      window.setTimeout(() => {
+        if (!invalidated) followCaret(event);
+      }, 0);
+    }
+
+    // A pinned card closes when the writer clicks anywhere outside the field and the card.
+    function closeOnOutsideClick(event: PointerEvent): void {
+      const path = event.composedPath();
+      if (path.some((node) => node instanceof Element && node.id === 'typecheck-root')) return;
+      if (activeAdapter !== null && path.includes(activeAdapter.element)) return;
+      overlay.closeIssuePopover();
+    }
+
+    // Remembers fields that were password fields, so a "show password" button does not expose them.
+    function rememberPasswords(event: Event): void {
+      const target = event.composedPath()[0];
+      if (target instanceof HTMLInputElement && target.type === 'password') rememberPasswordField(target);
+    }
+
     function reposition(): void {
       if (activeAdapter === null || repositionFrame !== null || invalidated) return;
       repositionFrame = window.requestAnimationFrame(() => {
@@ -452,12 +598,15 @@ export async function startTypeCheck(context: Readonly<{
       });
     }
 
+    for (const field of document.querySelectorAll<HTMLInputElement>('input[type="password"]')) rememberPasswordField(field);
+    document.addEventListener('focusin', rememberPasswords, true);
     document.addEventListener('focusin', activate, true);
     document.addEventListener('focusout', deactivate, true);
     document.addEventListener('input', onInput, true);
     document.addEventListener('keydown', onKeyDown, true);
     document.addEventListener('keyup', followCaret, true);
-    document.addEventListener('pointerup', followCaret, true);
+    document.addEventListener('pointerup', followClick, true);
+    document.addEventListener('pointerdown', closeOnOutsideClick, true);
     document.addEventListener('scroll', reposition, true);
     window.addEventListener('resize', reposition);
     document.addEventListener('visibilitychange', onPageHidden);
@@ -474,10 +623,10 @@ export async function startTypeCheck(context: Readonly<{
       const change = changes['typecheck.settings.v1'];
       if (change === undefined) return;
       const nextSettings = parseSettings(change.newValue);
+      const wasAvailable = isAvailable();
       settings = nextSettings;
       if (!isAvailable()) {
-        overlay.destroy();
-        context.abort();
+        forgetField();
         return;
       }
       void applySettings(nextSettings).catch((error: unknown) => {
@@ -485,28 +634,41 @@ export async function startTypeCheck(context: Readonly<{
           `Could not reload writing checker: ${error instanceof Error ? error.message : String(error)}`,
         );
       });
+      // Switched back on: check the field the writer is in straight away.
+      const current = document.activeElement === null ? null : closestSupportedEditor(document.activeElement);
+      if (!wasAvailable && current !== null) activateEditor(current);
     };
     browser.storage.onChanged.addListener(onStorageChanged);
 
-    context.onInvalidated(() => {
+    function teardown(): void {
+      if (invalidated) return;
       invalidated = true;
       effects.dispose();
       if (repositionFrame !== null) window.cancelAnimationFrame(repositionFrame);
       repositionFrame = null;
+      if (fieldTimer !== null) window.clearInterval(fieldTimer);
+      fieldTimer = null;
+      if (mutationTimer !== null) window.clearTimeout(mutationTimer);
+      textObserver?.disconnect();
+      document.removeEventListener('focusin', rememberPasswords, true);
       document.removeEventListener('focusin', activate, true);
       document.removeEventListener('focusout', deactivate, true);
       document.removeEventListener('input', onInput, true);
       document.removeEventListener('keydown', onKeyDown, true);
       document.removeEventListener('keyup', followCaret, true);
-      document.removeEventListener('pointerup', followCaret, true);
+      document.removeEventListener('pointerup', followClick, true);
+      document.removeEventListener('pointerdown', closeOnOutsideClick, true);
       document.removeEventListener('scroll', reposition, true);
       window.removeEventListener('resize', reposition);
       document.removeEventListener('visibilitychange', onPageHidden);
-      browser.storage.onChanged.removeListener(onStorageChanged);
-      flushTypingStats();
+      if (!isCutOff()) {
+        browser.storage.onChanged.removeListener(onStorageChanged);
+        flushTypingStats();
+      }
       stopKeepingEngineAlive();
       overlay.destroy();
-    });
+    }
+    context.onInvalidated(teardown);
 }
 
 type ContentContext = Parameters<typeof startTypeCheck>[0];

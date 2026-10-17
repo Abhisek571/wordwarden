@@ -88,4 +88,27 @@ describe('the shipped engine', () => {
         .toEqual([]);
     }
   });
+
+  it('accepts a lowercase personal word added after its capitalised form', async () => {
+    await american.addWords(['Blorpton']);
+    await american.addWords(['blorpton']);
+    const text = 'I met blorpton and Blorpton today.';
+    expect((await american.lint(text)).filter((issue) => issue.category === 'spelling')).toEqual([]);
+  });
+
+  it('offers the right word for common slips', async () => {
+    for (const [text, word, fix] of [
+      ['im going home now.', 'im', "I'm"],
+      ['thats a good idea.', 'thats', "that's"],
+      ['What a beautifull sunset.', 'beautifull', 'beautiful'],
+      ['You gave me bad advices.', 'advices', 'advice'],
+    ] as const) {
+      expect(at(await american.lint(text), text, word)?.replacements[0], text).toBe(fix);
+    }
+  });
+
+  it("does not flag a spelling the dialect's own dictionary has", async () => {
+    const text = 'She dreamed of home.';
+    expect((await british.lint(text)).some((issue) => issue.originalText === 'dreamed')).toBe(false);
+  });
 });

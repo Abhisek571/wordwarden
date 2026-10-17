@@ -5,7 +5,7 @@ import { issueHash } from '#/core/hash';
 import { excludeIssuesOverlappingSpelling, resolveOverlappingIssues } from '#/core/issue-ranges';
 import { isPopularVocabularyWord, mergePopularVocabulary } from '#/core/popular-vocabulary';
 import { supplementGrammarIssues } from '#/engines/grammar-rules';
-import { createAnalysisSections, rebaseSectionRange, type AnalysisSection } from '#/engines/text-sections';
+import { createAnalysisSections, rebaseSectionRange, startsInSection, type AnalysisSection } from '#/engines/text-sections';
 import {
   areNeighbourKeys,
   createSpellingRanker,
@@ -120,8 +120,10 @@ function issueCategory(kind: string): IssueCategory {
   return 'grammar';
 }
 
-const SUPPORTED_PUNCTUATION = /[',.?-]/gu;
-const UNSUPPORTED_PUNCTUATION = /[^\p{L}\p{N}\s',.?-]/u;
+// Fixes that only change punctuation and spacing: "Hello , world" → "Hello, world", "..." → "…", "5-10" → "5–10",
+// "said\"hello" → "said \"hello".
+const SUPPORTED_PUNCTUATION = /[\s',.?!;:"“”‘’…–—-]/gu;
+const UNSUPPORTED_PUNCTUATION = /[^\p{L}\p{N}\s',.?!;:"“”‘’…–—-]/u;
 
 function isSupportedPunctuationReplacement(original: string, replacement: string): boolean {
   if (UNSUPPORTED_PUNCTUATION.test(original) || UNSUPPORTED_PUNCTUATION.test(replacement)) {
@@ -146,11 +148,14 @@ const MUTED_CORE_RULES: Readonly<Record<string, boolean>> = Object.freeze({
   // Its fixes used to be lost with the other insertions; once kept, most were a comma after "Therefore" in correct text.
   // Wordwarden's own IntroductoryComma rule covers the cases that matter.
   DiscourseMarkers: false,
+  // Typography, not mistakes: "..." → "…" and "5-10" → "5–10" fired on correct text once their fixes were kept.
+  Dashes: false,
+  NumericRangeEnDash: false,
+  UseEllipsisCharacter: false,
   DisjointPrefixes: false,
   Excellent: false,
   // Sections used to cut long sentences, so it never fired; it only says a sentence is long.
   LongSentences: false,
-  MassNouns: false,
   MissingPreposition: false,
   MissingTo: false,
   ModalBeAdjective: false,
@@ -184,7 +189,8 @@ function isSentenceCaseOnlyChange(issue: WritingIssue, text: string): boolean {
   const [replacement] = issue.replacements;
   if (replacement === undefined) return false;
   if (replacement.toLocaleLowerCase('en') !== issue.originalText.toLocaleLowerCase('en')) return false;
-  return /(?:^|[.!?]\s+)$/u.test(text.slice(0, issue.range.start));
+  // After a full stop, a line break, an opening quote or bracket, or an ellipsis.
+  return /(?:^|[.!?…]\s+|\n\s*)["'“‘(\[]?$/u.test(text.slice(0, issue.range.start));
 }
 
 // An unknown word with a capital in mid-sentence ("Jeju", "Smallerden") is almost always a name. It is flagged only
@@ -222,8 +228,8 @@ function wordContext(source: string, start: number, end: number): WordContext {
 // The core's SpellCheck says this of a word it knows in another dialect only (`colour` in American English).
 const OTHER_DIALECT_MESSAGE = /is spelled this way in another variety of English\.$/u;
 
-// Only findings in the section's own part are kept: the text around it is there for context, and findings in it
-// belong to the neighbouring sections. Those are skipped before their suggestions are ranked.
+// Only findings that start in the section's own part are kept: the text around it is there for context, and findings
+// starting in it belong to the neighbouring sections. Those are skipped before their suggestions are ranked.
 function normalizeFinding(
   finding: CoreFinding,
   section: AnalysisSection,
@@ -232,25 +238,27 @@ function normalizeFinding(
   const source = section.text;
   const ruleId = finding.rule;
   const span = fillerSpan(ruleId, source, finding.start, finding.end);
-  if (span.start < section.localRange.start || span.end > section.localRange.end) return null;
+  if (!startsInSection(section, span)) return null;
   const contextStart = Math.max(0, span.start - 32);
   const contextEnd = Math.min(source.length, span.end + 32);
-  const hash = issueHash(ruleId, source.slice(contextStart, contextEnd));
+  const original = source.slice(span.start, span.end);
+  // The flagged text is part of the hash, so ignoring one finding never hides another of the same rule nearby.
+  const hash = issueHash(ruleId, `${original}\u0000${source.slice(contextStart, contextEnd)}`);
   const category = issueCategory(finding.kind);
+  // Only SpellCheck's guesses are ranked again. Other rules of kind "typo" know the word they mean ("were" → "where").
   const rankedReplacements = rankIssueReplacements(
-    category,
+    ruleId === 'SpellCheck' ? category : 'grammar',
     source.slice(span.start, span.end),
     finding.suggestions,
     spellingRanker,
     wordContext(source, span.start, span.end),
     OTHER_DIALECT_MESSAGE.test(finding.message),
   );
-  const original = source.slice(span.start, span.end);
-  const replacements = category === 'punctuation'
-    ? Object.freeze(rankedReplacements.filter((replacement) => (
-      isSupportedPunctuationReplacement(original, replacement)
-    )))
-    : Object.freeze(rankedReplacements.map((replacement) => matchShoutedCase(original, replacement)));
+  const fitted = category === 'punctuation'
+    ? rankedReplacements.filter((replacement) => isSupportedPunctuationReplacement(original, replacement))
+    : rankedReplacements.map((replacement) => matchShoutedCase(original, replacement));
+  // Some rules repeat a fix or offer the text as it is ("welcomed with open arms").
+  const replacements = Object.freeze([...new Set(fitted)].filter((replacement) => replacement !== original));
   return Object.freeze({
     id: `${hash}-${span.start}-${span.end}`,
     source: 'core',
@@ -264,7 +272,8 @@ function normalizeFinding(
   });
 }
 
-// Findings per section of text, so text that did not change since the last check is not checked again.
+// Findings per section of text, so text that did not change since the last check is not checked again. The cache holds
+// at least twice the sections of the last text: one smaller than the text would drop each section just before its reuse.
 const SECTION_CACHE_SIZE = 256;
 
 export function createWordwardenCore(runtime: WordwardenCoreRuntime = Object.freeze({})): WordwardenCore {
@@ -274,6 +283,7 @@ export function createWordwardenCore(runtime: WordwardenCoreRuntime = Object.fre
   let spellingRanker: SpellingRanker | null = null;
   // Most recently used last.
   const sectionCache = new Map<string, readonly WritingIssue[]>();
+  let cacheLimit = SECTION_CACHE_SIZE;
   // Changes whenever the words or the engine change, so findings from before are not cached after.
   let generation = 0;
 
@@ -378,14 +388,16 @@ export function createWordwardenCore(runtime: WordwardenCoreRuntime = Object.fre
     }));
     if (startedGeneration === generation) {
       sectionCache.set(key, issues);
-      if (sectionCache.size > SECTION_CACHE_SIZE) sectionCache.delete(sectionCache.keys().next().value ?? key);
+      if (sectionCache.size > cacheLimit) sectionCache.delete(sectionCache.keys().next().value ?? key);
     }
     return issues;
   }
 
   async function lint(text: string): Promise<readonly WritingIssue[]> {
     const { checker: activeChecker, spellingRanker: activeSpellingRanker } = readyChecker();
-    const coreIssues = createAnalysisSections(text).flatMap((section) => (
+    const sections = createAnalysisSections(text);
+    cacheLimit = Math.max(SECTION_CACHE_SIZE, sections.length * 2);
+    const coreIssues = sections.flatMap((section) => (
       sectionIssues(activeChecker, activeSpellingRanker, section).flatMap((localIssue) => {
         const range = rebaseSectionRange(section, localIssue.range);
         if (range === null) return [];
@@ -395,8 +407,17 @@ export function createWordwardenCore(runtime: WordwardenCoreRuntime = Object.fre
     const supportedIssues = coreIssues.filter((issue) => (
       (issue.category !== 'punctuation' || issue.replacements.length > 0) &&
       (issue.category !== 'spelling' || !isPopularVocabularyWord(issue.originalText)) &&
+      // The core's word list misses some spellings the dialect's own dictionary has (British "dreamed", Australian
+      // "larrikin"); those are not mistakes for this writer.
+      (issue.ruleId !== 'SpellCheck' || !activeSpellingRanker.accepts(issue.originalText)) &&
       !isSentenceCaseOnlyChange(issue, text) &&
       !isLikelyName(issue, text)
+    )).filter((issue, _index, issues) => (
+      // MassNouns flags correct text too, but on a plural that is not a word at all ("advices", "informations") its fix
+      // is the right one; there it takes the spelling guess's place.
+      issue.ruleId !== 'MassNouns' || issues.some((other) => (
+        other.ruleId === 'SpellCheck' && other.range.start === issue.range.start && other.range.end === issue.range.end
+      ))
     ));
     const supplemented = supplementGrammarIssues(
       supportedIssues,

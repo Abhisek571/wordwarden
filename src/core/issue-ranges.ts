@@ -27,7 +27,7 @@ export function issueMatchesText(issue: WritingIssue, text: string): boolean {
 // instead of the rule. Not the capitalisation rules or SplitWords: on the typing benchmarks they mostly fire on typos
 // that only look like a name or an acronym ("brian", "un"), where the spelling guess is the better fix.
 const SPECIFIC_RULES: ReadonlySet<string> = new Set([
-  'NotablePlaces', 'OpenCompounds', 'PluralDecades', 'Theres',
+  'MassNouns', 'NotablePlaces', 'OpenCompounds', 'PluralDecades', 'Theres',
 ]);
 
 function contains(outer: WritingIssue, inner: WritingIssue): boolean {

@@ -53,7 +53,9 @@ const EDITORS = new Set(['textarea', 'input', 'rich text', 'none']);
 const CHECKER_STATES = new Set(['not started', 'starting', 'ready', 'failed']);
 
 export function isSafeHostname(value: unknown): value is string {
-  if (typeof value !== 'string' || value.length === 0 || value.length > 253) return false;
+  if (typeof value !== 'string' || value.length === 0 || value.length > 254) return false;
+  // "example.org." is the same site as "example.org".
+  if (value.endsWith('.')) return value.length > 1 && isSafeHostname(value.slice(0, -1));
   if (/^\[[0-9a-f:.]+\]$/iu.test(value)) return value.includes(':');
   const labels = value.split('.');
   if (labels.every((label) => /^\d+$/u.test(label))) {
@@ -63,7 +65,8 @@ export function isSafeHostname(value: unknown): value is string {
     (label) =>
       label.length > 0 &&
       label.length <= 63 &&
-      /^[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/iu.test(label),
+      // Underscores are not allowed in domain names, but browsers open such hosts ("my_host.example").
+      /^[a-z0-9_](?:[a-z0-9_-]*[a-z0-9_])?$/iu.test(label),
   );
 }
 

@@ -82,6 +82,12 @@ function pack(target) {
   entries.push(['LICENSE', readFileSync('LICENSE'), false]);
   entries.push(['THIRD_PARTY_NOTICES.md', readFileSync('THIRD_PARTY_NOTICES.md'), false]);
   entries.push(['licenses/Node.js-LICENSE.txt', readFileSync(join(nodeDir, 'LICENSE')), false]);
+  // The same licence texts the browser packages carry, for the parts the add-on shares with them.
+  entries.push(['licenses/Apache-2.0.txt', readFileSync('core/LICENSE'), false]);
+  entries.push(['licenses/Harper-NOTICE.txt', readFileSync('core/NOTICE'), false]);
+  entries.push(['licenses/Rust-crates.txt', readFileSync('core/dist/rust-crates-licenses.txt'), false]);
+  entries.push(['licenses/nspell-MIT.txt', readFileSync('node_modules/nspell/license'), false]);
+  entries.push(['licenses/English-dictionaries-MIT-BSD.txt', readFileSync('node_modules/dictionary-en/license'), false]);
   entries.push(['licenses/SUBTLEX-frequencies-ISC.txt', readFileSync('node_modules/subtlex-word-frequencies/license'), false]);
   entries.push(['engine/engine-host.cjs', engineScript, false]);
   for (const [name, source] of Object.entries(ENGINE_DATA)) entries.push([`engine/data/${name}`, readFileSync(source), false]);

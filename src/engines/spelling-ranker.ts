@@ -16,6 +16,8 @@ export type WordContext = Readonly<{
 export type SpellingRanker = Readonly<{
   rank(token: string, coreCandidates: readonly string[], context?: WordContext): readonly string[];
   hasPrefixCompletion(token: string): boolean;
+  /** Whether the dialect's own dictionary has this word ("dreamed" in British English, "larrikin" in Australian). */
+  accepts(word: string): boolean;
   /** Adds personal words, as if they had been given when the ranker was made. */
   addWords(words: readonly string[]): void;
   wordPairs: WordPairs;
@@ -207,11 +209,18 @@ function singleEdits(token: string): readonly string[] {
   return Object.freeze(edits);
 }
 
-// Left-out letters ("workd" for "worked") and swapped letters ("teh") are the most common typos.
+// Left-out letters ("workd" for "worked"), swapped letters ("teh") and a doubled letter ("beautifull") are the most
+// common typos.
 function isCommonTypoOf(token: string, candidate: string): boolean {
   if (candidate.length === token.length + 1) {
     for (let index = 0; index < candidate.length; index += 1) {
       if (candidate.slice(0, index) + candidate.slice(index + 1) === token) return true;
+    }
+    return false;
+  }
+  if (token.length === candidate.length + 1) {
+    for (let index = 1; index < token.length; index += 1) {
+      if (token[index] === token[index - 1] && token.slice(0, index) + token.slice(index + 1) === candidate) return true;
     }
     return false;
   }
@@ -281,6 +290,12 @@ function preserveCase(token: string, replacement: string): string {
   }
   return replacement;
 }
+
+// Words whose 's is a contraction, not a possessive.
+const CONTRACTION_BASES = new Set([
+  'everyone', 'everything', 'he', 'here', 'how', 'it', 'let', 'nobody', 'nothing', 'she', 'somebody', 'someone',
+  'something', 'that', 'there', 'what', 'when', 'where', 'who', 'why',
+]);
 
 // A slur is never offered, and a vulgar word only for a typo of that word (`peniss`), not as a guess further away.
 function isOffensiveGuess(normalizedToken: string, candidate: string): boolean {
@@ -501,9 +516,13 @@ export function createSpellingRankerFromData(
     }
     // The frequency list has no words with apostrophes, so contractions ("don;t" → "don't") need only be in the
     // dictionary.
-    const editCandidates = singleEdits(normalizedToken).filter(
-      (edit) => (frequencyOf(edit) > 0 || edit.includes("'")) && checker.correct(edit),
-    );
+    // "im" → "I'm": the dictionary has the contraction only with its capital.
+    const editCandidates = singleEdits(normalizedToken).flatMap((edit) => {
+      if (!(frequencyOf(edit) > 0 || edit.includes("'"))) return [];
+      if (checker.correct(edit)) return [edit];
+      const capital = `${edit.slice(0, 1).toLocaleUpperCase('en')}${edit.slice(1)}`;
+      return edit.includes("'") && checker.correct(capital) ? [capital] : [];
+    });
     const irregularPast = IRREGULAR_PAST_TENSES.get(normalizedToken);
     // Personal and bundled words are offered only for near misses, never for unrelated typos.
     const personalLimit = normalizedToken.length <= 4 ? 1 : 2;
@@ -570,7 +589,11 @@ export function createSpellingRankerFromData(
         });
         return Object.freeze({
           candidate,
-          structural: structuralMatch(normalizedToken, normalizedCandidate),
+          // "advices" is a plural that should not be one, not a possessive: "advice's" is no closer than "advice".
+          // After words like "that" or "let" the 's is a contraction ("thats" → "that's").
+          structural: structuralMatch(normalizedToken, normalizedCandidate) &&
+            !(normalizedCandidate === `${normalizedToken.slice(0, -1)}'s` &&
+              frequencyOf(normalizedToken.slice(0, -1)) > 0 && !CONTRACTION_BASES.has(normalizedToken.slice(0, -1))),
           distance,
           // A word spelt by ear counts as one typo away, however far off the letters are.
           rankDistance: byEar ? 1 : distance,
@@ -622,7 +645,11 @@ export function createSpellingRankerFromData(
     return completionCount >= 0 && (tokenCount === 0 || completionCount * 10 >= tokenCount);
   }
 
-  return Object.freeze({ rank, hasPrefixCompletion, addWords, wordPairs });
+  function accepts(word: string): boolean {
+    return checker.correct(word);
+  }
+
+  return Object.freeze({ rank, hasPrefixCompletion, accepts, addWords, wordPairs });
 }
 
 async function fetchText(path: string): Promise<string> {

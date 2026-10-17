@@ -1,7 +1,7 @@
-import { MAX_DICTIONARY_WORD_LENGTH as MAX_WORD_LENGTH } from './settings';
+import { MAX_DICTIONARY_WORD_LENGTH as MAX_WORD_LENGTH, MAX_SETTINGS_LIST_LENGTH } from './settings';
 
 export const MAX_DICTIONARY_IMPORT_BYTES = 1_000_000;
-export const MAX_DICTIONARY_WORDS = 10_000;
+export const MAX_DICTIONARY_WORDS = MAX_SETTINGS_LIST_LENGTH;
 const WORD = /^\p{L}[\p{L}\p{M}\p{N}'’-]*$/u;
 
 export type DictionaryImportPreview = Readonly<{ words: readonly string[]; addedCount: number }>;

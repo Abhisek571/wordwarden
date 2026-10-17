@@ -53,8 +53,18 @@ function checkSettings(): Promise<TypeCheckSettings> {
   return settingsForChecks;
 }
 
-export async function handleRequest(request: unknown): Promise<RuntimeResponse> {
+// Requests only the popup and Settings may make. A content script runs inside web pages, so it may not wipe or
+// replace settings or read the diagnostic log.
+const EXTENSION_PAGE_REQUESTS = new Set(['data:clear', 'settings:replace', 'site:set-enabled', 'diagnostics']);
+
+export async function handleRequest(
+  request: unknown,
+  sender: Readonly<{ tab?: unknown }> = Object.freeze({}),
+): Promise<RuntimeResponse> {
   if (!isRuntimeRequest(request)) return Object.freeze({ ok: false, error: 'Invalid request.' });
+  if (sender.tab !== undefined && EXTENSION_PAGE_REQUESTS.has(request.type)) {
+    return Object.freeze({ ok: false, error: 'Not allowed from a web page.' });
+  }
   if (request.type === 'settings:get') {
     return Object.freeze({ ok: true, settings: await loadSettings() });
   }
@@ -68,14 +78,20 @@ export async function handleRequest(request: unknown): Promise<RuntimeResponse> 
   if (request.type === 'settings:update') {
     return enqueueSettingsWrite(async () => {
       const current = await loadSettings();
+      // A list changed in another tab since this one read it: apply only this tab's additions and removals to the
+      // stored list, so neither tab's change is lost.
+      const patch: Record<string, unknown> = { ...request.patch };
       for (const field of ['dictionary', 'ignoredIssueHashes', 'disabledSites'] as const) {
         const base = request.base?.[field];
-        if (request.patch[field] !== undefined && base !== undefined &&
-            (base.length !== current[field].length || base.some((value, index) => value !== current[field][index]))) {
-          throw new Error('Settings changed in another tab. Reload this page and try again.');
-        }
+        const next = request.patch[field];
+        if (next === undefined || base === undefined) continue;
+        if (base.length === current[field].length && base.every((value, index) => value === current[field][index])) continue;
+        const added = next.filter((value) => !base.includes(value));
+        const removed = new Set(base.filter((value) => !next.includes(value)));
+        const merged = [...new Set([...current[field].filter((value) => !removed.has(value)), ...added])];
+        patch[field] = field === 'ignoredIssueHashes' ? merged : merged.sort();
       }
-      const settings = mergeSettings(current, request.patch);
+      const settings = mergeSettings(current, patch as Partial<TypeCheckSettings>);
       if (settingsEqual(current, settings)) return Object.freeze({ ok: true, settings: current });
       await saveSettings(settings);
       return Object.freeze({ ok: true, settings });
@@ -104,7 +120,11 @@ export async function handleRequest(request: unknown): Promise<RuntimeResponse> 
     await recordError('page', request.message);
     return Object.freeze({ ok: true });
   }
-  if (request.type === 'engine:keep-alive') return Object.freeze({ ok: true });
+  if (request.type === 'engine:keep-alive') {
+    // A field got focus: start the engine now, so the first check does not wait for it.
+    void checkSettings().then((settings) => engine.warm(settings)).catch(() => undefined);
+    return Object.freeze({ ok: true });
+  }
   if (request.type === 'engine:lint') {
     const issues = await engine.lint(request.text, await checkSettings());
     return Object.freeze({ ok: true, issues });
@@ -138,8 +158,8 @@ export default defineBackground(() => {
   browser.storage.onChanged.addListener((_changes, areaName) => {
     if (areaName === 'local') forgetSettings();
   });
-  browser.runtime.onMessage.addListener((request: unknown) =>
-    handleRequest(request).catch((error: unknown): RuntimeResponse => {
+  browser.runtime.onMessage.addListener((request: unknown, sender: { tab?: unknown }) =>
+    handleRequest(request, sender).catch((error: unknown): RuntimeResponse => {
       const message = error instanceof Error ? error.message : String(error);
       void recordError('background', message);
       return Object.freeze({ ok: false, error: message });

@@ -47,6 +47,8 @@ function copyMeasurementStyles(source: HTMLElement, target: HTMLElement): void {
     'borderRightWidth',
     'borderTopWidth',
     'boxSizing',
+    // Right-to-left fields lay their text out from the right edge.
+    'direction',
     'fontFamily',
     'fontSize',
     'fontStyle',
@@ -103,6 +105,13 @@ function textControlRects(
     const style = getComputedStyle(element);
     const contentHeight = element.clientHeight - Number.parseFloat(style.paddingTop) - Number.parseFloat(style.paddingBottom);
     if (contentHeight > 0) mirror.style.lineHeight = `${contentHeight}px`;
+  }
+
+  // The page's own styles must not reach the copy ("html > div { display: none !important }" would leave every word
+  // with no size): its inline styles are made !important, which wins over the page's.
+  for (const box of [outer, mirror]) {
+    box.style.display = 'block';
+    for (const name of Array.from(box.style)) box.style.setProperty(name, box.style.getPropertyValue(name), 'important');
   }
 
   const text = document.createTextNode(element.value);

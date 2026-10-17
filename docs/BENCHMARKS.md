@@ -45,8 +45,8 @@ ranker, word lists, extra rules or engine changes. The difference shows what Wor
 
 `harper/` is the unpacked `harper-chrome-plugin.zip` from Harper's newest GitHub release
 (<https://github.com/Automattic/harper/releases/latest>, Apache 2.0); its engine file is run through the installed
-`harper.js`, whose npm package stopped at 2.10.0 while Harper's releases went on. Without the folder, the engine
-inside `harper.js` is used. The Accuracy workflow downloads the newest release on each run.
+`harper.js`, which only loads an engine file of its own version. Without the folder, the engine inside `harper.js` is
+used. The Accuracy workflow downloads the newest release on each run and installs the `harper.js` of the same version.
 
 ## Resource use
 

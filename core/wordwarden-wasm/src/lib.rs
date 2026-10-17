@@ -77,7 +77,13 @@ impl Checker {
 
     /// Adds words to the dictionary, as words of this checker's dialect.
     pub fn add_words(&mut self, words: Vec<String>) {
-        let count = self.user_dictionary.word_count();
+        // A word is kept once whatever its case, so "wordwarden" after "Wordwarden" changes the spelling, not the
+        // count. Any spelling the dictionary does not have yet means a rebuild.
+        let changed = words.iter().any(|word| {
+            !self
+                .user_dictionary
+                .contains_exact_word(&word.chars().collect::<CharString>())
+        });
         self.user_dictionary.extend_words(words.iter().map(|word| {
             (
                 word.chars().collect::<CharString>(),
@@ -87,8 +93,8 @@ impl Checker {
                 },
             )
         }));
-        // The rules are built over the dictionary, so they are rebuilt only when a word is new.
-        if self.user_dictionary.word_count() > count {
+        // The rules are built over the dictionary, so they are rebuilt only when a spelling is new.
+        if changed {
             let config = self.lint_group.config.clone();
             self.dictionary = merged_dictionary(&self.user_dictionary);
             self.lint_group =
