@@ -125,6 +125,20 @@
         "fixes": 70.3,
         "falseAlarms": 5.5
       }
+    },
+    {
+      "version": "v1.6.4",
+      "date": "2026-11-20",
+      "wordwarden": {
+        "wikipedia": 91.9,
+        "twitter": 74,
+        "aalto": 56,
+        "birkbeck": 44.8,
+        "holbrook": 32.8,
+        "recall": 64.2,
+        "fixes": 70.3,
+        "falseAlarms": 5.5
+      }
     }
   ]
 }
