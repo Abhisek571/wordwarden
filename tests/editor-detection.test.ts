@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it } from 'vitest';
-import { closestSupportedEditor } from '#/editors/editor-detection';
+import { closestSupportedEditor, scrollCanMove } from '#/editors/editor-detection';
 
 describe('editor privacy filtering', () => {
   beforeEach(() => {
@@ -122,5 +122,43 @@ describe('editor privacy filtering', () => {
     document.body.append(legacy, current);
     expect(closestSupportedEditor(legacyField)).toBeNull();
     expect(closestSupportedEditor(currentField)).toBeNull();
+  });
+});
+
+describe('scrolls that can move the field', () => {
+  beforeEach(() => {
+    document.body.innerHTML = '';
+  });
+
+  it('counts the page, the field itself and the boxes the field sits in', () => {
+    const panel = document.createElement('section');
+    const field = document.createElement('textarea');
+    panel.append(field);
+    document.body.append(panel);
+    expect(scrollCanMove(document, field)).toBe(true);
+    expect(scrollCanMove(field, field)).toBe(true);
+    expect(scrollCanMove(panel, field)).toBe(true);
+    expect(scrollCanMove(null, field)).toBe(true);
+  });
+
+  it('ignores a message list scrolling beside the chat box', () => {
+    const chat = document.createElement('section');
+    const messages = document.createElement('div');
+    const field = document.createElement('div');
+    field.contentEditable = 'true';
+    chat.append(messages, field);
+    document.body.append(chat);
+    expect(scrollCanMove(messages, field)).toBe(false);
+  });
+
+  it('looks through shadow roots to the box that holds the field', () => {
+    const scroller = document.createElement('div');
+    const host = document.createElement('chat-input');
+    scroller.append(host);
+    document.body.append(scroller);
+    const field = document.createElement('textarea');
+    host.attachShadow({ mode: 'open' }).append(field);
+    expect(scrollCanMove(scroller, field)).toBe(true);
+    expect(scrollCanMove(document.createElement('div'), field)).toBe(false);
   });
 });

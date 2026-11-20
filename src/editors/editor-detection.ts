@@ -21,6 +21,18 @@ export function editorFromEvent(event: Event): SupportedEditor | null {
   return candidate instanceof Element ? closestSupportedEditor(candidate) : null;
 }
 
+/**
+ * Whether a scroll of `scrolled` can move `field`: the page, the field itself, or a box the field sits in (also across
+ * shadow roots). A chat's message list scrolling beside its input box cannot.
+ */
+export function scrollCanMove(scrolled: EventTarget | null, field: Element): boolean {
+  if (!(scrolled instanceof Node) || scrolled instanceof Document) return true;
+  for (let node: Node | null = field; node !== null; node = node instanceof ShadowRoot ? node.host : node.parentNode) {
+    if (node === scrolled) return true;
+  }
+  return false;
+}
+
 export function closestSupportedEditor(element: Element): SupportedEditor | null {
   if (element instanceof HTMLInputElement) return isSafeInput(element) ? element : null;
   if (element instanceof HTMLTextAreaElement) return isSafeElement(element) ? element : null;

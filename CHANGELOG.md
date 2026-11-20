@@ -3,6 +3,12 @@
 Each release's section is also its release notes on GitHub. Accuracy and resource numbers are in the
 README charts; method in [docs/BENCHMARKS.md](docs/BENCHMARKS.md).
 
+## 1.6.4 — 2026-11-21
+
+- **The card stays open in fast chats.** In a busy chat such as Twitch, the card for a word flickered open and shut
+  while new messages scrolled in. Scrolling elsewhere on the page no longer redraws the underlines, and an open card
+  now follows its word instead of closing.
+
 ## 1.6.3 — 2026-11-20
 
 - **Better spelling suggestions.** Suggestions are chosen from many more words, and words a few letters off can win

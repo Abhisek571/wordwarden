@@ -95,6 +95,56 @@ describe('drawing underlines again', () => {
   });
 });
 
+describe('a hover card while the page keeps redrawing', () => {
+  const pointAt = (clientX: number, clientY: number): void => {
+    document.dispatchEvent(new PointerEvent('pointermove', { clientX, clientY }));
+  };
+  const card = (): HTMLElement | null =>
+    document.querySelector('#typecheck-root')?.shadowRoot?.querySelector<HTMLElement>('[data-testid="issue-popover"]') ?? null;
+
+  function hoveredOverlay(): { overlay: TypeCheckOverlay; field: HTMLElement; marks: () => HTMLButtonElement[] } {
+    vi.useFakeTimers();
+    const { overlay, marks } = overlayWithShadow();
+    const field = document.createElement('div');
+    document.body.append(field);
+    overlay.renderIssues(adapterWithTops(field, () => 20), Object.freeze([issueAt(0)]));
+    pointAt(20, 25);
+    vi.advanceTimersByTime(180);
+    return { overlay, field, marks };
+  }
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  it('stays open and follows its word when the page draws the underlines again', () => {
+    const { overlay, field, marks } = hoveredOverlay();
+    const opened = card();
+    expect(opened).not.toBeNull();
+    overlay.renderIssues(adapterWithTops(field, () => 60), Object.freeze([issueAt(0)]));
+    expect(card()).toBe(opened);
+    expect(marks()[0]?.classList.contains('underline-hidden')).toBe(true);
+    expect(Number.parseFloat(opened?.style.top ?? '0')).toBeGreaterThan(60);
+    overlay.destroy();
+  });
+
+  it('closes when its word leaves the screen', () => {
+    const { overlay, field, marks } = hoveredOverlay();
+    overlay.renderIssues(adapterWithTops(field, () => window.innerHeight + 100), Object.freeze([issueAt(0)]));
+    expect(card()).toBeNull();
+    expect(marks()).toHaveLength(0);
+    overlay.destroy();
+  });
+
+  it('closes when its mistake is gone and another is drawn', () => {
+    const { overlay, field, marks } = hoveredOverlay();
+    overlay.renderIssues(adapterWithTops(field, () => 20), Object.freeze([issueAt(3)]));
+    expect(card()).toBeNull();
+    expect(marks()[0]?.classList.contains('underline-hidden')).toBe(false);
+    overlay.destroy();
+  });
+});
+
 describe('finding text offsets in long rich text', () => {
   it('maps offsets in every segment, at their edges, and declines offsets in a break', () => {
     const root = document.createElement('div');

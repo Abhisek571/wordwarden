@@ -16,7 +16,7 @@ import { caretOffset, createEditorAdapter } from '#/editors/editor-adapter';
 import { isCapitalsWord } from '#/core/popular-vocabulary';
 import { createTypingMeter, typedCharacterCount } from '#/core/typing-stats';
 import {
-  closestSupportedEditor, editorFromEvent, rememberPasswordField, type SupportedEditor,
+  closestSupportedEditor, editorFromEvent, rememberPasswordField, scrollCanMove, type SupportedEditor,
 } from '#/editors/editor-detection';
 import { updateSettings } from '#/ui/settings-update';
 import { createTypeCheckOverlay, type TypeCheckOverlay } from '#/ui/overlay';
@@ -598,6 +598,13 @@ export async function startTypeCheck(context: Readonly<{
       });
     }
 
+    // Only scrolls that can move the field redraw: a fast chat scrolls its message list several times a second, and
+    // each redraw closed the card the writer was hovering.
+    function repositionOnScroll(event: Event): void {
+      if (activeAdapter === null || !scrollCanMove(event.target, activeAdapter.element)) return;
+      reposition();
+    }
+
     for (const field of document.querySelectorAll<HTMLInputElement>('input[type="password"]')) rememberPasswordField(field);
     document.addEventListener('focusin', rememberPasswords, true);
     document.addEventListener('focusin', activate, true);
@@ -607,7 +614,7 @@ export async function startTypeCheck(context: Readonly<{
     document.addEventListener('keyup', followCaret, true);
     document.addEventListener('pointerup', followClick, true);
     document.addEventListener('pointerdown', closeOnOutsideClick, true);
-    document.addEventListener('scroll', reposition, true);
+    document.addEventListener('scroll', repositionOnScroll, true);
     window.addEventListener('resize', reposition);
     document.addEventListener('visibilitychange', onPageHidden);
     // A field that had focus before these listeners existed (a slow start, or a page that focuses a field as it
@@ -658,7 +665,7 @@ export async function startTypeCheck(context: Readonly<{
       document.removeEventListener('keyup', followCaret, true);
       document.removeEventListener('pointerup', followClick, true);
       document.removeEventListener('pointerdown', closeOnOutsideClick, true);
-      document.removeEventListener('scroll', reposition, true);
+      document.removeEventListener('scroll', repositionOnScroll, true);
       window.removeEventListener('resize', reposition);
       document.removeEventListener('visibilitychange', onPageHidden);
       if (!isCutOff()) {

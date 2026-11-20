@@ -549,15 +549,15 @@ export function createTypeCheckOverlay(actions: OverlayActions): TypeCheckOverla
   function renderIssues(adapter: EditorAdapter, issues: readonly WritingIssue[]): void {
     currentAdapter = adapter;
     host.dataset.surface = surfaceOf(adapter.element);
-    // A hover card belongs to where its word was; after a scroll or a new check it would cover the text.
-    if (popoverElement !== null && !popoverPinned) closePopover();
     markTargets = [];
     firstIssue = null;
     const hasSpelling = issues.some((issue) => issue.category === 'spelling');
     const hasGrammar = issues.some((issue) => issue.category !== 'spelling' && issue.category !== 'style');
     issueKinds = hasSpelling && hasGrammar ? 'both' : hasGrammar ? 'grammar' : 'spelling';
-    const pinnedIssueId = popoverPinned ? popoverIssueId : null;
-    let pinnedIssueFound = false;
+    // An open card, hovered or pinned, follows its word and closes only when the word is gone or off screen: closing it
+    // on every drawing made it flicker while the page kept redrawing (a fast chat beside the field).
+    const openIssueId = popoverElement !== null ? popoverIssueId : null;
+    let openIssueShown = false;
     // Scrolled text boxes (chat inputs) keep text outside their visible area; never draw marks there. Nor off the
     // screen: a long text has most of its underlines there, and each one drawn is restyled on every scroll frame.
     const bounds = adapter.element.getBoundingClientRect();
@@ -571,15 +571,16 @@ export function createTypeCheckOverlay(actions: OverlayActions): TypeCheckOverla
     // Measured before any underline is added, so the page is laid out once rather than once per issue.
     const issueRects = adapter.rangesToRects(issues.map((issue) => issue.range));
     for (const [index, issue] of issues.entries()) {
-      if (issue.id === pinnedIssueId) pinnedIssueFound = true;
+      // A pinned card stays while its issue does, even scrolled out of sight; a hover card needs its word on screen.
+      if (issue.id === openIssueId && popoverPinned) openIssueShown = true;
       const rects = issueRects[index] ?? [];
-      let pinnedRect: DOMRect | undefined;
+      let openRect: DOMRect | undefined;
       for (const rect of rects) {
         if (rect.width === 0 || rect.height === 0 || !visible(rect)) continue;
-        if (issue.id === pinnedIssueId && pinnedRect === undefined) pinnedRect = rect;
+        if (issue.id === openIssueId && openRect === undefined) openRect = rect;
         if (firstIssue === null) firstIssue = Object.freeze({ issue, rect });
         const mark = markElement(markTargets.length);
-        drawMark(mark, issue, rect, issue.id === pinnedIssueId);
+        drawMark(mark, issue, rect, issue.id === openIssueId);
         markTargets.push(Object.freeze({ issue, rect, box: new DOMRect(
           rect.left - GRAMMAR_MARK_INLINE_PADDING,
           rect.top - GRAMMAR_MARK_BLOCK_PADDING,
@@ -587,13 +588,15 @@ export function createTypeCheckOverlay(actions: OverlayActions): TypeCheckOverla
           rect.height + GRAMMAR_MARK_BLOCK_PADDING * 3,
         ) }));
       }
-      if (issue.id === pinnedIssueId && popoverElement !== null) {
-        if (pinnedRect !== undefined) positionPopover(popoverElement, pinnedRect);
+      if (openRect !== undefined && popoverElement !== null) {
+        openIssueShown = true;
+        popoverAnchor = openRect;
+        positionPopover(popoverElement, openRect);
       }
     }
     // Underlines left over from the last drawing (fewer issues on screen now) go.
     removeElements(issueElements.splice(markTargets.length));
-    if (pinnedIssueId !== null && !pinnedIssueFound) closePopover();
+    if (openIssueId !== null && !openIssueShown) closePopover();
   }
 
   // Drawing again after a scroll or a resize moves the underlines already there rather than making new ones: removing
