@@ -19,9 +19,15 @@ export type WordwardenCore = Readonly<{
   setup(dialect: EnglishDialect, dictionary: readonly string[]): Promise<void>;
   /** Adds personal words to the engine already set up, as if they had been in the dictionary given to `setup`. */
   addWords(words: readonly string[]): Promise<void>;
-  lint(text: string): Promise<readonly WritingIssue[]>;
+  lint(text: string, options?: LintOptions): Promise<readonly WritingIssue[]>;
   dispose(): Promise<void>;
 }>;
+
+/**
+ * `wordsOnly`: the text is a word looked up on its own (LibreOffice's spelling check), not a sentence, so a fix keeps
+ * the word's own case instead of taking a capital at the start of a sentence.
+ */
+export type LintOptions = Readonly<{ wordsOnly?: boolean }>;
 
 /**
  * Allows automated checks to provide the same packaged runtime assets from a
@@ -451,14 +457,14 @@ export function createWordwardenCore(runtime: WordwardenCoreRuntime = Object.fre
 
   // Text pasted from macOS often writes "é" as "e" and a combining accent, which the core splits into two words. It is
   // checked composed, and each finding's range is mapped back to the text as written.
-  async function lint(text: string): Promise<readonly WritingIssue[]> {
+  async function lint(text: string, options: LintOptions = Object.freeze({})): Promise<readonly WritingIssue[]> {
     const composed = composeAccents(text);
-    if (composed === null) return lintComposed(text);
-    const issues = await lintComposed(composed.text);
+    if (composed === null) return lintComposed(text, options);
+    const issues = await lintComposed(composed.text, options);
     return Object.freeze(issues.map((issue) => toOriginalText(issue, composed, text)));
   }
 
-  async function lintComposed(text: string): Promise<readonly WritingIssue[]> {
+  async function lintComposed(text: string, options: LintOptions): Promise<readonly WritingIssue[]> {
     const { checker: activeChecker, spellingRanker: activeSpellingRanker } = readyChecker();
     const sections = createAnalysisSections(text);
     cacheLimit = Math.max(SECTION_CACHE_SIZE, sections.length * 2);
@@ -485,7 +491,7 @@ export function createWordwardenCore(runtime: WordwardenCoreRuntime = Object.fre
       ))
     ));
     const supplemented = supplementGrammarIssues(
-      supportedIssues.map((issue) => capitalizeSentenceStart(issue, text)),
+      options.wordsOnly === true ? supportedIssues : supportedIssues.map((issue) => capitalizeSentenceStart(issue, text)),
       text,
       activeSpellingRanker.hasPrefixCompletion,
       activeSpellingRanker.wordPairs,

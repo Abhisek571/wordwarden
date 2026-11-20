@@ -11,7 +11,7 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { createInterface } from 'node:readline';
 import type { EnglishDialect, WritingIssue } from '#/core/types';
-import { createWordwardenCore, extraWordsPath, parseExtraWords, type WordwardenCore } from '#/engines/wordwarden-core';
+import { createWordwardenCore, extraWordsPath, parseExtraWords, type LintOptions, type WordwardenCore } from '#/engines/wordwarden-core';
 import { createSpellingRankerFromData } from '#/engines/spelling-ranker';
 import { parseWordPairs, type WordPairs } from '#/engines/word-pairs';
 
@@ -75,7 +75,7 @@ function issueOut(issue: WritingIssue) {
 // at the first answer of valid. So any misspelling inside the string makes it wrong, and the suggestions are the
 // whole string with the misspelling replaced.
 async function spell(dialect: EnglishDialect, word: string) {
-  const issues = await lintWithRecovery(dialect, word);
+  const issues = await lintWithRecovery(dialect, word, { wordsOnly: true });
   const typo = issues.find((issue) => issue.category === 'spelling');
   if (typo === undefined) return { valid: true, suggestions: [] };
   const before = word.slice(0, typo.range.start);
@@ -84,15 +84,17 @@ async function spell(dialect: EnglishDialect, word: string) {
 }
 
 // An engine whose check failed is not used again (the core may have aborted); one more try uses a new one.
-async function lintWithRecovery(dialect: EnglishDialect, text: string, retry = true): Promise<readonly WritingIssue[]> {
+async function lintWithRecovery(
+  dialect: EnglishDialect, text: string, options: LintOptions = {}, retry = true,
+): Promise<readonly WritingIssue[]> {
   const engine = engineFor(dialect);
   try {
-    return await (await engine).lint(text);
+    return await (await engine).lint(text, options);
   } catch (error) {
     if (engines.get(dialect) === engine) engines.delete(dialect);
     await engine.then((started) => started.dispose()).catch(() => undefined);
     if (!retry) throw error;
-    return lintWithRecovery(dialect, text, false);
+    return lintWithRecovery(dialect, text, options, false);
   }
 }
 

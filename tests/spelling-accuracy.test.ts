@@ -31,6 +31,13 @@ describe('spelling fixes at the start of a sentence', () => {
     }
   });
 
+  it('keeps the word\'s case for a word looked up on its own', async () => {
+    expect((await american.lint('freind', { wordsOnly: true }))[0]?.replacements[0]).toBe('friend');
+    expect((await american.lint('freind.', { wordsOnly: true }))[0]?.replacements[0]).toBe('friend');
+    expect((await american.lint('Freind', { wordsOnly: true }))[0]?.replacements[0]).toBe('Friend');
+    expect((await american.lint('freind'))[0]?.replacements[0]).toBe('Friend');
+  });
+
   it('keeps the fix lowercase in the middle of a sentence', async () => {
     expect((await issueAt('I left becuse it rained.', 'becuse'))?.replacements[0]).toBe('because');
     expect((await issueAt('We met, becuse it rained.', 'becuse'))?.replacements[0]).toBe('because');

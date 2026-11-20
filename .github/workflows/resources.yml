@@ -46,6 +46,7 @@ jobs:
         if: steps.languagetool.outputs.cache-hit != 'true'
         run: |
           curl -fsSL "https://languagetool.org/download/LanguageTool-${{ steps.latest.outputs.version }}.zip" -o "$RUNNER_TEMP/languagetool.zip"
+          mkdir -p "$RUNNER_TEMP/benchmarks"
           unzip -q "$RUNNER_TEMP/languagetool.zip" -d "$RUNNER_TEMP/benchmarks/languagetool"
           rm "$RUNNER_TEMP/languagetool.zip"
       # Harper's browser extension from its newest GitHub release, measured the same way as Wordwarden.
