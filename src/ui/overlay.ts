@@ -551,8 +551,6 @@ export function createTypeCheckOverlay(actions: OverlayActions): TypeCheckOverla
     host.dataset.surface = surfaceOf(adapter.element);
     // A hover card belongs to where its word was; after a scroll or a new check it would cover the text.
     if (popoverElement !== null && !popoverPinned) closePopover();
-    removeElements(issueElements);
-    issueElements = [];
     markTargets = [];
     firstIssue = null;
     const hasSpelling = issues.some((issue) => issue.category === 'spelling');
@@ -560,13 +558,16 @@ export function createTypeCheckOverlay(actions: OverlayActions): TypeCheckOverla
     issueKinds = hasSpelling && hasGrammar ? 'both' : hasGrammar ? 'grammar' : 'spelling';
     const pinnedIssueId = popoverPinned ? popoverIssueId : null;
     let pinnedIssueFound = false;
-    // Scrolled text boxes (chat inputs) keep text outside their visible area; never draw marks there.
+    // Scrolled text boxes (chat inputs) keep text outside their visible area; never draw marks there. Nor off the
+    // screen: a long text has most of its underlines there, and each one drawn is restyled on every scroll frame.
     const bounds = adapter.element.getBoundingClientRect();
-    const visible = (rect: DOMRect): boolean =>
+    const onScreen = (rect: DOMRect): boolean =>
+      rect.bottom > 0 && rect.top < window.innerHeight && rect.right > 0 && rect.left < window.innerWidth;
+    const visible = (rect: DOMRect): boolean => onScreen(rect) && (
       bounds.width === 0 || bounds.height === 0 || (
         rect.bottom > bounds.top + 1 && rect.top < bounds.bottom - 1 &&
         rect.right > bounds.left && rect.left < bounds.right
-      );
+      ));
     // Measured before any underline is added, so the page is laid out once rather than once per issue.
     const issueRects = adapter.rangesToRects(issues.map((issue) => issue.range));
     for (const [index, issue] of issues.entries()) {
@@ -577,21 +578,8 @@ export function createTypeCheckOverlay(actions: OverlayActions): TypeCheckOverla
         if (rect.width === 0 || rect.height === 0 || !visible(rect)) continue;
         if (issue.id === pinnedIssueId && pinnedRect === undefined) pinnedRect = rect;
         if (firstIssue === null) firstIssue = Object.freeze({ issue, rect });
-        const mark = button('', `mark ${issue.category}`, 'issue-mark');
-        // Out of the Tab order: a field with many marks would otherwise need a Tab per mark to reach the card.
-        mark.tabIndex = -1;
-        mark.dataset.issueId = issue.id;
-        if (issue.id === pinnedIssueId) mark.classList.add('underline-hidden');
-        mark.setAttribute('aria-label', issue.message);
-        mark.style.left = `${rect.left - GRAMMAR_MARK_INLINE_PADDING}px`;
-        mark.style.top = `${rect.top - GRAMMAR_MARK_BLOCK_PADDING}px`;
-        mark.style.width = `${Math.max(3, rect.width) + GRAMMAR_MARK_INLINE_PADDING * 2}px`;
-        mark.style.height = `${rect.height + GRAMMAR_MARK_BLOCK_PADDING * 3}px`;
-        mark.style.setProperty('--mark-inline-inset', `${GRAMMAR_MARK_INLINE_PADDING}px`);
-        mark.style.setProperty('--underline-top', `${rect.height + GRAMMAR_MARK_BLOCK_PADDING + 3}px`);
-        mark.addEventListener('click', () => showPopover(issue, rect, true));
-        layer.append(mark);
-        issueElements.push(mark);
+        const mark = markElement(markTargets.length);
+        drawMark(mark, issue, rect, issue.id === pinnedIssueId);
         markTargets.push(Object.freeze({ issue, rect, box: new DOMRect(
           rect.left - GRAMMAR_MARK_INLINE_PADDING,
           rect.top - GRAMMAR_MARK_BLOCK_PADDING,
@@ -603,7 +591,39 @@ export function createTypeCheckOverlay(actions: OverlayActions): TypeCheckOverla
         if (pinnedRect !== undefined) positionPopover(popoverElement, pinnedRect);
       }
     }
+    // Underlines left over from the last drawing (fewer issues on screen now) go.
+    removeElements(issueElements.splice(markTargets.length));
     if (pinnedIssueId !== null && !pinnedIssueFound) closePopover();
+  }
+
+  // Drawing again after a scroll or a resize moves the underlines already there rather than making new ones: removing
+  // and adding hundreds of elements on every frame made scrolling long texts stutter.
+  function markElement(index: number): HTMLButtonElement {
+    const existing = issueElements[index];
+    if (existing instanceof HTMLButtonElement) return existing;
+    const mark = button('', 'mark', 'issue-mark');
+    // Out of the Tab order: a field with many marks would otherwise need a Tab per mark to reach the card.
+    mark.tabIndex = -1;
+    mark.addEventListener('click', () => {
+      const target = markTargets[issueElements.indexOf(mark)];
+      if (target !== undefined) showPopover(target.issue, target.rect, true);
+    });
+    layer.append(mark);
+    issueElements.push(mark);
+    return mark;
+  }
+
+  function drawMark(mark: HTMLButtonElement, issue: WritingIssue, rect: DOMRect, underlineHidden: boolean): void {
+    mark.className = `mark ${issue.category}`;
+    mark.classList.toggle('underline-hidden', underlineHidden);
+    mark.dataset.issueId = issue.id;
+    mark.setAttribute('aria-label', issue.message);
+    mark.style.left = `${rect.left - GRAMMAR_MARK_INLINE_PADDING}px`;
+    mark.style.top = `${rect.top - GRAMMAR_MARK_BLOCK_PADDING}px`;
+    mark.style.width = `${Math.max(3, rect.width) + GRAMMAR_MARK_INLINE_PADDING * 2}px`;
+    mark.style.height = `${rect.height + GRAMMAR_MARK_BLOCK_PADDING * 3}px`;
+    mark.style.setProperty('--mark-inline-inset', `${GRAMMAR_MARK_INLINE_PADDING}px`);
+    mark.style.setProperty('--underline-top', `${rect.height + GRAMMAR_MARK_BLOCK_PADDING + 3}px`);
   }
 
   function isBetween(event: PointerEvent, word: DOMRect, card: DOMRect): boolean {

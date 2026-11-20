@@ -43,8 +43,10 @@ License 2.0 (see `NOTICE` and `LICENSE`).
 - Harper tries each of its 743 pattern rules at every word. For 654 of them the core works out which words a match
   can start with, and tries them only where one of those words is (`first_words_cover_every_match` checks on the
   test texts that no match starts anywhere else).
-- Spelling mistakes come with up to ten suggestions instead of three, which Wordwarden's ranker sorts again with
-  word frequency, typing slips and context.
+- Spelling mistakes come with up to 48 suggestions instead of three, which Wordwarden's ranker sorts again with
+  word frequency, typing slips and context. Case variants ("Polish", "polish") count once, and a word of six or more
+  letters also gets words three edits away when some are two away ("beutifull" → "bountiful" as well as "beautiful").
+- A name's initials ("J. S. Bach"), which the document joins into one word each, are not flagged as spelling.
 - `RegularIrregulars` gave its fixes for a verb ("chose", "chosen") in random order; the core gives the simple past
   first.
 - Fixes for three panics that also abort Harper 2.12.0: a text ending in "both" and a number, an upper-case

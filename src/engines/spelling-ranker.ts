@@ -15,6 +15,8 @@ export type WordContext = Readonly<{
 
 export type SpellingRanker = Readonly<{
   rank(token: string, coreCandidates: readonly string[], context?: WordContext): readonly string[];
+  /** Every candidate `rank` chose its three from, best first, with what it was ranked by; the benchmarks read it. */
+  candidateEvidence(token: string, coreCandidates: readonly string[], context?: WordContext): readonly CandidateEvidence[];
   hasPrefixCompletion(token: string): boolean;
   /** Whether the dialect's own dictionary has this word ("dreamed" in British English, "larrikin" in Australian). */
   accepts(word: string): boolean;
@@ -81,6 +83,16 @@ const IRREGULAR_PAST_TENSES: ReadonlyMap<string, string> = Object.freeze(
     ['taked', 'took'], ['teached', 'taught'], ['telled', 'told'], ['thinked', 'thought'],
     ['throwed', 'threw'], ['understanded', 'understood'], ['weared', 'wore'],
     ['winned', 'won'], ['writed', 'wrote'],
+  ]),
+);
+
+// Informal spellings in chat and tweets, each seen at least four times in the tune half of the tweet benchmark.
+const INFORMAL_SPELLINGS: ReadonlyMap<string, string> = Object.freeze(
+  new Map([
+    ['abt', 'about'], ['bck', 'back'], ['cus', 'because'], ['cuz', 'because'], ['dat', 'that'], ['dats', "that's"],
+    ['dnt', "don't"], ['hve', 'have'], ['jst', 'just'], ['kno', 'know'], ['knw', 'know'], ['pls', 'please'],
+    ['plz', 'please'], ['ppl', 'people'], ['tha', 'the'], ['tho', 'though'], ['tht', 'that'], ['thx', 'thanks'],
+    ['txt', 'text'], ['urself', 'yourself'], ['wat', 'what'], ['wid', 'with'], ['wut', 'what'],
   ]),
 );
 
@@ -409,33 +421,75 @@ function contextFit(pairs: WordPairs, word: string, context: WordContext): numbe
   return before * after;
 }
 
-type Support = Readonly<{
-  commonTypo: boolean;
-  keySlip: boolean;
-  endingMatch: boolean;
-  byEar: boolean;
+/**
+ * What is known of one candidate, each in powers of two of how likely it makes the candidate: how common the word is,
+ * whether a left-out or swapped letter ("workd" is "worked"), a slipped finger, a kept ending ("-ing") or a word that
+ * sounds right ("nite" is "night") turns it into the misspelling, which letters slipped ("e" for "a" is common, "z"
+ * for "a" is not), how well it fits the words either side ("the form of", not "the from of"), and how many letters
+ * are off.
+ */
+export type RankSignals = Readonly<{
   frequency: number;
+  commonTypo: number;
+  keySlip: number;
+  endingMatch: number;
+  byEar: number;
   slip: number;
   context: number;
+  droppedG: number;
+  personal: number;
+  twoEdits: number;
+  threeEdits: number;
+  moreEdits: number;
 }>;
 
-// How well a candidate the same distance away fits the misspelling: a left-out or swapped letter is
-// worth a hundredfold in frequency ("workd" is "worked", not "world"), a slipped finger or a kept ending
-// tenfold, and a word that sounds right twofold ("nite" is "night", not "unite" or "nice"). A word
-// missing from the frequency list still outranks one that is merely frequent when its shape fits better.
-// On top of that, the particular letters slipped count ("e" for "a" is common, "z" for "a" is not), and
-// so do the words either side ("the form of", not "the from of").
-function support(item: Support): number {
-  return (item.frequency + (item.commonTypo ? 1 : 0) + (item.endingMatch ? 0.5 : 0)) *
-    (item.commonTypo ? 100 : 1) * (item.keySlip ? 10 : 1) * (item.endingMatch ? 10 : 1) * (item.byEar ? 2 : 1) *
-    2 ** (item.slip / 10) * item.context;
+export type RankWeights = Readonly<Record<keyof RankSignals, number>>;
+
+/**
+ * How much each signal counts in the one score candidates are sorted by. Fitted on the tune halves of the spelling
+ * benchmarks only (Birkbeck, Wikipedia, typing slips and tweets, each counted equally), by trying each weight up and
+ * down in turn for as long as the share of right words ranked first went up: `node scripts/rank-weights.mjs` (see
+ * docs/BENCHMARKS.md). Before, distance was a hard tier: a word two letters off never beat one a letter off.
+ */
+export const RANK_WEIGHTS: RankWeights = Object.freeze({
+  frequency: 2,
+  commonTypo: 12.94,
+  keySlip: 4.9,
+  endingMatch: 5.24,
+  byEar: 2.86,
+  slip: 1.93,
+  context: 1,
+  droppedG: 8,
+  // Set by hand, not fitted: the benchmarks have no user's dictionary to learn it from. It is the smallest weight with
+  // which a personal or bundled word one slip away ("OpenAl" for "OpenAI") outranks a common word two letters off
+  // ("Open"), as when distance was a hard tier.
+  personal: 16,
+  twoEdits: -14.5,
+  threeEdits: -27.5,
+  moreEdits: -30,
+});
+
+export function blendedScore(signals: RankSignals, weights: RankWeights = RANK_WEIGHTS): number {
+  let score = 0;
+  for (const name of Object.keys(weights) as (keyof RankSignals)[]) score += weights[name] * signals[name];
+  return score;
 }
+
+/** One candidate and what it was ranked by. `tier` goes before the score: a case fix 3, a known form (an irregular
+ * past or an informal spelling) 2, the same letters with a space or apostrophe ("alot" → "a lot") 1. */
+export type CandidateEvidence = Readonly<{ word: string; tier: number; signals: RankSignals }>;
+
+const NO_SIGNALS: RankSignals = Object.freeze({
+  frequency: 0, commonTypo: 0, keySlip: 0, endingMatch: 0, byEar: 0, slip: 0, context: 0, droppedG: 0,
+  personal: 0, twoEdits: 0, threeEdits: 0, moreEdits: 0,
+});
 
 export function createSpellingRankerFromData(
   dictionary: DictionaryText,
   entries: readonly FrequencyEntry[],
   personalWords: readonly string[],
   wordPairs: WordPairs = EMPTY_WORD_PAIRS,
+  weights: RankWeights = RANK_WEIGHTS,
 ): SpellingRanker {
   const checker = nspell(dictionary.aff, dictionary.dic);
   const personalCandidates: string[] = [];
@@ -494,11 +548,12 @@ export function createSpellingRankerFromData(
     return ranked;
   }
 
-  function uncachedRank(
+  // Every candidate for the token, best first, and the token with its capitals put right when that goes first.
+  function scoredCandidates(
     token: string,
     coreCandidates: readonly string[],
     context: WordContext,
-  ): readonly string[] {
+  ) {
     const normalizedToken = token.toLocaleLowerCase('en');
     const lowercaseToken = token === normalizedToken;
     const ending = inflectionEnding(normalizedToken);
@@ -523,7 +578,12 @@ export function createSpellingRankerFromData(
       const capital = `${edit.slice(0, 1).toLocaleUpperCase('en')}${edit.slice(1)}`;
       return edit.includes("'") && checker.correct(capital) ? [capital] : [];
     });
-    const irregularPast = IRREGULAR_PAST_TENSES.get(normalizedToken);
+    // A word this spelling is known to stand for: "buyed" is "bought", "dat" is "that".
+    const knownForm = IRREGULAR_PAST_TENSES.get(normalizedToken) ?? INFORMAL_SPELLINGS.get(normalizedToken);
+    // "goin" for "going" is how it is said, but "beggin" may be "begin": a dropped "g" only counts in the score.
+    const droppedG = /^[a-z]{2,}in$/u.test(normalizedToken) && checker.correct(`${normalizedToken}g`)
+      ? `${normalizedToken}g`
+      : undefined;
     // Personal and bundled words are offered only for near misses, never for unrelated typos.
     const personalLimit = normalizedToken.length <= 4 ? 1 : 2;
     const nearPersonal = personalCandidates.filter(
@@ -541,8 +601,10 @@ export function createSpellingRankerFromData(
         editDistance(normalizedToken, word) <= soundLimit &&
         checker.correct(word)
       ));
+    const nearPersonalKeys = new Set(nearPersonal.map((word) => word.toLocaleLowerCase('en')));
     const candidates = [
-      ...(irregularPast === undefined ? [] : [irregularPast]),
+      ...(knownForm === undefined ? [] : [knownForm]),
+      ...(droppedG === undefined ? [] : [droppedG]),
       ...nearPersonal,
       ...prefixCandidates,
       ...coreCandidates,
@@ -577,15 +639,25 @@ export function createSpellingRankerFromData(
         const distance = editDistance(normalizedToken, normalizedCandidate);
         // Two or more edits that keep the sound ("nite" for "night") were spelt by ear, not mistyped.
         const byEar = spokenToken && distance >= 2 && soundsLike(normalizedToken, tokenKey, normalizedCandidate);
-        const fit = Object.freeze({
-          commonTypo: isCommonTypoOf(normalizedToken, normalizedCandidate),
-          keySlip: isNeighbourKeySlip(normalizedToken, normalizedCandidate),
-          endingMatch: ending !== null && normalizedCandidate.endsWith(ending),
-          byEar,
-          frequency: frequencyOf(normalizedCandidate),
+        const commonTypo = isCommonTypoOf(normalizedToken, normalizedCandidate);
+        const keySlip = isNeighbourKeySlip(normalizedToken, normalizedCandidate);
+        const frequency = frequencyOf(normalizedCandidate);
+        // A word spelt by ear counts as one typo away, however far off the letters are.
+        const rankDistance = byEar ? 1 : distance;
+        const signals: RankSignals = Object.freeze({
+          frequency: Math.log2(1 + frequency),
+          commonTypo: Number(commonTypo),
+          keySlip: Number(keySlip),
+          endingMatch: Number(ending !== null && normalizedCandidate.endsWith(ending)),
+          byEar: Number(byEar),
           // Which letters slipped only tells mistypings apart; a word spelt by ear is judged by its sound.
-          slip: distance <= 2 && !byEar ? slipWeight(normalizedToken, normalizedCandidate) : 0,
-          context: contextFit(wordPairs, normalizedCandidate, context),
+          slip: distance <= 2 && !byEar ? slipWeight(normalizedToken, normalizedCandidate) / 10 : 0,
+          context: Math.log2(contextFit(wordPairs, normalizedCandidate, context)),
+          droppedG: Number(normalizedCandidate === droppedG),
+          personal: Number(nearPersonalKeys.has(normalizedCandidate)),
+          twoEdits: Number(rankDistance === 2),
+          threeEdits: Number(rankDistance === 3),
+          moreEdits: Number(rankDistance > 3),
         });
         return Object.freeze({
           candidate,
@@ -595,23 +667,30 @@ export function createSpellingRankerFromData(
             !(normalizedCandidate === `${normalizedToken.slice(0, -1)}'s` &&
               frequencyOf(normalizedToken.slice(0, -1)) > 0 && !CONTRACTION_BASES.has(normalizedToken.slice(0, -1))),
           distance,
-          // A word spelt by ear counts as one typo away, however far off the letters are.
-          rankDistance: byEar ? 1 : distance,
-          irregular: normalizedCandidate === irregularPast,
-          commonTypo: fit.commonTypo,
-          keySlip: fit.keySlip,
-          frequency: fit.frequency,
-          support: support(fit),
+          knownForm: normalizedCandidate === knownForm,
+          commonTypo,
+          keySlip,
+          frequency,
+          signals,
+          score: blendedScore(signals, weights),
         });
       })
       .sort(
         (left, right) =>
-          Number(right.irregular) - Number(left.irregular) ||
+          Number(right.knownForm) - Number(left.knownForm) ||
           Number(right.structural) - Number(left.structural) ||
-          left.rankDistance - right.rankDistance ||
-          right.support - left.support ||
+          right.score - left.score ||
           left.candidate.localeCompare(right.candidate, 'en'),
       );
+    return Object.freeze({ ranked, caseFix });
+  }
+
+  function uncachedRank(
+    token: string,
+    coreCandidates: readonly string[],
+    context: WordContext,
+  ): readonly string[] {
+    const { ranked, caseFix } = scoredCandidates(token, coreCandidates, context);
     const shown = ranked.slice(0, 3);
     // "uo" ranks "ufo" first; keep the far more common "up" (one key over) on the card in the last spot.
     const best = shown[0];
@@ -626,6 +705,20 @@ export function createSpellingRankerFromData(
     }
     const words = shown.map((item) => preserveCase(token, item.candidate));
     return Object.freeze(caseFix === undefined ? words : [caseFix, ...words].slice(0, 3));
+  }
+
+  function candidateEvidence(
+    token: string,
+    coreCandidates: readonly string[],
+    context: WordContext = Object.freeze({}),
+  ): readonly CandidateEvidence[] {
+    const { ranked, caseFix } = scoredCandidates(token, coreCandidates, context);
+    const evidence = ranked.map((item) => Object.freeze({
+      word: item.candidate,
+      tier: item.knownForm ? 2 : Number(item.structural),
+      signals: item.signals,
+    }));
+    return Object.freeze(caseFix === undefined ? evidence : [Object.freeze({ word: caseFix, tier: 3, signals: NO_SIGNALS }), ...evidence]);
   }
 
   function hasPrefixCompletion(token: string): boolean {
@@ -649,7 +742,7 @@ export function createSpellingRankerFromData(
     return checker.correct(word);
   }
 
-  return Object.freeze({ rank, hasPrefixCompletion, accepts, addWords, wordPairs });
+  return Object.freeze({ rank, candidateEvidence, hasPrefixCompletion, accepts, addWords, wordPairs });
 }
 
 async function fetchText(path: string): Promise<string> {

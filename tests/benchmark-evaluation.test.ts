@@ -7,6 +7,7 @@ import { binaryInlined } from 'harper.js/binaryInlined';
 import { createBinaryModuleFromUrl, Dialect, LocalLinter } from 'harper.js';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import type { WritingIssue } from '#/core/types';
+import type { CandidateEvidence, SpellingRanker } from '#/engines/spelling-ranker';
 import type { WordwardenCore } from '#/engines/wordwarden-core';
 import { createProductionEngine } from './helpers/production-engine';
 
@@ -16,12 +17,14 @@ const jflegDirectory = resolve(benchmarkDirectory, 'jfleg');
 const lexnormDirectory = resolve(benchmarkDirectory, 'lexnorm');
 const aaltoSample = resolve(benchmarkDirectory, 'aalto', 'sample.tsv');
 const FAILURE_EXAMPLES = 20;
+// WORDWARDEN_BENCHMARK_COMPARE=0 skips plain Harper and LanguageTool, for quicker runs while tuning.
+const runComparisons = process.env.WORDWARDEN_BENCHMARK_COMPARE !== '0';
 // LanguageTool, for comparison: the folder holding languagetool-server.jar (or a LanguageTool-x.y folder with it).
 const languageToolDirectory = process.env.WORDWARDEN_LANGUAGETOOL_DIR ?? resolve(benchmarkDirectory, 'languagetool');
 const LANGUAGETOOL_PORT = 8081;
 // Harper, for comparison: the unpacked harper-chrome-plugin.zip of its newest GitHub release, whose engine file
-// harper.js runs. Harper's npm package stopped at 2.10.0 while its releases went on; without the folder, the
-// engine bundled with harper.js is used.
+// harper.js runs. Harper's npm package can lag its releases, and an engine does not load with a much older harper.js
+// (3.3.0's fails with 2.10.0, works with 3.2.0); without the folder, the engine bundled with harper.js is used.
 const harperDirectory = process.env.WORDWARDEN_HARPER_DIR ?? resolve(benchmarkDirectory, 'harper');
 const harperEngineFile = resolve(harperDirectory, 'wasm', 'harper_wasm_bg.wasm');
 const harperRelease = existsSync(resolve(harperDirectory, 'manifest.json')) && existsSync(harperEngineFile);
@@ -48,7 +51,102 @@ const RULE_EXAMPLES = 5;
  * One checker under test. Wordwarden's results go at the top of the report; LanguageTool's go under
  * `languagetool` and plain Harper's under `harper`, both using only the holdout halves, to keep their runs short.
  */
-type Suite = Readonly<{ out: Report; american: Checker; british: Checker; holdoutOnly: boolean }>;
+type Suite = Readonly<{ out: Report; american: Checker; british: Checker; holdoutOnly: boolean; pools?: CandidatePools }>;
+
+/**
+ * Every candidate Wordwarden's ranker chose its three suggestions from, by misspelling (lower-cased), so a miss can be
+ * told apart: the right word was never a candidate, or it was one but ranked too low. Off while timing.
+ */
+type CandidatePools = { recording: boolean; byToken: Map<string, readonly CandidateEvidence[]> };
+// WORDWARDEN_BENCHMARK_RANK_CASES names a file to write, one line per tune-half misspelling, with every candidate and
+// what it was ranked by: the data the ranker's weights are fitted on. The holdout halves are never written.
+const rankCasesPath = process.env.WORDWARDEN_BENCHMARK_RANK_CASES;
+const rankCases: string[] = [];
+
+function recordingRanker(pools: CandidatePools) {
+  return (ranker: SpellingRanker): SpellingRanker => Object.freeze({
+    ...ranker,
+    rank(token: string, coreCandidates: readonly string[], context?: Parameters<SpellingRanker['rank']>[2]) {
+      if (pools.recording) {
+        pools.byToken.set(token.toLocaleLowerCase('en'), ranker.candidateEvidence(token, coreCandidates, context));
+      }
+      return ranker.rank(token, coreCandidates, context);
+    },
+  });
+}
+
+/** Where misses come from: by how far the misspelling is from the right word, and where that word was among the candidates. */
+type Diagnosis = {
+  byDistance: Record<string, Counts & { inPool: number }>;
+  targetRank: Record<string, number>;
+};
+
+const DISTANCE_BUCKETS = Object.freeze(['1', '2', '3', '4+']);
+const RANK_BUCKETS = Object.freeze(['1', '2', '3', '4-10', '11-32', '33+', 'not a candidate', 'other rule', 'not flagged']);
+
+function emptyDiagnosis(): Diagnosis {
+  return {
+    byDistance: Object.fromEntries(DISTANCE_BUCKETS.map((bucket) => [bucket, { ...emptyCounts(), inPool: 0 }])),
+    targetRank: Object.fromEntries(RANK_BUCKETS.map((bucket) => [bucket, 0])),
+  };
+}
+
+function rankBucket(rank: number): string {
+  if (rank <= 3) return String(rank);
+  if (rank <= 10) return '4-10';
+  return rank <= 32 ? '11-32' : '33+';
+}
+
+/** Scores one marked misspelling into `bucket`, and files it in `diagnosis` by distance and by the right word's rank. */
+function scoreMistake(
+  bucket: Counts, diagnosis: Diagnosis, pools: CandidatePools | undefined,
+  misspelling: string, targets: readonly string[], issue: WritingIssue | undefined, caseOf?: string,
+): boolean {
+  const wanted = targets.map((target) => target.toLocaleLowerCase('en'));
+  const suggestions = (issue?.replacements ?? []).map((value) => value.toLocaleLowerCase('en'));
+  const topOne = suggestions[0] !== undefined && wanted.includes(suggestions[0]);
+  const topThree = suggestions.slice(0, 3).some((suggestion) => wanted.includes(suggestion));
+  const typed = misspelling.toLocaleLowerCase('en');
+  const distance = Math.min(...wanted.map((target) => letterDistance(typed, target)));
+  const byDistance = diagnosis.byDistance[distance >= 4 ? '4+' : String(distance)];
+  const evidence = issue?.ruleId === 'SpellCheck' ? pools?.byToken.get(issue.originalText.toLocaleLowerCase('en')) : undefined;
+  const pool = evidence?.map((candidate) => candidate.word.toLocaleLowerCase('en'));
+  if (rankCasesPath !== undefined && caseOf !== undefined && evidence !== undefined) {
+    rankCases.push(JSON.stringify({ set: caseOf, targets: wanted, candidates: evidence }));
+  }
+  const rank = pool === undefined ? -1 : pool.findIndex((word) => wanted.includes(word)) + 1;
+  for (const counts of [bucket, byDistance]) {
+    if (counts === undefined) continue;
+    counts.total += 1;
+    if (issue !== undefined) counts.detected += 1;
+    if (topOne) counts.topOne += 1;
+    if (topThree) counts.topThree += 1;
+  }
+  if (byDistance !== undefined && (rank > 0 || topThree)) byDistance.inPool += 1;
+  let rankKey = 'not flagged';
+  if (issue !== undefined) rankKey = pool === undefined ? 'other rule' : rank > 0 ? rankBucket(rank) : 'not a candidate';
+  diagnosis.targetRank[rankKey] = (diagnosis.targetRank[rankKey] ?? 0) + 1;
+  return topThree;
+}
+
+function diagnosisReport(diagnosis: Diagnosis): Report {
+  return {
+    byDistance: Object.fromEntries(Object.entries(diagnosis.byDistance).map(([distance, counts]) => [distance, {
+      ...rates(counts), inPool: counts.inPool, inPoolPct: percent(counts.inPool, counts.total),
+    }])),
+    targetRank: diagnosis.targetRank,
+  };
+}
+
+/** A fixed pseudo-random sample, so the examples cover all kinds of misses rather than the first ones in the file. */
+function sampleOf(items: readonly string[], size: number): readonly string[] {
+  const hashOf = (item: string): number => {
+    let hash = 2166136261;
+    for (const character of item) hash = Math.imul(hash ^ character.charCodeAt(0), 16777619);
+    return hash >>> 0;
+  };
+  return [...items].sort((left, right) => hashOf(left) - hashOf(right)).slice(0, size);
+}
 
 const report: Report = {};
 let american: WordwardenCore;
@@ -121,10 +219,11 @@ function parseMisspellingList(source: string): readonly SpellingPair[] {
     targets.add(target);
     targetsByMisspelling.set(line, targets);
   }
+  // Split by the right word, not the misspelling, so no word is tuned on in one half and scored in the other.
   return Object.freeze([...targetsByMisspelling].map(([misspelling, targets]) => Object.freeze({
     misspelling,
     targets: Object.freeze([...targets]),
-    split: splitFor(misspelling),
+    split: splitFor([...targets].map((target) => target.toLocaleLowerCase('en')).sort()[0] ?? misspelling),
   })));
 }
 
@@ -137,22 +236,24 @@ async function evaluateWordList(suite: Suite, name: string, file: string, engine
   const pairs = parseMisspellingList(await readFile(path, 'utf8'))
     .filter((pair) => !suite.holdoutOnly || pair.split === 'holdout');
   const counts: Record<Split, Counts> = { tune: emptyCounts(), holdout: emptyCounts() };
+  const diagnoses: Record<Split, Diagnosis> = { tune: emptyDiagnosis(), holdout: emptyDiagnosis() };
   const misses: string[] = [];
   for (const pair of pairs) {
     const issues = await engine.lint(pair.misspelling);
     const issue = issues.find((candidate) => candidate.range.start === 0);
-    const wanted = pair.targets.map((target) => target.toLocaleLowerCase('en'));
-    const suggestions = (issue?.replacements ?? []).map((value) => value.toLocaleLowerCase('en'));
-    const bucket = counts[pair.split];
-    bucket.total += 1;
-    if (issue !== undefined) bucket.detected += 1;
-    if (suggestions[0] !== undefined && wanted.includes(suggestions[0])) bucket.topOne += 1;
-    if (suggestions.slice(0, 3).some((suggestion) => wanted.includes(suggestion))) bucket.topThree += 1;
-    else if (issue !== undefined && misses.length < FAILURE_EXAMPLES && pair.split === 'holdout') {
-      misses.push(`${pair.misspelling} → want ${pair.targets.join('/')}; got ${suggestions.slice(0, 3).join(', ') || '∅'}`);
+    const found = scoreMistake(
+      counts[pair.split], diagnoses[pair.split], suite.pools, pair.misspelling, pair.targets, issue,
+      pair.split === 'tune' ? name : undefined,
+    );
+    if (!found && issue !== undefined && pair.split === 'holdout') {
+      misses.push(`${pair.misspelling} → want ${pair.targets.join('/')}; got ${issue.replacements.slice(0, 3).join(', ') || '∅'}`);
     }
   }
-  suite.out[name] = { tune: rates(counts.tune), holdout: rates(counts.holdout), holdoutMisses: misses };
+  suite.out[name] = {
+    tune: rates(counts.tune), holdout: rates(counts.holdout),
+    diagnosis: { tune: diagnosisReport(diagnoses.tune), holdout: diagnosisReport(diagnoses.holdout) },
+    holdoutMisses: sampleOf(misses, FAILURE_EXAMPLES),
+  };
 }
 
 /** JFLEG text is tokenized ("siences ."); rejoin it the way people type. */
@@ -365,25 +466,29 @@ function letterDistance(left: string, right: string): number {
 /** Misspellings marked inside whole sentences: caught, and the right word first or in the top three. */
 async function evaluateInContext(suite: Suite, name: string, items: readonly ContextItem[]): Promise<void> {
   const counts: Record<Split, Counts> = { tune: emptyCounts(), holdout: emptyCounts() };
+  const diagnoses: Record<Split, Diagnosis> = { tune: emptyDiagnosis(), holdout: emptyDiagnosis() };
   const misses: string[] = [];
   for (const item of items) {
     if (suite.holdoutOnly && item.split === 'tune') continue;
-    const engine = suite.american;
-    const issues = await engine.lint(item.text);
-    const bucket = counts[item.split];
+    const issues = await suite.american.lint(item.text);
     for (const error of item.errors) {
-      bucket.total += 1;
       const issue = issues.find((candidate) => candidate.range.start < error.end && error.start < candidate.range.end);
-      const suggestions = (issue?.replacements ?? []).map((value) => value.toLocaleLowerCase('en'));
-      if (issue !== undefined) bucket.detected += 1;
-      if (suggestions[0] === error.target) bucket.topOne += 1;
-      if (suggestions.slice(0, 3).includes(error.target)) bucket.topThree += 1;
-      else if (misses.length < FAILURE_EXAMPLES && item.split === 'holdout') {
-        misses.push(`${item.text.slice(error.start, error.end)} → want ${error.target}; got ${suggestions.slice(0, 3).join(', ') || '∅'}`);
+      const typed = item.text.slice(error.start, error.end);
+      const found = scoreMistake(
+        counts[item.split], diagnoses[item.split], suite.pools, typed, [error.target], issue,
+        item.split === 'tune' ? name : undefined,
+      );
+      if (!found && item.split === 'holdout') {
+        const got = (issue?.replacements ?? []).slice(0, 3).join(', ') || (issue === undefined ? 'not flagged' : '∅');
+        misses.push(`${typed} → want ${error.target}; got ${got} | ${item.text}`);
       }
     }
   }
-  suite.out[name] = { tune: rates(counts.tune), holdout: rates(counts.holdout), holdoutMisses: misses };
+  suite.out[name] = {
+    tune: rates(counts.tune), holdout: rates(counts.holdout),
+    diagnosis: { tune: diagnosisReport(diagnoses.tune), holdout: diagnosisReport(diagnoses.holdout) },
+    holdoutMisses: sampleOf(misses, FAILURE_EXAMPLES),
+  };
 }
 
 /**
@@ -454,7 +559,8 @@ async function evaluateAalto(suite: Suite): Promise<void> {
         errors.push({ start: start + Math.max(0, offset), end: start + Math.max(0, offset) + got.length, target: wanted });
       }
     });
-    if (errors.length > 0) items.push(Object.freeze({ text, errors: Object.freeze(errors), split: splitFor(line) }));
+    // Split by the sentence people were asked to type: many typed the same one, and it must not be in both halves.
+    if (errors.length > 0) items.push(Object.freeze({ text, errors: Object.freeze(errors), split: splitFor(target) }));
   }
   await evaluateInContext(suite, 'aalto', items);
 }
@@ -475,6 +581,7 @@ async function evaluateSpeed(suite: Suite): Promise<void> {
   }
   const [warmUp, ...timed] = texts;
   if (warmUp === undefined) return;
+  if (suite.pools !== undefined) suite.pools.recording = false;
   await suite.american.lint(warmUp);
   const timings: number[] = [];
   for (const sample of timed) {
@@ -608,8 +715,13 @@ async function evaluateAll(suite: Suite): Promise<void> {
   await evaluateSpeed(suite);
 }
 
+const pools: CandidatePools = { recording: true, byToken: new Map() };
+
 beforeAll(async () => {
-  [american, british] = await Promise.all([createProductionEngine('american'), createProductionEngine('british')]);
+  [american, british] = await Promise.all([
+    createProductionEngine('american', recordingRanker(pools)),
+    createProductionEngine('british', recordingRanker(pools)),
+  ]);
 }, 120_000);
 
 afterAll(async () => {
@@ -619,30 +731,9 @@ afterAll(async () => {
 
 describe('real-world benchmarks', () => {
   it('reports spelling, grammar, false-alarm, and speed results', async () => {
-    await evaluateAll(Object.freeze({ out: report, american, british, holdoutOnly: false }));
-    const harper = { american: plainHarperChecker(Dialect.American), british: plainHarperChecker(Dialect.British) };
-    const harperOut: Report = { version: harperVersion };
-    report.harper = harperOut;
-    try {
-      await evaluateAll(Object.freeze({ out: harperOut, ...harper, holdoutOnly: true }));
-    } finally {
-      await Promise.all([harper.american.dispose(), harper.british.dispose()]);
-    }
-    const jar = findLanguageToolJar();
-    if (jar === null) {
-      report.languagetool = { skipped: `missing languagetool-server.jar in ${languageToolDirectory}` };
-    } else {
-      await startLanguageTool(jar);
-      const out: Report = { version: /LanguageTool-([\d.]+)/u.exec(jar)?.[1] ?? null };
-      report.languagetool = out;
-      try {
-        await evaluateAll(Object.freeze({
-          out, american: languageToolChecker('en-US'), british: languageToolChecker('en-GB'), holdoutOnly: true,
-        }));
-      } finally {
-        stopLanguageTool();
-      }
-    }
+    await evaluateAll(Object.freeze({ out: report, american, british, holdoutOnly: false, pools }));
+    if (rankCasesPath !== undefined) await writeFile(rankCasesPath, `${rankCases.join('\n')}\n`);
+    if (runComparisons) await evaluateComparisons();
     console.log(`WORDWARDEN_BENCHMARK_REPORT=${JSON.stringify(report, null, 2)}`);
     // The accuracy chart is drawn from this file (scripts/accuracy-chart.mjs).
     const reportPath = process.env.WORDWARDEN_BENCHMARK_REPORT;
@@ -650,3 +741,30 @@ describe('real-world benchmarks', () => {
     expect(Object.keys(report).length).toBeGreaterThan(0);
   });
 });
+
+/** Plain Harper and LanguageTool on the holdout halves, for comparison. */
+async function evaluateComparisons(): Promise<void> {
+  const harper = { american: plainHarperChecker(Dialect.American), british: plainHarperChecker(Dialect.British) };
+  const harperOut: Report = { version: harperVersion };
+  report.harper = harperOut;
+  try {
+    await evaluateAll(Object.freeze({ out: harperOut, ...harper, holdoutOnly: true }));
+  } finally {
+    await Promise.all([harper.american.dispose(), harper.british.dispose()]);
+  }
+  const jar = findLanguageToolJar();
+  if (jar === null) {
+    report.languagetool = { skipped: `missing languagetool-server.jar in ${languageToolDirectory}` };
+  } else {
+    await startLanguageTool(jar);
+    const out: Report = { version: /LanguageTool-([\d.]+)/u.exec(jar)?.[1] ?? null };
+    report.languagetool = out;
+    try {
+      await evaluateAll(Object.freeze({
+        out, american: languageToolChecker('en-US'), british: languageToolChecker('en-GB'), holdoutOnly: true,
+      }));
+    } finally {
+      stopLanguageTool();
+    }
+  }
+}

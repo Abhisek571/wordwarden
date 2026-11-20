@@ -9,8 +9,11 @@ import type { EnglishDialect } from '#/core/types';
 import { DELETION, DOUBLE_DROP, SUBSTITUTION } from '#/engines/edit-costs';
 import { phoneticKey } from '#/engines/phonetic-key';
 import {
+  blendedScore,
   createSpellingRankerFromData,
+  RANK_WEIGHTS,
   rankIssueReplacements,
+  type RankSignals,
 } from '#/engines/spelling-ranker';
 import { parseWordPairs } from '#/engines/word-pairs';
 
@@ -201,9 +204,55 @@ describe('local spelling ranker with bundled frequencies', () => {
     expect(ranker.rank("don;t", [])[0]).toBe("don't");
   });
 
+  it.each([
+    ['dat', 'that'],
+    ['dnt', "don't"],
+    ['wut', 'what'],
+    ['pls', 'please'],
+  ])('puts the word an informal spelling stands for first: %s', (token, expected) => {
+    expect(ranker.rank(token, [])[0]).toBe(expected);
+  });
+
+  it('reads a dropped "g" as the "-ing" word, but not over a closer fit', () => {
+    expect(ranker.rank('goin', [])[0]).toBe('going');
+    expect(ranker.rank('lookin', [])[0]).toBe('looking');
+    expect(ranker.rank('imagin', [])[0]).toBe('imagine');
+  });
+
   it('prefers the word whose dropped double letter is a common slip', () => {
     expect(ranker.rank('leter', [])[0]).toBe('letter');
     expect(ranker.rank('comittee', [])[0]).toBe('committee');
+  });
+});
+
+describe('blended ranking score', () => {
+  const none: RankSignals = Object.freeze({
+    frequency: 0, commonTypo: 0, keySlip: 0, endingMatch: 0, byEar: 0, slip: 0, context: 0, droppedG: 0,
+    personal: 0, twoEdits: 0, threeEdits: 0, moreEdits: 0,
+  });
+
+  it('adds up each signal times its weight', () => {
+    expect(blendedScore(none)).toBe(0);
+    expect(blendedScore({ ...none, frequency: 10, twoEdits: 1 })).toBeCloseTo(10 * RANK_WEIGHTS.frequency + RANK_WEIGHTS.twoEdits);
+    expect(blendedScore({ ...none, commonTypo: 1 }, { ...RANK_WEIGHTS, commonTypo: 3 })).toBe(3);
+  });
+
+  it('lets a far more common word three edits away beat a rare word two edits away', () => {
+    const data = [{ word: 'abxy', count: 1 }, { word: 'axyz', count: 1_000_000 }];
+    const dictionary = { aff: 'SET UTF-8', dic: '2\nabxy\naxyz' };
+    expect(createSpellingRankerFromData(dictionary, data, []).rank('abcd', ['abxy', 'axyz'])[0]).toBe('axyz');
+    // With distance as a hard tier, as before, the closer word always won.
+    const tiered = createSpellingRankerFromData(dictionary, data, [], undefined, { ...RANK_WEIGHTS, threeEdits: -1000 });
+    expect(tiered.rank('abcd', ['abxy', 'axyz'])[0]).toBe('abxy');
+  });
+
+  it('shows every candidate with what it was ranked by, a case fix first', () => {
+    const ranker = createSpellingRankerFromData(dictionaryText(american), subtlex, Object.freeze([]));
+    const evidence = ranker.candidateEvidence('london', ['London', 'condone']);
+    expect(evidence[0]).toMatchObject({ word: 'London', tier: 3 });
+    expect(evidence.length).toBeGreaterThan(3);
+    expect(ranker.candidateEvidence('teh', []).map((candidate) => candidate.word)).toContain('the');
+    expect(ranker.candidateEvidence('qqqqqqqqqqqqqqqqqqqqqqqqq', [])).toEqual([]);
   });
 });
 

@@ -46,24 +46,44 @@ Suggest:
   - Replace with: “Post”
   - Replace with: “Pot”
   - Replace with: “Pow”
-
-
-
-Lint:    Spelling (63 priority)
-Message: |
-      18 | two distinctive groups: rule-based and stochastic. E. Brill's tagger, one of the
-         |                                                    ^~ Did you mean to spell `E.` this way?
-Suggest:
-  - Replace with: “Eh”
-  - Replace with: “Em”
-  - Replace with: “Ex”
-  - Replace with: “EC”
-  - Replace with: “ET”
-  - Replace with: “EV”
-  - Replace with: “Eu”
-  - Replace with: “E”
-  - Replace with: “Ed”
-  - Replace with: “En”
+  - Replace with: “PBS”
+  - Replace with: “PMS”
+  - Replace with: “POS”
+  - Replace with: “PPS”
+  - Replace with: “PS”
+  - Replace with: “Po”
+  - Replace with: “Poe”
+  - Replace with: “Pas”
+  - Replace with: “Pis”
+  - Replace with: “Pods”
+  - Replace with: “Pols”
+  - Replace with: “Poms”
+  - Replace with: “Poo”
+  - Replace with: “Poos”
+  - Replace with: “Pops”
+  - Replace with: “Poss”
+  - Replace with: “Posy”
+  - Replace with: “Pots”
+  - Replace with: “Pox”
+  - Replace with: “Pros”
+  - Replace with: “Pus”
+  - Replace with: “Los”
+  - Replace with: “QoS”
+  - Replace with: “ToS”
+  - Replace with: “Cos”
+  - Replace with: “Dos”
+  - Replace with: “Hos”
+  - Replace with: “Mos”
+  - Replace with: “Nos”
+  - Replace with: “Ops”
+  - Replace with: “P.S.”
+  - Replace with: “P2”
+  - Replace with: “P2P”
+  - Replace with: “P2s”
+  - Replace with: “PAC”
+  - Replace with: “PBX”
+  - Replace with: “PC”
+  - Replace with: “PCB”
 
 
 
@@ -83,6 +103,44 @@ Suggest:
   - Replace with: “Trill's”
   - Replace with: “Brian's”
   - Replace with: “Brice's”
+  - Replace with: “Brit's”
+  - Replace with: “Britt's”
+  - Replace with: “Bail's”
+  - Replace with: “Ball's”
+  - Replace with: “Bell's”
+  - Replace with: “Bile's”
+  - Replace with: “Billy's”
+  - Replace with: “Boil's”
+  - Replace with: “Boll's”
+  - Replace with: “Braille's”
+  - Replace with: “Brawl's”
+  - Replace with: “Bribe's”
+  - Replace with: “Brick's”
+  - Replace with: “Bridal's”
+  - Replace with: “Bride's”
+  - Replace with: “Bridle's”
+  - Replace with: “Brie's”
+  - Replace with: “Brief's”
+  - Replace with: “Brier's”
+  - Replace with: “Brig's”
+  - Replace with: “Brim's”
+  - Replace with: “Brine's”
+  - Replace with: “Brink's”
+  - Replace with: “Broil's”
+  - Replace with: “Build's”
+  - Replace with: “Bull's”
+  - Replace with: “Burial's”
+  - Replace with: “Brailles”
+  - Replace with: “Bills”
+  - Replace with: “Bridles”
+  - Replace with: “Brill”
+  - Replace with: “Arial's”
+  - Replace with: “Ariel's”
+  - Replace with: “Brillo”
+  - Replace with: “Jill's”
+  - Replace with: “Uriel's”
+  - Replace with: “Weill's”
+  - Replace with: “Chill's”
 
 
 
@@ -134,6 +192,44 @@ Suggest:
   - Replace with: “Ni”
   - Replace with: “An”
   - Replace with: “In”
+  - Replace with: “Inn”
+  - Replace with: “On”
+  - Replace with: “Ann”
+  - Replace with: “N1”
+  - Replace with: “N2”
+  - Replace with: “N3”
+  - Replace with: “N4”
+  - Replace with: “N5”
+  - Replace with: “NC”
+  - Replace with: “NF”
+  - Replace with: “NH”
+  - Replace with: “NJ”
+  - Replace with: “NM”
+  - Replace with: “NR”
+  - Replace with: “NS”
+  - Replace with: “NT”
+  - Replace with: “NV”
+  - Replace with: “NW”
+  - Replace with: “NY”
+  - Replace with: “NZ”
+  - Replace with: “Nb”
+  - Replace with: “Nd”
+  - Replace with: “Np”
+  - Replace with: “UN”
+  - Replace with: “En”
+  - Replace with: “N”
+  - Replace with: “NAT”
+  - Replace with: “NBA”
+  - Replace with: “NCO”
+  - Replace with: “NDA”
+  - Replace with: “NEC”
+  - Replace with: “NEH”
+  - Replace with: “NES”
+  - Replace with: “NFA”
+  - Replace with: “NGO”
+  - Replace with: “NIH”
+  - Replace with: “Kn”
+  - Replace with: “Tn”
 
 
 
@@ -153,6 +249,44 @@ Suggest:
   - Replace with: “NS”
   - Replace with: “Ens”
   - Replace with: “Inns”
+  - Replace with: “NASA”
+  - Replace with: “NAT”
+  - Replace with: “NBA”
+  - Replace with: “NCO”
+  - Replace with: “NDA”
+  - Replace with: “NEC”
+  - Replace with: “NEH”
+  - Replace with: “NFA”
+  - Replace with: “NGO”
+  - Replace with: “NIH”
+  - Replace with: “NMI”
+  - Replace with: “NRA”
+  - Replace with: “NSA”
+  - Replace with: “NYSE”
+  - Replace with: “NYU”
+  - Replace with: “Na”
+  - Replace with: “NaN”
+  - Replace with: “NaNs”
+  - Replace with: “Nam”
+  - Replace with: “Ne”
+  - Replace with: “Neb”
+  - Replace with: “Ned”
+  - Replace with: “Nev”
+  - Replace with: “Ni”
+  - Replace with: “Noe”
+  - Replace with: “Nov”
+  - Replace with: “Ann's”
+  - Replace with: “E's”
+  - Replace with: “O's”
+  - Replace with: “CNS”
+  - Replace with: “DNS”
+  - Replace with: “AES”
+  - Replace with: “AIs”
+  - Replace with: “ANSI”
+  - Replace with: “AWS”
+  - Replace with: “Ana”
+  - Replace with: “Ann”
+  - Replace with: “Anna”
 
 
 
@@ -172,6 +306,44 @@ Suggest:
   - Replace with: “Op”
   - Replace with: “Up”
   - Replace with: “AP”
+  - Replace with: “IP”
+  - Replace with: “N1”
+  - Replace with: “N2”
+  - Replace with: “N3”
+  - Replace with: “N4”
+  - Replace with: “N5”
+  - Replace with: “NC”
+  - Replace with: “NF”
+  - Replace with: “NH”
+  - Replace with: “NJ”
+  - Replace with: “NLP”
+  - Replace with: “NM”
+  - Replace with: “NPC”
+  - Replace with: “NPR”
+  - Replace with: “NR”
+  - Replace with: “NS”
+  - Replace with: “NT”
+  - Replace with: “NTP”
+  - Replace with: “NV”
+  - Replace with: “NW”
+  - Replace with: “NY”
+  - Replace with: “NZ”
+  - Replace with: “Nb”
+  - Replace with: “Nd”
+  - Replace with: “Np”
+  - Replace with: “N”
+  - Replace with: “Npm”
+  - Replace with: “Hp”
+  - Replace with: “Mp”
+  - Replace with: “Pp”
+  - Replace with: “BP”
+  - Replace with: “DP”
+  - Replace with: “GNP”
+  - Replace with: “GP”
+  - Replace with: “JP”
+  - Replace with: “KP”
+  - Replace with: “LP”
+  - Replace with: “RP”
 
 
 
@@ -191,6 +363,44 @@ Suggest:
   - Replace with: “Kane”
   - Replace with: “Kobe”
   - Replace with: “Kong”
+  - Replace with: “Kike”
+  - Replace with: “Kines”
+  - Replace with: “Kink”
+  - Replace with: “Koan”
+  - Replace with: “Koans”
+  - Replace with: “Krone”
+  - Replace with: “Amine”
+  - Replace with: “Boing”
+  - Replace with: “Bone”
+  - Replace with: “Borne”
+  - Replace with: “Bovine”
+  - Replace with: “Brine”
+  - Replace with: “Cine”
+  - Replace with: “Coin”
+  - Replace with: “Cosine”
+  - Replace with: “Dine”
+  - Replace with: “Done”
+  - Replace with: “Fine”
+  - Replace with: “Gone”
+  - Replace with: “Hone”
+  - Replace with: “Iodine”
+  - Replace with: “Join”
+  - Replace with: “Joint”
+  - Replace with: “Line”
+  - Replace with: “Loin”
+  - Replace with: “Lone”
+  - Replace with: “Mine”
+  - Replace with: “Nine”
+  - Replace with: “Noise”
+  - Replace with: “None”
+  - Replace with: “One”
+  - Replace with: “Pine”
+  - Replace with: “Point”
+  - Replace with: “Quine”
+  - Replace with: “Seine”
+  - Replace with: “Shine”
+  - Replace with: “Sine”
+  - Replace with: “Spine”
 
 
 
@@ -210,6 +420,44 @@ Suggest:
   - Replace with: “Denise”
   - Replace with: “Debase”
   - Replace with: “Decode”
+  - Replace with: “Defrost”
+  - Replace with: “Defuse”
+  - Replace with: “Delouse”
+  - Replace with: “Demode”
+  - Replace with: “Demos”
+  - Replace with: “Demote”
+  - Replace with: “Denote”
+  - Replace with: “Deposed”
+  - Replace with: “Deposes”
+  - Replace with: “Deride”
+  - Replace with: “Derive”
+  - Replace with: “Devise”
+  - Replace with: “Devote”
+  - Replace with: “Dextrose”
+  - Replace with: “Dross”
+  - Replace with: “Drowse”
+  - Replace with: “DVR's”
+  - Replace with: “Dec's”
+  - Replace with: “Dee's”
+  - Replace with: “Del's”
+  - Replace with: “Deno's”
+  - Replace with: “Dear's”
+  - Replace with: “Deb's”
+  - Replace with: “Arose”
+  - Replace with: “Erase”
+  - Replace with: “Erode”
+  - Replace with: “Heroes”
+  - Replace with: “Prose”
+  - Replace with: “Rose”
+  - Replace with: “Verbose”
+  - Replace with: “Verse”
+  - Replace with: “Dare”
+  - Replace with: “Debris”
+  - Replace with: “Decade”
+  - Replace with: “Decide”
+  - Replace with: “Jerome”
+  - Replace with: “Cerise”
+  - Replace with: “Morose”
 
 
 
@@ -227,10 +475,11 @@ Suggest:
 Lint:    Spelling (63 priority)
 Message: |
       58 | morphosyntactic descriptor in the case of morphologically rich languages is
-         |                                           ^~~~~~~~~~~~~~~ Did you mean `morphological`?
+         |                                           ^~~~~~~~~~~~~~~ Did you mean to spell `morphologically` this way?
       59 | commonly expressed using very short mnemonics, such as Ncmsan for Category=Noun,
 Suggest:
   - Replace with: “morphological”
+  - Replace with: “topologically”
 
 
 
@@ -242,6 +491,52 @@ Message: |
 Suggest:
   - Replace with: “Nisan”
   - Replace with: “Nissan”
+  - Replace with: “Nasal”
+  - Replace with: “Nelson”
+  - Replace with: “Nomad”
+  - Replace with: “Nampa”
+  - Replace with: “Nansen”
+  - Replace with: “Nassau”
+  - Replace with: “Nathan”
+  - Replace with: “Nelsen”
+  - Replace with: “Newman”
+  - Replace with: “Nissans”
+  - Replace with: “Nolan”
+  - Replace with: “Norman”
+  - Replace with: “Nubian”
+  - Replace with: “Nyasa”
+  - Replace with: “Naan”
+  - Replace with: “Newsman”
+  - Replace with: “Can”
+  - Replace with: “Clan”
+  - Replace with: “Clean”
+  - Replace with: “Cyan”
+  - Replace with: “Human”
+  - Replace with: “Iceman”
+  - Replace with: “Man”
+  - Replace with: “Mean”
+  - Replace with: “Ocean”
+  - Replace with: “Roman”
+  - Replace with: “Scan”
+  - Replace with: “Unclean”
+  - Replace with: “Woman”
+  - Replace with: “Amman”
+  - Replace with: “Atman”
+  - Replace with: “Busan”
+  - Replace with: “Damian”
+  - Replace with: “Haman”
+  - Replace with: “Hamsun”
+  - Replace with: “Hasan”
+  - Replace with: “Kansan”
+  - Replace with: “Lyman”
+  - Replace with: “McLean”
+  - Replace with: “Oman”
+  - Replace with: “Osman”
+  - Replace with: “Pusan”
+  - Replace with: “Qumran”
+  - Replace with: “Ramsay”
+  - Replace with: “Samoan”
+  - Replace with: “Samson”
 
 
 
@@ -261,6 +556,10 @@ Suggest:
   - Replace with: “Embank”
   - Replace with: “Freeball”
   - Replace with: “Freebase”
+  - Replace with: “Freehand”
+  - Replace with: “Greenback”
+  - Replace with: “Reembark”
+  - Replace with: “Rerank”
 
 
 
@@ -289,6 +588,44 @@ Suggest:
   - Replace with: “Peron”
   - Replace with: “Perot”
   - Replace with: “Petra”
+  - Replace with: “Pathos”
+  - Replace with: “Python”
+  - Replace with: “Perth”
+  - Replace with: “Pedro's”
+  - Replace with: “Pete's”
+  - Replace with: “Petra's”
+  - Replace with: “Pear's”
+  - Replace with: “Peer's”
+  - Replace with: “Pet's”
+  - Replace with: “Peter's”
+  - Replace with: “Petrol's”
+  - Replace with: “Metro”
+  - Replace with: “Retro”
+  - Replace with: “Parrot”
+  - Replace with: “Patio”
+  - Replace with: “Patriot”
+  - Replace with: “Pear”
+  - Replace with: “Pearl”
+  - Replace with: “Perch”
+  - Replace with: “Peril”
+  - Replace with: “Period”
+  - Replace with: “Perky”
+  - Replace with: “Perm”
+  - Replace with: “Person”
+  - Replace with: “Pert”
+  - Replace with: “Peso”
+  - Replace with: “Pet”
+  - Replace with: “Petite”
+  - Replace with: “Petty”
+  - Replace with: “Poetry”
+  - Replace with: “Potion”
+  - Replace with: “Pro”
+  - Replace with: “Prod”
+  - Replace with: “Prof”
+  - Replace with: “Prop”
+  - Replace with: “Prove”
+  - Replace with: “Metros”
+  - Replace with: “Retrod”
 
 
 
@@ -297,9 +634,44 @@ Message: |
       75 | as Inuit languages may be virtually impossible. At the other extreme, Petrov et
          |                                                                              ^~~
       76 | al. have proposed a "universal" tag set, with 12 categories (for example, no
-         | ~~~ Did you mean `et al.`?
+         | ~~~ Did you mean to spell `et
+  al.` this way?
 Suggest:
   - Replace with: “et al.”
+  - Replace with: “ethyl”
+  - Replace with: “ethane”
+  - Replace with: “eta's”
+  - Replace with: “equal”
+  - Replace with: “eta”
+  - Replace with: “etc.”
+  - Replace with: “embalm”
+  - Replace with: “equals”
+  - Replace with: “etas”
+  - Replace with: “eval”
+  - Replace with: “evals”
+  - Replace with: “exalt”
+  - Replace with: “exhale”
+  - Replace with: “lethal”
+  - Replace with: “fetal”
+  - Replace with: “ital”
+  - Replace with: “metal”
+  - Replace with: “netball”
+  - Replace with: “stale”
+  - Replace with: “stalk”
+  - Replace with: “stall”
+  - Replace with: “steal”
+  - Replace with: “tale”
+  - Replace with: “talk”
+  - Replace with: “tall”
+  - Replace with: “teal”
+  - Replace with: “Italy”
+  - Replace with: “metals”
+  - Replace with: “petal”
+  - Replace with: “petals”
+  - Replace with: “steals”
+  - Replace with: “talc”
+  - Replace with: “tali”
+  - Replace with: “teals”
 
 
 
@@ -319,24 +691,44 @@ Suggest:
   - Replace with: “Kurd”
   - Replace with: “Kurt”
   - Replace with: “Kern”
-
-
-
-Lint:    Spelling (63 priority)
-Message: |
-      87 | developed at Brown University by Henry Kučera and W. Nelson Francis, in the
-         |                                                   ^~ Did you mean to spell `W.` this way?
-Suggest:
-  - Replace with: “We”
-  - Replace with: “WA”
-  - Replace with: “WI”
-  - Replace with: “Wu”
-  - Replace with: “WC”
-  - Replace with: “WP”
-  - Replace with: “WV”
-  - Replace with: “WW”
-  - Replace with: “WY”
-  - Replace with: “Wm”
+  - Replace with: “Auger”
+  - Replace with: “Aura”
+  - Replace with: “Aurora”
+  - Replace with: “Camera”
+  - Replace with: “Era”
+  - Replace with: “Eureka”
+  - Replace with: “Funeral”
+  - Replace with: “Genera”
+  - Replace with: “Numeral”
+  - Replace with: “Opera”
+  - Replace with: “Queer”
+  - Replace with: “Query”
+  - Replace with: “Superb”
+  - Replace with: “Supra”
+  - Replace with: “Tundra”
+  - Replace with: “Ultra”
+  - Replace with: “Urea”
+  - Replace with: “User”
+  - Replace with: “Altera”
+  - Replace with: “Audra”
+  - Replace with: “Buber”
+  - Replace with: “Durer”
+  - Replace with: “Euler”
+  - Replace with: “Guerra”
+  - Replace with: “Hera”
+  - Replace with: “Hiera”
+  - Replace with: “Huber”
+  - Replace with: “Hubert”
+  - Replace with: “Huerta”
+  - Replace with: “Judea”
+  - Replace with: “Luger”
+  - Replace with: “Madera”
+  - Replace with: “Monera”
+  - Replace with: “Quora”
+  - Replace with: “Rivera”
+  - Replace with: “Rupert”
+  - Replace with: “Sudra”
+  - Replace with: “Sumeria”
 
 
 
@@ -356,6 +748,44 @@ Suggest:
   - Replace with: “i”
   - Replace with: “sf”
   - Replace with: “sh”
+  - Replace with: “sq”
+  - Replace with: “O”
+  - Replace with: “U”
+  - Replace with: “e”
+  - Replace with: “st”
+  - Replace with: “E's”
+  - Replace with: “O's”
+  - Replace with: “0s”
+  - Replace with: “1s”
+  - Replace with: “Zs”
+  - Replace with: “cs”
+  - Replace with: “gs”
+  - Replace with: “ks”
+  - Replace with: “ls”
+  - Replace with: “ms”
+  - Replace with: “ts”
+  - Replace with: “vs”
+  - Replace with: “AIs”
+  - Replace with: “CIs”
+  - Replace with: “EVs”
+  - Replace with: “Gus”
+  - Replace with: “Hus”
+  - Replace with: “ICs”
+  - Replace with: “IQs”
+  - Replace with: “IVs”
+  - Replace with: “Les”
+  - Replace with: “Los”
+  - Replace with: “ODs”
+  - Replace with: “OGs”
+  - Replace with: “OKs”
+  - Replace with: “F”
+  - Replace with: “R”
+  - Replace with: “b”
+  - Replace with: “c”
+  - Replace with: “d”
+  - Replace with: “g”
+  - Replace with: “h”
+  - Replace with: “j”
 
 
 
@@ -386,6 +816,44 @@ Suggest:
   - Replace with: “Valving”
   - Replace with: “Versing”
   - Replace with: “Vicuna”
+  - Replace with: “Vising”
+  - Replace with: “Voicing”
+  - Replace with: “Voiding”
+  - Replace with: “Vols”
+  - Replace with: “Voluble”
+  - Replace with: “Volubly”
+  - Replace with: “Volumes”
+  - Replace with: “Volute”
+  - Replace with: “Volutes”
+  - Replace with: “Voting”
+  - Replace with: “Vowing”
+  - Replace with: “Jolson's”
+  - Replace with: “Bologna”
+  - Replace with: “Flung”
+  - Replace with: “Gosling”
+  - Replace with: “Lounge”
+  - Replace with: “Lung”
+  - Replace with: “Plunge”
+  - Replace with: “Rotunda”
+  - Replace with: “Sung”
+  - Replace with: “Young”
+  - Replace with: “Bosnia”
+  - Replace with: “Golang”
+  - Replace with: “Golangs”
+  - Replace with: “Golconda”
+  - Replace with: “Golding”
+  - Replace with: “Jolson”
+  - Replace with: “Molina”
+  - Replace with: “Rosanna”
+  - Replace with: “Samsung”
+  - Replace with: “Tonga”
+  - Replace with: “Tortuga”
+  - Replace with: “Yolanda”
+  - Replace with: “Beluga”
+  - Replace with: “Bolding”
+  - Replace with: “Bolting”
+  - Replace with: “Bossing”
+  - Replace with: “Closing”
 
 
 
@@ -427,6 +895,44 @@ Suggest:
   - Replace with: “Hem's”
   - Replace with: “Ho's”
   - Replace with: “Hum's”
+  - Replace with: “Has”
+  - Replace with: “His”
+  - Replace with: “Hiss”
+  - Replace with: “Hummus”
+  - Replace with: “HUDs”
+  - Replace with: “Haas”
+  - Replace with: “Hals”
+  - Replace with: “Hans”
+  - Replace with: “Hess”
+  - Replace with: “Huns”
+  - Replace with: “Hus”
+  - Replace with: “Hags”
+  - Replace with: “Harms”
+  - Replace with: “Hats”
+  - Replace with: “Haws”
+  - Replace with: “Hays”
+  - Replace with: “Helms”
+  - Replace with: “Hemis”
+  - Replace with: “Hens”
+  - Replace with: “Hers”
+  - Replace with: “Hews”
+  - Replace with: “Hies”
+  - Replace with: “Hips”
+  - Replace with: “Hits”
+  - Replace with: “Hobs”
+  - Replace with: “Hods”
+  - Replace with: “Hoes”
+  - Replace with: “Hogs”
+  - Replace with: “Hols”
+  - Replace with: “Homes”
+  - Replace with: “Homos”
+  - Replace with: “Hons”
+  - Replace with: “Hops”
+  - Replace with: “Hos”
+  - Replace with: “Hots”
+  - Replace with: “Hows”
+  - Replace with: “Hubs”
+  - Replace with: “Hues”
 
 
 
@@ -445,6 +951,44 @@ Suggest:
   - Replace with: “Hem's”
   - Replace with: “Ho's”
   - Replace with: “Hum's”
+  - Replace with: “Has”
+  - Replace with: “His”
+  - Replace with: “Hiss”
+  - Replace with: “Hummus”
+  - Replace with: “HUDs”
+  - Replace with: “Haas”
+  - Replace with: “Hals”
+  - Replace with: “Hans”
+  - Replace with: “Hess”
+  - Replace with: “Huns”
+  - Replace with: “Hus”
+  - Replace with: “Hags”
+  - Replace with: “Harms”
+  - Replace with: “Hats”
+  - Replace with: “Haws”
+  - Replace with: “Hays”
+  - Replace with: “Helms”
+  - Replace with: “Hemis”
+  - Replace with: “Hens”
+  - Replace with: “Hers”
+  - Replace with: “Hews”
+  - Replace with: “Hies”
+  - Replace with: “Hips”
+  - Replace with: “Hits”
+  - Replace with: “Hobs”
+  - Replace with: “Hods”
+  - Replace with: “Hoes”
+  - Replace with: “Hogs”
+  - Replace with: “Hols”
+  - Replace with: “Homes”
+  - Replace with: “Homos”
+  - Replace with: “Hons”
+  - Replace with: “Hops”
+  - Replace with: “Hos”
+  - Replace with: “Hots”
+  - Replace with: “Hows”
+  - Replace with: “Hubs”
+  - Replace with: “Hues”
 
 
 
@@ -463,6 +1007,44 @@ Suggest:
   - Replace with: “Hem's”
   - Replace with: “Ho's”
   - Replace with: “Hum's”
+  - Replace with: “Has”
+  - Replace with: “His”
+  - Replace with: “Hiss”
+  - Replace with: “Hummus”
+  - Replace with: “HUDs”
+  - Replace with: “Haas”
+  - Replace with: “Hals”
+  - Replace with: “Hans”
+  - Replace with: “Hess”
+  - Replace with: “Huns”
+  - Replace with: “Hus”
+  - Replace with: “Hags”
+  - Replace with: “Harms”
+  - Replace with: “Hats”
+  - Replace with: “Haws”
+  - Replace with: “Hays”
+  - Replace with: “Helms”
+  - Replace with: “Hemis”
+  - Replace with: “Hens”
+  - Replace with: “Hers”
+  - Replace with: “Hews”
+  - Replace with: “Hies”
+  - Replace with: “Hips”
+  - Replace with: “Hits”
+  - Replace with: “Hobs”
+  - Replace with: “Hods”
+  - Replace with: “Hoes”
+  - Replace with: “Hogs”
+  - Replace with: “Hols”
+  - Replace with: “Homes”
+  - Replace with: “Homos”
+  - Replace with: “Hons”
+  - Replace with: “Hops”
+  - Replace with: “Hos”
+  - Replace with: “Hots”
+  - Replace with: “Hows”
+  - Replace with: “Hubs”
+  - Replace with: “Hues”
 
 
 
@@ -496,6 +1078,31 @@ Suggest:
   - Replace with: “Charlie”
   - Replace with: “Cranial”
   - Replace with: “Carina”
+  - Replace with: “Carnap”
+  - Replace with: “Chadian”
+  - Replace with: “Chadwick”
+  - Replace with: “Charbray”
+  - Replace with: “Charmin”
+  - Replace with: “Chartism”
+  - Replace with: “Carnies”
+  - Replace with: “Carsick”
+  - Replace with: “Chaining”
+  - Replace with: “Charging”
+  - Replace with: “Charier”
+  - Replace with: “Charily”
+  - Replace with: “Charlies”
+  - Replace with: “Charming”
+  - Replace with: “Charring”
+  - Replace with: “Charting”
+  - Replace with: “Churning”
+  - Replace with: “Czarina”
+  - Replace with: “Czarinas”
+  - Replace with: “Sharia”
+  - Replace with: “Narnia”
+  - Replace with: “Hernia”
+  - Replace with: “Hernial”
+  - Replace with: “Hernias”
+  - Replace with: “Shariah”
 
 
 
@@ -537,6 +1144,44 @@ Suggest:
   - Replace with: “Hem's”
   - Replace with: “Ho's”
   - Replace with: “Hum's”
+  - Replace with: “Has”
+  - Replace with: “His”
+  - Replace with: “Hiss”
+  - Replace with: “Hummus”
+  - Replace with: “HUDs”
+  - Replace with: “Haas”
+  - Replace with: “Hals”
+  - Replace with: “Hans”
+  - Replace with: “Hess”
+  - Replace with: “Huns”
+  - Replace with: “Hus”
+  - Replace with: “Hags”
+  - Replace with: “Harms”
+  - Replace with: “Hats”
+  - Replace with: “Haws”
+  - Replace with: “Hays”
+  - Replace with: “Helms”
+  - Replace with: “Hemis”
+  - Replace with: “Hens”
+  - Replace with: “Hers”
+  - Replace with: “Hews”
+  - Replace with: “Hies”
+  - Replace with: “Hips”
+  - Replace with: “Hits”
+  - Replace with: “Hobs”
+  - Replace with: “Hods”
+  - Replace with: “Hoes”
+  - Replace with: “Hogs”
+  - Replace with: “Hols”
+  - Replace with: “Homes”
+  - Replace with: “Homos”
+  - Replace with: “Hons”
+  - Replace with: “Hops”
+  - Replace with: “Hos”
+  - Replace with: “Hots”
+  - Replace with: “Hows”
+  - Replace with: “Hubs”
+  - Replace with: “Hues”
 
 
 
@@ -574,24 +1219,44 @@ Suggest:
   - Replace with: “Denise”
   - Replace with: “Debase”
   - Replace with: “Decode”
-
-
-
-Lint:    Spelling (63 priority)
-Message: |
-     159 | In 1987, Steven DeRose and Kenneth W. Church independently developed dynamic
-         |                                    ^~ Did you mean to spell `W.` this way?
-Suggest:
-  - Replace with: “We”
-  - Replace with: “WA”
-  - Replace with: “WI”
-  - Replace with: “Wu”
-  - Replace with: “WC”
-  - Replace with: “WP”
-  - Replace with: “WV”
-  - Replace with: “WW”
-  - Replace with: “WY”
-  - Replace with: “Wm”
+  - Replace with: “Defrost”
+  - Replace with: “Defuse”
+  - Replace with: “Delouse”
+  - Replace with: “Demode”
+  - Replace with: “Demos”
+  - Replace with: “Demote”
+  - Replace with: “Denote”
+  - Replace with: “Deposed”
+  - Replace with: “Deposes”
+  - Replace with: “Deride”
+  - Replace with: “Derive”
+  - Replace with: “Devise”
+  - Replace with: “Devote”
+  - Replace with: “Dextrose”
+  - Replace with: “Dross”
+  - Replace with: “Drowse”
+  - Replace with: “DVR's”
+  - Replace with: “Dec's”
+  - Replace with: “Dee's”
+  - Replace with: “Del's”
+  - Replace with: “Deno's”
+  - Replace with: “Dear's”
+  - Replace with: “Deb's”
+  - Replace with: “Arose”
+  - Replace with: “Erase”
+  - Replace with: “Erode”
+  - Replace with: “Heroes”
+  - Replace with: “Prose”
+  - Replace with: “Rose”
+  - Replace with: “Verbose”
+  - Replace with: “Verse”
+  - Replace with: “Dare”
+  - Replace with: “Debris”
+  - Replace with: “Decade”
+  - Replace with: “Decide”
+  - Replace with: “Jerome”
+  - Replace with: “Cerise”
+  - Replace with: “Morose”
 
 
 
@@ -611,6 +1276,26 @@ Suggest:
   - Replace with: “Voter”
   - Replace with: “Verdi”
   - Replace with: “Vite”
+  - Replace with: “Vites”
+  - Replace with: “Verbs”
+  - Replace with: “Viler”
+  - Replace with: “Vipers”
+  - Replace with: “Voters”
+  - Replace with: “Biter's”
+  - Replace with: “Liter's”
+  - Replace with: “Miter's”
+  - Replace with: “Niter's”
+  - Replace with: “Literal”
+  - Replace with: “Biter”
+  - Replace with: “Biters”
+  - Replace with: “Liter”
+  - Replace with: “Literati”
+  - Replace with: “Liters”
+  - Replace with: “Miter”
+  - Replace with: “Mitered”
+  - Replace with: “Miters”
+  - Replace with: “Niter”
+  - Replace with: “Uteri”
 
 
 
@@ -629,6 +1314,44 @@ Suggest:
   - Replace with: “Denise”
   - Replace with: “Debase”
   - Replace with: “Decode”
+  - Replace with: “Defrost”
+  - Replace with: “Defuse”
+  - Replace with: “Delouse”
+  - Replace with: “Demode”
+  - Replace with: “Demos”
+  - Replace with: “Demote”
+  - Replace with: “Denote”
+  - Replace with: “Deposed”
+  - Replace with: “Deposes”
+  - Replace with: “Deride”
+  - Replace with: “Derive”
+  - Replace with: “Devise”
+  - Replace with: “Devote”
+  - Replace with: “Dextrose”
+  - Replace with: “Dross”
+  - Replace with: “Drowse”
+  - Replace with: “DVR's”
+  - Replace with: “Dec's”
+  - Replace with: “Dee's”
+  - Replace with: “Del's”
+  - Replace with: “Deno's”
+  - Replace with: “Dear's”
+  - Replace with: “Deb's”
+  - Replace with: “Arose”
+  - Replace with: “Erase”
+  - Replace with: “Erode”
+  - Replace with: “Heroes”
+  - Replace with: “Prose”
+  - Replace with: “Rose”
+  - Replace with: “Verbose”
+  - Replace with: “Verse”
+  - Replace with: “Dare”
+  - Replace with: “Debris”
+  - Replace with: “Decade”
+  - Replace with: “Decide”
+  - Replace with: “Jerome”
+  - Replace with: “Cerise”
+  - Replace with: “Morose”
 
 
 
@@ -661,6 +1384,44 @@ Suggest:
   - Replace with: “Dross's”
   - Replace with: “Drove's”
   - Replace with: “Drowse's”
+  - Replace with: “Deposes”
+  - Replace with: “Jerome's”
+  - Replace with: “Cerise's”
+  - Replace with: “Prose's”
+  - Replace with: “Repose's”
+  - Replace with: “Rose's”
+  - Replace with: “Verse's”
+  - Replace with: “Danone's”
+  - Replace with: “Davos's”
+  - Replace with: “DeSoto's”
+  - Replace with: “Deanne's”
+  - Replace with: “Debbie's”
+  - Replace with: “Debora's”
+  - Replace with: “Debs's”
+  - Replace with: “Dee's”
+  - Replace with: “Deere's”
+  - Replace with: “Degas's”
+  - Replace with: “Deidre's”
+  - Replace with: “Deimos's”
+  - Replace with: “Delores's”
+  - Replace with: “Dempsey's”
+  - Replace with: “Denis's”
+  - Replace with: “Deno's”
+  - Replace with: “Deon's”
+  - Replace with: “Devon's”
+  - Replace with: “Duse's”
+  - Replace with: “Dare's”
+  - Replace with: “Debate's”
+  - Replace with: “Debris's”
+  - Replace with: “Decade's”
+  - Replace with: “Decease's”
+  - Replace with: “Decoder's”
+  - Replace with: “Decomp's”
+  - Replace with: “Decor's”
+  - Replace with: “Decoy's”
+  - Replace with: “Decrease's”
+  - Replace with: “Decree's”
+  - Replace with: “Dedupe's”
 
 
 
@@ -680,6 +1441,44 @@ Suggest:
   - Replace with: “analyst”
   - Replace with: “analyze”
   - Replace with: “analyzer”
+  - Replace with: “analyte”
+  - Replace with: “analyzed”
+  - Replace with: “analog's”
+  - Replace with: “analysis's”
+  - Replace with: “analyzer's”
+  - Replace with: “dialyses”
+  - Replace with: “abacuses”
+  - Replace with: “abalones”
+  - Replace with: “abases”
+  - Replace with: “acolytes”
+  - Replace with: “amasses”
+  - Replace with: “analogies”
+  - Replace with: “analogs”
+  - Replace with: “analogues”
+  - Replace with: “analysands”
+  - Replace with: “analytics”
+  - Replace with: “anapests”
+  - Replace with: “angles”
+  - Replace with: “ankles”
+  - Replace with: “annalists”
+  - Replace with: “anodynes”
+  - Replace with: “anuses”
+  - Replace with: “atlases”
+  - Replace with: “analytic”
+  - Replace with: “analysand”
+  - Replace with: “catalysis”
+  - Replace with: “dialysis”
+  - Replace with: “paralysis”
+  - Replace with: “ballses”
+  - Replace with: “calyxes”
+  - Replace with: “canalizes”
+  - Replace with: “catalysts”
+  - Replace with: “catalyzes”
+  - Replace with: “dialyzes”
+  - Replace with: “encloses”
+  - Replace with: “oxalises”
+  - Replace with: “paralyzes”
+  - Replace with: “reanalysis”
 
 
 
@@ -699,6 +1498,44 @@ Suggest:
   - Replace with: “Dross's”
   - Replace with: “Drove's”
   - Replace with: “Drowse's”
+  - Replace with: “Deposes”
+  - Replace with: “Jerome's”
+  - Replace with: “Cerise's”
+  - Replace with: “Prose's”
+  - Replace with: “Repose's”
+  - Replace with: “Rose's”
+  - Replace with: “Verse's”
+  - Replace with: “Danone's”
+  - Replace with: “Davos's”
+  - Replace with: “DeSoto's”
+  - Replace with: “Deanne's”
+  - Replace with: “Debbie's”
+  - Replace with: “Debora's”
+  - Replace with: “Debs's”
+  - Replace with: “Dee's”
+  - Replace with: “Deere's”
+  - Replace with: “Degas's”
+  - Replace with: “Deidre's”
+  - Replace with: “Deimos's”
+  - Replace with: “Delores's”
+  - Replace with: “Dempsey's”
+  - Replace with: “Denis's”
+  - Replace with: “Deno's”
+  - Replace with: “Deon's”
+  - Replace with: “Devon's”
+  - Replace with: “Duse's”
+  - Replace with: “Dare's”
+  - Replace with: “Debate's”
+  - Replace with: “Debris's”
+  - Replace with: “Decade's”
+  - Replace with: “Decease's”
+  - Replace with: “Decoder's”
+  - Replace with: “Decomp's”
+  - Replace with: “Decor's”
+  - Replace with: “Decoy's”
+  - Replace with: “Decrease's”
+  - Replace with: “Decree's”
+  - Replace with: “Dedupe's”
 
 
 
@@ -761,6 +1598,26 @@ Suggest:
   - Replace with: “Voter”
   - Replace with: “Verdi”
   - Replace with: “Vite”
+  - Replace with: “Vites”
+  - Replace with: “Verbs”
+  - Replace with: “Viler”
+  - Replace with: “Vipers”
+  - Replace with: “Voters”
+  - Replace with: “Biter's”
+  - Replace with: “Liter's”
+  - Replace with: “Miter's”
+  - Replace with: “Niter's”
+  - Replace with: “Literal”
+  - Replace with: “Biter”
+  - Replace with: “Biters”
+  - Replace with: “Liter”
+  - Replace with: “Literati”
+  - Replace with: “Liters”
+  - Replace with: “Miter”
+  - Replace with: “Mitered”
+  - Replace with: “Miters”
+  - Replace with: “Niter”
+  - Replace with: “Uteri”
 
 
 
@@ -780,6 +1637,41 @@ Suggest:
   - Replace with: “Which”
   - Replace with: “Winch”
   - Replace with: “Witch”
+  - Replace with: “Wrench”
+  - Replace with: “Belch”
+  - Replace with: “Walsh”
+  - Replace with: “Wealth”
+  - Replace with: “Welds”
+  - Replace with: “Wells”
+  - Replace with: “Welly”
+  - Replace with: “Welts”
+  - Replace with: “Wretch”
+  - Replace with: “Beach”
+  - Replace with: “Beech”
+  - Replace with: “Bench”
+  - Replace with: “Each”
+  - Replace with: “Fetch”
+  - Replace with: “Gulch”
+  - Replace with: “Leach”
+  - Replace with: “Lech”
+  - Replace with: “Leech”
+  - Replace with: “Peach”
+  - Replace with: “Perch”
+  - Replace with: “Reach”
+  - Replace with: “Teach”
+  - Replace with: “Tech”
+  - Replace with: “Hench”
+  - Replace with: “Reich”
+  - Replace with: “Etch”
+  - Replace with: “Filch”
+  - Replace with: “Ketch”
+  - Replace with: “Merch”
+  - Replace with: “Milch”
+  - Replace with: “Mulch”
+  - Replace with: “Retch”
+  - Replace with: “Tench”
+  - Replace with: “Vetch”
+  - Replace with: “Zilch”
 
 
 
@@ -798,6 +1690,26 @@ Suggest:
   - Replace with: “Voter”
   - Replace with: “Verdi”
   - Replace with: “Vite”
+  - Replace with: “Vites”
+  - Replace with: “Verbs”
+  - Replace with: “Viler”
+  - Replace with: “Vipers”
+  - Replace with: “Voters”
+  - Replace with: “Biter's”
+  - Replace with: “Liter's”
+  - Replace with: “Miter's”
+  - Replace with: “Niter's”
+  - Replace with: “Literal”
+  - Replace with: “Biter”
+  - Replace with: “Biters”
+  - Replace with: “Liter”
+  - Replace with: “Literati”
+  - Replace with: “Liters”
+  - Replace with: “Miter”
+  - Replace with: “Mitered”
+  - Replace with: “Miters”
+  - Replace with: “Niter”
+  - Replace with: “Uteri”
 
 
 
@@ -816,6 +1728,44 @@ Suggest:
   - Replace with: “SBA”
   - Replace with: “SDI”
   - Replace with: “SEO”
+  - Replace with: “SGI”
+  - Replace with: “SHA”
+  - Replace with: “SIMD”
+  - Replace with: “SLA”
+  - Replace with: “SOS”
+  - Replace with: “SRAM”
+  - Replace with: “SRO”
+  - Replace with: “SSA”
+  - Replace with: “SSE”
+  - Replace with: “STI”
+  - Replace with: “SUV”
+  - Replace with: “SUVs”
+  - Replace with: “SVGA”
+  - Replace with: “Sal”
+  - Replace with: “Sam”
+  - Replace with: “San”
+  - Replace with: “Se”
+  - Replace with: “Sep”
+  - Replace with: “Si”
+  - Replace with: “Sid”
+  - Replace with: “Sta”
+  - Replace with: “Ste”
+  - Replace with: “Stu”
+  - Replace with: “Sui”
+  - Replace with: “I'm”
+  - Replace with: “Aim”
+  - Replace with: “Am”
+  - Replace with: “Arm”
+  - Replace with: “Av”
+  - Replace with: “Ave”
+  - Replace with: “Avg”
+  - Replace with: “Bum”
+  - Replace with: “Cam”
+  - Replace with: “Com”
+  - Replace with: “Cum”
+  - Replace with: “Dam”
+  - Replace with: “Dim”
+  - Replace with: “Elm”
 
 
 
@@ -835,6 +1785,10 @@ Suggest:
   - Replace with: “Embank”
   - Replace with: “Freeball”
   - Replace with: “Freebase”
+  - Replace with: “Freehand”
+  - Replace with: “Greenback”
+  - Replace with: “Reembark”
+  - Replace with: “Rerank”
 
 
 

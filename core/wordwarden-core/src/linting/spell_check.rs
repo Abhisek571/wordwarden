@@ -1,3 +1,4 @@
+use std::collections::HashSet;
 use std::num::NonZero;
 
 use lru::LruCache;
@@ -31,7 +32,9 @@ impl<T: Dictionary> SpellCheck<T> {
     }
 
     // Wordwarden ranks these again with word frequency, typing slips and context, so it is given more to choose from.
-    const MAX_SUGGESTIONS: usize = 10;
+    const MAX_SUGGESTIONS: usize = 48;
+    // Longer words are often misspelt three letters off ("ocasionaly"), even when some word is two off.
+    const FAR_SEARCH_MIN_LEN: usize = 6;
 
     fn suggest_correct_spelling(&mut self, word: &[char]) -> Vec<CharString> {
         if let Some(hit) = self.suggestion_cache.get(word) {
@@ -43,8 +46,11 @@ impl<T: Dictionary> SpellCheck<T> {
         }
     }
     fn uncached_suggest_correct_spelling(&self, word: &[char]) -> Vec<CharString> {
-        // Back off until we find a match.
-        for dist in 2..5 {
+        // Back off until we find a match. A search further away also finds everything closer, closest first.
+        let first_dist = if word.len() >= Self::FAR_SEARCH_MIN_LEN { 3 } else { 2 };
+        for dist in first_dist..5 {
+            // Case variants ("Polish", "polish") count once, so they do not crowd out other words.
+            let mut seen = HashSet::new();
             let suggestions: Vec<CharString> =
                 suggest_correct_spelling(word, 200, dist, &self.dictionary)
                     .into_iter()
@@ -56,6 +62,7 @@ impl<T: Dictionary> SpellCheck<T> {
                             .dialects
                             .is_dialect_enabled(self.dialect)
                     })
+                    .filter(|v| seen.insert(v.to_lower().into_owned()))
                     .map(|v| v.to_smallvec())
                     .take(Self::MAX_SUGGESTIONS)
                     .collect();
@@ -68,6 +75,14 @@ impl<T: Dictionary> SpellCheck<T> {
         // no suggestions found
         Vec::new()
     }
+}
+
+/// A name's initials, such as "J." or "J.S.": the document condenses each into one word, which no dictionary has.
+fn is_initials(word: &[char]) -> bool {
+    word.len() >= 2
+        && word
+            .chunks(2)
+            .all(|pair| pair.len() == 2 && pair[0].is_uppercase() && pair[1] == '.')
 }
 
 fn parenthetical_plural_s_expr() -> Filter {
@@ -96,7 +111,7 @@ impl<T: Dictionary> Linter for SpellCheck<T> {
         for word in document.iter_words() {
             let word_chars = document.get_span_content(&word.span);
 
-            if is_informal_laughter(word_chars) {
+            if is_informal_laughter(word_chars) || is_initials(word_chars) {
                 continue;
             }
 
@@ -548,6 +563,54 @@ mod tests {
             "We had to prepone the meeting",
             SpellCheck::new(FstDictionary::curated(), Dialect::Indian),
         );
+    }
+
+    fn suggestions_for(word: &str) -> Vec<String> {
+        let check = SpellCheck::new(FstDictionary::curated(), Dialect::American);
+        let chars: Vec<char> = word.chars().collect();
+        check
+            .uncached_suggest_correct_spelling(&chars)
+            .iter()
+            .map(|suggestion| suggestion.iter().collect())
+            .collect()
+    }
+
+    #[test]
+    fn long_words_also_get_words_three_edits_away() {
+        let suggestions = suggestions_for("beutifull");
+        assert!(suggestions.contains(&"beautiful".to_string()));
+        assert!(suggestions.contains(&"bountiful".to_string()));
+    }
+
+    #[test]
+    fn short_words_stay_within_two_edits_when_any_are_found() {
+        let suggestions = suggestions_for("polsh");
+        assert!(suggestions.contains(&"polish".to_string()));
+        assert!(!suggestions.contains(&"polishes".to_string()));
+    }
+
+    #[test]
+    fn case_variants_count_once_and_the_pool_is_capped() {
+        let suggestions = suggestions_for("Polsh");
+        let lowercase: std::collections::HashSet<String> =
+            suggestions.iter().map(|word| word.to_lowercase()).collect();
+        assert_eq!(lowercase.len(), suggestions.len());
+        assert_eq!(suggestions_for("intresting").len(), 48);
+    }
+
+    #[test]
+    fn dont_flag_initials() {
+        assert_no_lints("J. S. Bach wrote it for A. Smith and J.S. Mill.", test_linter());
+    }
+
+    #[test]
+    fn still_flags_misspelling_next_to_initials() {
+        assert_lint_count("Sergent S. M. Smith told us.", test_linter(), 1);
+    }
+
+    #[test]
+    fn still_flags_lowercase_letter_with_period() {
+        assert_lint_count("We went to the q. and left.", test_linter(), 1);
     }
 
     #[test]

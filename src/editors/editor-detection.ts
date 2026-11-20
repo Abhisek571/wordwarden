@@ -52,7 +52,19 @@ export function isSafeElement(element: HTMLElement): boolean {
     return false;
   }
   const style = getComputedStyle(element);
-  return style.display !== 'none' && style.visibility !== 'hidden';
+  return style.display !== 'none' && style.visibility !== 'hidden' && !isCodeField(element, style);
+}
+
+const CODE_EDITORS = '.cm-editor, .CodeMirror, .monaco-editor, .ace_editor';
+const MONOSPACE_FONT = /mono|courier|consolas|menlo|monaco|cascadia|source code/iu;
+
+// Code, command and log boxes ask for no proofing with spellcheck="false". Chat boxes and rich editors such as
+// CKEditor 5 and Twitch's chat set it too and are still wanted, so it counts only in a code editor or a box set in a
+// monospace font.
+function isCodeField(element: HTMLElement, style: CSSStyleDeclaration): boolean {
+  const spellcheck = element.closest('[spellcheck]')?.getAttribute('spellcheck')?.toLowerCase();
+  if (spellcheck !== 'false') return false;
+  return element.closest(CODE_EDITORS) !== null || MONOSPACE_FONT.test(style.fontFamily);
 }
 
 // Fields that were password fields stay private after a "show password" button turns them into text fields.

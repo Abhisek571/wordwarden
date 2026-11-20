@@ -154,6 +154,10 @@ const MUTED_CORE_RULES: Readonly<Record<string, boolean>> = Object.freeze({
   UseEllipsisCharacter: false,
   DisjointPrefixes: false,
   Excellent: false,
+  // Opinions, not mistakes: "not unusual" → "common" changes what was said (its only dev-set flag was on corrected
+  // text), and "Turkey", "Bombay" or "Canton" (Ohio) are not wrong in English.
+  LitotesDirectPositive: false,
+  UpdatePlaceNames: false,
   // Sections used to cut long sentences, so it never fired; it only says a sentence is long.
   LongSentences: false,
   MissingPreposition: false,
@@ -208,6 +212,21 @@ function isLikelyName(issue: WritingIssue, text: string): boolean {
   return (suggestedFirst !== first && !areNeighbourKeys(suggestedFirst, first)) || editDistance(word, suggestion) > 2;
 }
 
+// Where a sentence starts: the start of the text or a line, or after a full stop and space, with an opening quote or
+// bracket allowed before the word.
+const SENTENCE_START = /(?:^\s*|[.!?…]["'”’)\]]*\s+|\n\s*)["'“‘(\[]?$/u;
+
+// "becuse I left." → "Because": a lowercase misspelling that starts a sentence gets fixes with a capital, as the
+// writer would have typed the word spelt right.
+function capitalizeSentenceStart(issue: WritingIssue, text: string): WritingIssue {
+  if (issue.category !== 'spelling' || !/^\p{Ll}/u.test(issue.originalText)) return issue;
+  if (!SENTENCE_START.test(text.slice(0, issue.range.start))) return issue;
+  const replacements = issue.replacements.map((replacement) => (
+    /^\p{Ll}/u.test(replacement) ? `${replacement.slice(0, 1).toLocaleUpperCase('en')}${replacement.slice(1)}` : replacement
+  ));
+  return Object.freeze({ ...issue, replacements: Object.freeze(replacements) });
+}
+
 // Removing " uh" from "slow, uh, like" would leave "slow,, like", so take the comma after it too.
 function fillerSpan(ruleId: string, source: string, start: number, end: number): Readonly<{ start: number; end: number }> {
   const takesComma = ruleId === 'FillerWords' && source[end] === ',' && source.slice(0, start).trimEnd().endsWith(',');
@@ -227,6 +246,43 @@ function wordContext(source: string, start: number, end: number): WordContext {
 
 // The core's SpellCheck says this of a word it knows in another dialect only (`colour` in American English).
 const OTHER_DIALECT_MESSAGE = /is spelled this way in another variety of English\.$/u;
+
+type ComposedText = Readonly<{
+  text: string;
+  /** For each offset in `text`, where a range starting or ending there starts or ends in the original: an offset
+   * inside a letter and its accents maps to the start or the end of the whole group. */
+  originalStart: readonly number[];
+  originalEnd: readonly number[];
+}>;
+
+// Composes each letter with the accents after it, or returns null when the text has nothing to compose.
+function composeAccents(text: string): ComposedText | null {
+  if (!/\p{M}/u.test(text) || text === text.normalize('NFC')) return null;
+  const parts: string[] = [];
+  const originalStart: number[] = [];
+  const originalEnd: number[] = [0];
+  for (const match of text.matchAll(/\P{M}\p{M}*|\p{M}+/gsu)) {
+    const from = match.index;
+    const to = from + match[0].length;
+    const part = match[0].normalize('NFC');
+    parts.push(part);
+    for (let index = 0; index < part.length; index += 1) {
+      originalStart.push(from);
+      originalEnd.push(to);
+    }
+  }
+  originalStart.push(text.length);
+  return Object.freeze({ text: parts.join(''), originalStart, originalEnd });
+}
+
+// Moves a finding on the composed text onto the text as written.
+function toOriginalText(issue: WritingIssue, composed: ComposedText, text: string): WritingIssue {
+  const range = Object.freeze({
+    start: composed.originalStart[issue.range.start] ?? text.length,
+    end: composed.originalEnd[issue.range.end] ?? text.length,
+  });
+  return Object.freeze({ ...issue, range, originalText: text.slice(range.start, range.end) });
+}
 
 // Only findings that start in the section's own part are kept: the text around it is there for context, and findings
 // starting in it belong to the neighbouring sections. Those are skipped before their suggestions are ranked.
@@ -393,7 +449,16 @@ export function createWordwardenCore(runtime: WordwardenCoreRuntime = Object.fre
     return issues;
   }
 
+  // Text pasted from macOS often writes "é" as "e" and a combining accent, which the core splits into two words. It is
+  // checked composed, and each finding's range is mapped back to the text as written.
   async function lint(text: string): Promise<readonly WritingIssue[]> {
+    const composed = composeAccents(text);
+    if (composed === null) return lintComposed(text);
+    const issues = await lintComposed(composed.text);
+    return Object.freeze(issues.map((issue) => toOriginalText(issue, composed, text)));
+  }
+
+  async function lintComposed(text: string): Promise<readonly WritingIssue[]> {
     const { checker: activeChecker, spellingRanker: activeSpellingRanker } = readyChecker();
     const sections = createAnalysisSections(text);
     cacheLimit = Math.max(SECTION_CACHE_SIZE, sections.length * 2);
@@ -420,7 +485,7 @@ export function createWordwardenCore(runtime: WordwardenCoreRuntime = Object.fre
       ))
     ));
     const supplemented = supplementGrammarIssues(
-      supportedIssues,
+      supportedIssues.map((issue) => capitalizeSentenceStart(issue, text)),
       text,
       activeSpellingRanker.hasPrefixCompletion,
       activeSpellingRanker.wordPairs,

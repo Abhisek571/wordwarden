@@ -3,6 +3,25 @@
 Each release's section is also its release notes on GitHub. Accuracy and resource numbers are in the
 README charts; method in [docs/BENCHMARKS.md](docs/BENCHMARKS.md).
 
+## 1.6.3 — 2026-11-20
+
+- **Better spelling suggestions.** Suggestions are chosen from many more words, and words a few letters off can win
+  when they fit much better, so the right word comes first more often, most of all in chat and tweets. Informal
+  spellings get the word they stand for ("dat" → "that", "pls" → "please", "goin" → "going").
+- A misspelling at the start of a sentence gets a fix with a capital ("becuse" → "Because").
+- A name's initials ("J. S. Bach") are no longer flagged, nor are old place names ("Bombay", "Turkey") and "not
+  unusual", which were opinions rather than mistakes.
+- **Fixes work in CKEditor 5.** Editors that draw their text from their own copy, such as CKEditor 5, threw away
+  an applied fix. They now get it the way they expect. If an editor still takes neither, the text is left as it was.
+- **Code boxes are left alone.** Code editors (CodeMirror, Monaco, Ace) and boxes set in a monospace font that ask
+  for no spell checking are no longer checked. Chat boxes and rich text editors that ask the same are still checked.
+- **Accented words pasted from a Mac.** Text that writes "é" as "e" plus a separate accent is checked as whole
+  words, so "naïve" and "résumé" are no longer flagged, and fixes next to them land in the right place.
+- A fix that an editor undoes while swapping a space for a no-break space no longer undoes your own last edit.
+- **Smooth scrolling in long texts.** Underlines are moved rather than drawn again on every frame, and only the ones on
+  screen are drawn. In a long post with 720 mistakes, scrolling took about 15 times less work and no longer got slower
+  the longer you scrolled.
+
 ## 1.6.2 — 2026-10-17
 
 - **Harper's newer rules and dictionary.** The rules and fixes Harper added in 2.11 and 2.12 are in, such as

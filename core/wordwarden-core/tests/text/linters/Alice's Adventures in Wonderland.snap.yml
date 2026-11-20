@@ -127,6 +127,44 @@ Suggest:
   - Replace with: “curtly”
   - Replace with: “curtsied”
   - Replace with: “curtsies”
+  - Replace with: “cutesy”
+  - Replace with: “cutey”
+  - Replace with: “cur's”
+  - Replace with: “curse's”
+  - Replace with: “curtsy's”
+  - Replace with: “cartel”
+  - Replace with: “certify”
+  - Replace with: “corpse”
+  - Replace with: “cortex”
+  - Replace with: “course”
+  - Replace with: “courser”
+  - Replace with: “courtier”
+  - Replace with: “crises”
+  - Replace with: “crispy”
+  - Replace with: “cruise”
+  - Replace with: “curate”
+  - Replace with: “cure”
+  - Replace with: “curfew”
+  - Replace with: “curiae”
+  - Replace with: “curie”
+  - Replace with: “curler”
+  - Replace with: “curlew”
+  - Replace with: “curry”
+  - Replace with: “cursor”
+  - Replace with: “curt”
+  - Replace with: “curtail”
+  - Replace with: “curtain”
+  - Replace with: “curve”
+  - Replace with: “custody”
+  - Replace with: “cute”
+  - Replace with: “cutler”
+  - Replace with: “cutlery”
+  - Replace with: “cutter”
+  - Replace with: “Courtney”
+  - Replace with: “carted”
+  - Replace with: “carter”
+  - Replace with: “carts”
+  - Replace with: “cerise”
 
 
 
@@ -134,18 +172,32 @@ Lint:    Spelling (63 priority)
 Message: |
       68 | this New Zealand or Australia?” (and she tried to curtsey as she spoke—fancy
       69 | curtseying as you’re falling through the air! Do you think you could manage it?)
-         | ^~~~~~~~~~ Did you mean `curtsying`?
+         | ^~~~~~~~~~ Did you mean to spell `curtseying` this way?
 Suggest:
   - Replace with: “curtsying”
+  - Replace with: “certifying”
+  - Replace with: “corseting”
+  - Replace with: “currying”
+  - Replace with: “cursing”
+  - Replace with: “curtailing”
+  - Replace with: “curtaining”
+  - Replace with: “furthering”
+  - Replace with: “purveying”
+  - Replace with: “surveying”
 
 
 
 Lint:    Spelling (63 priority)
 Message: |
       74 | again. “Dinah’ll miss me very much to-night, I should think!” (Dinah was the
-         |         ^~~~~~~~ Did you mean `Dinah's`?
+         |         ^~~~~~~~ Did you mean to spell `Dinah’ll` this way?
 Suggest:
   - Replace with: “Dinah's”
+  - Replace with: “Dina's”
+  - Replace with: “Dinar's”
+  - Replace with: “Dinah”
+  - Replace with: “Dunghill”
+  - Replace with: “Winchell”
 
 
 
@@ -394,6 +446,21 @@ Suggest:
   - Replace with: “Curious”
   - Replace with: “Carouser”
   - Replace with: “Curiously”
+  - Replace with: “Curio's”
+  - Replace with: “Carousel”
+  - Replace with: “Carious”
+  - Replace with: “Carouse”
+  - Replace with: “Caroused”
+  - Replace with: “Carousers”
+  - Replace with: “Carouses”
+  - Replace with: “Crosser”
+  - Replace with: “Cruiser”
+  - Replace with: “Curios”
+  - Replace with: “Curiousness”
+  - Replace with: “Furious”
+  - Replace with: “Trouser”
+  - Replace with: “Furiously”
+  - Replace with: “Grouser”
 
 
 
@@ -405,6 +472,21 @@ Suggest:
   - Replace with: “curious”
   - Replace with: “carouser”
   - Replace with: “curiously”
+  - Replace with: “curio's”
+  - Replace with: “carousel”
+  - Replace with: “carious”
+  - Replace with: “carouse”
+  - Replace with: “caroused”
+  - Replace with: “carousers”
+  - Replace with: “carouses”
+  - Replace with: “crosser”
+  - Replace with: “cruiser”
+  - Replace with: “curios”
+  - Replace with: “curiousness”
+  - Replace with: “furious”
+  - Replace with: “trouser”
+  - Replace with: “furiously”
+  - Replace with: “grouser”
 
 
 
@@ -479,9 +561,48 @@ Suggest:
   - Replace with: “serried”
   - Replace with: “slurred”
   - Replace with: “slurries”
+  - Replace with: “scarred”
+  - Replace with: “starred”
+  - Replace with: “stirred”
+  - Replace with: “surrey”
   - Replace with: “curried”
   - Replace with: “flurried”
   - Replace with: “hurried”
+  - Replace with: “safaried”
+  - Replace with: “salaried”
+  - Replace with: “scurvier”
+  - Replace with: “sherries”
+  - Replace with: “shirred”
+  - Replace with: “skied”
+  - Replace with: “skirted”
+  - Replace with: “skivvied”
+  - Replace with: “skulked”
+  - Replace with: “skunked”
+  - Replace with: “slurped”
+  - Replace with: “slurring”
+  - Replace with: “sorrier”
+  - Replace with: “sortied”
+  - Replace with: “sourced”
+  - Replace with: “soured”
+  - Replace with: “sparred”
+  - Replace with: “spurged”
+  - Replace with: “spurned”
+  - Replace with: “spurring”
+  - Replace with: “spurted”
+  - Replace with: “squared”
+  - Replace with: “squired”
+  - Replace with: “squirmed”
+  - Replace with: “squirted”
+  - Replace with: “starrier”
+  - Replace with: “storied”
+  - Replace with: “studied”
+  - Replace with: “sturdier”
+  - Replace with: “sullied”
+  - Replace with: “surfed”
+  - Replace with: “surged”
+  - Replace with: “surlier”
+  - Replace with: “surmised”
+  - Replace with: “surprised”
 
 
 
@@ -642,6 +763,44 @@ Suggest:
   - Replace with: “Ow”
   - Replace with: “Ox”
   - Replace with: “Oz”
+  - Replace with: “O”
+  - Replace with: “OD”
+  - Replace with: “OE”
+  - Replace with: “OG”
+  - Replace with: “OJ”
+  - Replace with: “OK”
+  - Replace with: “OT”
+  - Replace with: “Os”
+  - Replace with: “Ob”
+  - Replace with: “O's”
+  - Replace with: “OAS”
+  - Replace with: “OBD”
+  - Replace with: “OCR”
+  - Replace with: “ODs”
+  - Replace with: “OED”
+  - Replace with: “OEM”
+  - Replace with: “OGs”
+  - Replace with: “OKs”
+  - Replace with: “OMB”
+  - Replace with: “OMG”
+  - Replace with: “OOP”
+  - Replace with: “ORM”
+  - Replace with: “OSS”
+  - Replace with: “OTB”
+  - Replace with: “OTC”
+  - Replace with: “Oct”
+  - Replace with: “Ola”
+  - Replace with: “Ono”
+  - Replace with: “Ont”
+  - Replace with: “Ora”
+  - Replace with: “Orr”
+  - Replace with: “0s”
+  - Replace with: “1s”
+  - Replace with: “3D”
+  - Replace with: “AA”
+  - Replace with: “AF”
+  - Replace with: “AI”
+  - Replace with: “AK”
 
 
 
@@ -669,6 +828,44 @@ Suggest:
   - Replace with: “nest”
   - Replace with: “rest”
   - Replace with: “set”
+  - Replace with: “test”
+  - Replace with: “vest”
+  - Replace with: “west”
+  - Replace with: “ear”
+  - Replace with: “ease”
+  - Replace with: “easy”
+  - Replace with: “ebb”
+  - Replace with: “edit”
+  - Replace with: “eek”
+  - Replace with: “eel”
+  - Replace with: “eff”
+  - Replace with: “egg”
+  - Replace with: “ego”
+  - Replace with: “eh”
+  - Replace with: “elf”
+  - Replace with: “elk”
+  - Replace with: “ell”
+  - Replace with: “elm”
+  - Replace with: “else”
+  - Replace with: “em”
+  - Replace with: “emit”
+  - Replace with: “emo”
+  - Replace with: “emu”
+  - Replace with: “end”
+  - Replace with: “eon”
+  - Replace with: “era”
+  - Replace with: “ere”
+  - Replace with: “erg”
+  - Replace with: “err”
+  - Replace with: “esp.”
+  - Replace with: “espy”
+  - Replace with: “ester”
+  - Replace with: “eta”
+  - Replace with: “eve”
+  - Replace with: “ewe”
+  - Replace with: “ex”
+  - Replace with: “exist”
+  - Replace with: “exit”
 
 
 
@@ -687,6 +884,44 @@ Suggest:
   - Replace with: “cattle”
   - Replace with: “chalet”
   - Replace with: “chance”
+  - Replace with: “change”
+  - Replace with: “chant”
+  - Replace with: “chapter”
+  - Replace with: “charge”
+  - Replace with: “chart”
+  - Replace with: “charter”
+  - Replace with: “chase”
+  - Replace with: “chat”
+  - Replace with: “chute”
+  - Replace with: “crate”
+  - Replace with: “catted”
+  - Replace with: “catty”
+  - Replace with: “chafe”
+  - Replace with: “chaise”
+  - Replace with: “chanted”
+  - Replace with: “chanter”
+  - Replace with: “chantey”
+  - Replace with: “chants”
+  - Replace with: “charted”
+  - Replace with: “charts”
+  - Replace with: “chasten”
+  - Replace with: “chaster”
+  - Replace with: “chats”
+  - Replace with: “chattels”
+  - Replace with: “chatters”
+  - Replace with: “chattier”
+  - Replace with: “clatter”
+  - Replace with: “cat's”
+  - Replace with: “chant's”
+  - Replace with: “chap's”
+  - Replace with: “char's”
+  - Replace with: “haste”
+  - Replace with: “hate”
+  - Replace with: “matte”
+  - Replace with: “shatter”
+  - Replace with: “cable”
+  - Replace with: “cache”
+  - Replace with: “cacti”
 
 
 
@@ -756,6 +991,44 @@ Suggest:
   - Replace with: “Glory”
   - Replace with: “Gory”
   - Replace with: “Lacy”
+  - Replace with: “Lady”
+  - Replace with: “Lard”
+  - Replace with: “Lark”
+  - Replace with: “Lay”
+  - Replace with: “Lazy”
+  - Replace with: “Levy”
+  - Replace with: “Lily”
+  - Replace with: “Lira”
+  - Replace with: “Lire”
+  - Replace with: “Load”
+  - Replace with: “Loaf”
+  - Replace with: “Loan”
+  - Replace with: “Lobby”
+  - Replace with: “Lobe”
+  - Replace with: “Loci”
+  - Replace with: “Lock”
+  - Replace with: “Loco”
+  - Replace with: “Loft”
+  - Replace with: “Lofty”
+  - Replace with: “Log”
+  - Replace with: “Logo”
+  - Replace with: “Loin”
+  - Replace with: “Lone”
+  - Replace with: “Long”
+  - Replace with: “Loo”
+  - Replace with: “Look”
+  - Replace with: “Loom”
+  - Replace with: “Loon”
+  - Replace with: “Loop”
+  - Replace with: “Loos”
+  - Replace with: “Loot”
+  - Replace with: “Lop”
+  - Replace with: “Lope”
+  - Replace with: “Lose”
+  - Replace with: “Loss”
+  - Replace with: “Lost”
+  - Replace with: “Lot”
+  - Replace with: “Loud”
 
 
 
@@ -771,10 +1044,48 @@ Suggest:
   - Replace with: “draggier”
   - Replace with: “drawled”
   - Replace with: “ragged”
+  - Replace with: “dagger”
+  - Replace with: “dogged”
+  - Replace with: “dragging”
   - Replace with: “bedraggled”
   - Replace with: “bragged”
   - Replace with: “haggled”
   - Replace with: “straggled”
+  - Replace with: “waggled”
+  - Replace with: “wrangled”
+  - Replace with: “wriggled”
+  - Replace with: “dabbled”
+  - Replace with: “dandled”
+  - Replace with: “danged”
+  - Replace with: “dangle”
+  - Replace with: “dangler”
+  - Replace with: “dangles”
+  - Replace with: “dappled”
+  - Replace with: “dawdled”
+  - Replace with: “dazzled”
+  - Replace with: “derailed”
+  - Replace with: “deranged”
+  - Replace with: “dialed”
+  - Replace with: “dialled”
+  - Replace with: “dogsled”
+  - Replace with: “drafted”
+  - Replace with: “draggiest”
+  - Replace with: “draggy”
+  - Replace with: “dragnet”
+  - Replace with: “dragooned”
+  - Replace with: “dragster”
+  - Replace with: “drained”
+  - Replace with: “draped”
+  - Replace with: “dratted”
+  - Replace with: “dredged”
+  - Replace with: “dribbled”
+  - Replace with: “drilled”
+  - Replace with: “driveled”
+  - Replace with: “drizzled”
+  - Replace with: “drooled”
+  - Replace with: “drudged”
+  - Replace with: “druggie”
+  - Replace with: “druggies”
 
 
 
@@ -818,6 +1129,44 @@ Suggest:
   - Replace with: “Glory”
   - Replace with: “Gory”
   - Replace with: “Lacy”
+  - Replace with: “Lady”
+  - Replace with: “Lard”
+  - Replace with: “Lark”
+  - Replace with: “Lay”
+  - Replace with: “Lazy”
+  - Replace with: “Levy”
+  - Replace with: “Lily”
+  - Replace with: “Lira”
+  - Replace with: “Lire”
+  - Replace with: “Load”
+  - Replace with: “Loaf”
+  - Replace with: “Loan”
+  - Replace with: “Lobby”
+  - Replace with: “Lobe”
+  - Replace with: “Loci”
+  - Replace with: “Lock”
+  - Replace with: “Loco”
+  - Replace with: “Loft”
+  - Replace with: “Lofty”
+  - Replace with: “Log”
+  - Replace with: “Logo”
+  - Replace with: “Loin”
+  - Replace with: “Lone”
+  - Replace with: “Long”
+  - Replace with: “Loo”
+  - Replace with: “Look”
+  - Replace with: “Loom”
+  - Replace with: “Loon”
+  - Replace with: “Loop”
+  - Replace with: “Loos”
+  - Replace with: “Loot”
+  - Replace with: “Lop”
+  - Replace with: “Lope”
+  - Replace with: “Lose”
+  - Replace with: “Loss”
+  - Replace with: “Lost”
+  - Replace with: “Lot”
+  - Replace with: “Loud”
 
 
 
@@ -837,6 +1186,44 @@ Suggest:
   - Replace with: “Glory”
   - Replace with: “Gory”
   - Replace with: “Lacy”
+  - Replace with: “Lady”
+  - Replace with: “Lard”
+  - Replace with: “Lark”
+  - Replace with: “Lay”
+  - Replace with: “Lazy”
+  - Replace with: “Levy”
+  - Replace with: “Lily”
+  - Replace with: “Lira”
+  - Replace with: “Lire”
+  - Replace with: “Load”
+  - Replace with: “Loaf”
+  - Replace with: “Loan”
+  - Replace with: “Lobby”
+  - Replace with: “Lobe”
+  - Replace with: “Loci”
+  - Replace with: “Lock”
+  - Replace with: “Loco”
+  - Replace with: “Loft”
+  - Replace with: “Lofty”
+  - Replace with: “Log”
+  - Replace with: “Logo”
+  - Replace with: “Loin”
+  - Replace with: “Lone”
+  - Replace with: “Long”
+  - Replace with: “Loo”
+  - Replace with: “Look”
+  - Replace with: “Loom”
+  - Replace with: “Loon”
+  - Replace with: “Loop”
+  - Replace with: “Loos”
+  - Replace with: “Loot”
+  - Replace with: “Lop”
+  - Replace with: “Lope”
+  - Replace with: “Lose”
+  - Replace with: “Loss”
+  - Replace with: “Lost”
+  - Replace with: “Lot”
+  - Replace with: “Loud”
 
 
 
@@ -855,6 +1242,44 @@ Suggest:
   - Replace with: “Mopar”
   - Replace with: “Moran”
   - Replace with: “Morgan”
+  - Replace with: “Mortars”
+  - Replace with: “Motorcar”
+  - Replace with: “Marc's”
+  - Replace with: “More's”
+  - Replace with: “Moro's”
+  - Replace with: “Mort's”
+  - Replace with: “Merc's”
+  - Replace with: “Boxcar”
+  - Replace with: “Mar”
+  - Replace with: “March”
+  - Replace with: “Maria”
+  - Replace with: “Marker”
+  - Replace with: “Martyr”
+  - Replace with: “Mecca”
+  - Replace with: “Mercury”
+  - Replace with: “Mercy”
+  - Replace with: “Mica”
+  - Replace with: “Mirror”
+  - Replace with: “Moat”
+  - Replace with: “Mock”
+  - Replace with: “Modal”
+  - Replace with: “Modular”
+  - Replace with: “Dorcas”
+  - Replace with: “Macao”
+  - Replace with: “Magyar”
+  - Replace with: “Majorca”
+  - Replace with: “Mara”
+  - Replace with: “Marat”
+  - Replace with: “Marc”
+  - Replace with: “Marceau”
+  - Replace with: “Marcel”
+  - Replace with: “Marci”
+  - Replace with: “Marcia”
+  - Replace with: “Marcie”
+  - Replace with: “Marco”
+  - Replace with: “Marcos”
+  - Replace with: “Marcus”
+  - Replace with: “Marcy”
 
 
 
@@ -880,6 +1305,44 @@ Suggest:
   - Replace with: “Glory”
   - Replace with: “Gory”
   - Replace with: “Lacy”
+  - Replace with: “Lady”
+  - Replace with: “Lard”
+  - Replace with: “Lark”
+  - Replace with: “Lay”
+  - Replace with: “Lazy”
+  - Replace with: “Levy”
+  - Replace with: “Lily”
+  - Replace with: “Lira”
+  - Replace with: “Lire”
+  - Replace with: “Load”
+  - Replace with: “Loaf”
+  - Replace with: “Loan”
+  - Replace with: “Lobby”
+  - Replace with: “Lobe”
+  - Replace with: “Loci”
+  - Replace with: “Lock”
+  - Replace with: “Loco”
+  - Replace with: “Loft”
+  - Replace with: “Lofty”
+  - Replace with: “Log”
+  - Replace with: “Logo”
+  - Replace with: “Loin”
+  - Replace with: “Lone”
+  - Replace with: “Long”
+  - Replace with: “Loo”
+  - Replace with: “Look”
+  - Replace with: “Loom”
+  - Replace with: “Loon”
+  - Replace with: “Loop”
+  - Replace with: “Loos”
+  - Replace with: “Loot”
+  - Replace with: “Lop”
+  - Replace with: “Lope”
+  - Replace with: “Lose”
+  - Replace with: “Loss”
+  - Replace with: “Lost”
+  - Replace with: “Lot”
+  - Replace with: “Loud”
 
 
 
@@ -898,6 +1361,44 @@ Suggest:
   - Replace with: “Glory”
   - Replace with: “Gory”
   - Replace with: “Lacy”
+  - Replace with: “Lady”
+  - Replace with: “Lard”
+  - Replace with: “Lark”
+  - Replace with: “Lay”
+  - Replace with: “Lazy”
+  - Replace with: “Levy”
+  - Replace with: “Lily”
+  - Replace with: “Lira”
+  - Replace with: “Lire”
+  - Replace with: “Load”
+  - Replace with: “Loaf”
+  - Replace with: “Loan”
+  - Replace with: “Lobby”
+  - Replace with: “Lobe”
+  - Replace with: “Loci”
+  - Replace with: “Lock”
+  - Replace with: “Loco”
+  - Replace with: “Loft”
+  - Replace with: “Lofty”
+  - Replace with: “Log”
+  - Replace with: “Logo”
+  - Replace with: “Loin”
+  - Replace with: “Lone”
+  - Replace with: “Long”
+  - Replace with: “Loo”
+  - Replace with: “Look”
+  - Replace with: “Loom”
+  - Replace with: “Loon”
+  - Replace with: “Loop”
+  - Replace with: “Loos”
+  - Replace with: “Loot”
+  - Replace with: “Lop”
+  - Replace with: “Lope”
+  - Replace with: “Lose”
+  - Replace with: “Loss”
+  - Replace with: “Lost”
+  - Replace with: “Lot”
+  - Replace with: “Loud”
 
 
 
@@ -917,6 +1418,44 @@ Suggest:
   - Replace with: “Mopar”
   - Replace with: “Moran”
   - Replace with: “Morgan”
+  - Replace with: “Mortars”
+  - Replace with: “Motorcar”
+  - Replace with: “Marc's”
+  - Replace with: “More's”
+  - Replace with: “Moro's”
+  - Replace with: “Mort's”
+  - Replace with: “Merc's”
+  - Replace with: “Boxcar”
+  - Replace with: “Mar”
+  - Replace with: “March”
+  - Replace with: “Maria”
+  - Replace with: “Marker”
+  - Replace with: “Martyr”
+  - Replace with: “Mecca”
+  - Replace with: “Mercury”
+  - Replace with: “Mercy”
+  - Replace with: “Mica”
+  - Replace with: “Mirror”
+  - Replace with: “Moat”
+  - Replace with: “Mock”
+  - Replace with: “Modal”
+  - Replace with: “Modular”
+  - Replace with: “Dorcas”
+  - Replace with: “Macao”
+  - Replace with: “Magyar”
+  - Replace with: “Majorca”
+  - Replace with: “Mara”
+  - Replace with: “Marat”
+  - Replace with: “Marc”
+  - Replace with: “Marceau”
+  - Replace with: “Marcel”
+  - Replace with: “Marci”
+  - Replace with: “Marcia”
+  - Replace with: “Marcie”
+  - Replace with: “Marco”
+  - Replace with: “Marcos”
+  - Replace with: “Marcus”
+  - Replace with: “Marcy”
 
 
 
@@ -937,7 +1476,51 @@ Suggest:
   - Replace with: “Stand”
   - Replace with: “Stipend”
   - Replace with: “Strand”
+  - Replace with: “Stigma's”
+  - Replace with: “Sand”
+  - Replace with: “Sign”
+  - Replace with: “Signal”
+  - Replace with: “Slogan”
+  - Replace with: “Stagnant”
+  - Replace with: “Stead”
+  - Replace with: “Steward”
+  - Replace with: “Stigma”
+  - Replace with: “Sting”
+  - Replace with: “Stint”
+  - Replace with: “Stirred”
   - Replace with: “Brigand”
+  - Replace with: “Sagan”
+  - Replace with: “Saigon”
+  - Replace with: “Sigmund”
+  - Replace with: “Sigurd”
+  - Replace with: “Sivan”
+  - Replace with: “Stan”
+  - Replace with: “Stefan”
+  - Replace with: “Stine”
+  - Replace with: “Streisand”
+  - Replace with: “Stygian”
+  - Replace with: “Szilard”
+  - Replace with: “Sighed”
+  - Replace with: “Signed”
+  - Replace with: “Signs”
+  - Replace with: “Slogans”
+  - Replace with: “Soigne”
+  - Replace with: “Staged”
+  - Replace with: “Stagehand”
+  - Replace with: “Staging”
+  - Replace with: “Staid”
+  - Replace with: “Stands”
+  - Replace with: “Stank”
+  - Replace with: “Stiffed”
+  - Replace with: “Stifled”
+  - Replace with: “Stigmas”
+  - Replace with: “Stigmata”
+  - Replace with: “Stilled”
+  - Replace with: “Stilted”
+  - Replace with: “Stinging”
+  - Replace with: “Stink”
+  - Replace with: “Stinted”
+  - Replace with: “Stipends”
 
 
 
@@ -948,11 +1531,53 @@ Message: |
          |                            ^~~~~~~~ Did you mean to spell `Atheling` this way?
 Suggest:
   - Replace with: “Adhering”
+  - Replace with: “Atheism”
+  - Replace with: “Atheist”
   - Replace with: “Fathering”
   - Replace with: “Gathering”
   - Replace with: “Lathering”
   - Replace with: “Theming”
+  - Replace with: “Athena”
+  - Replace with: “Athene”
+  - Replace with: “Athenian”
+  - Replace with: “Athenians”
+  - Replace with: “Athens”
+  - Replace with: “Authoring”
+  - Replace with: “Agreeing”
+  - Replace with: “Atelier”
   - Replace with: “Steeling”
+  - Replace with: “Adeline”
+  - Replace with: “Angelina”
+  - Replace with: “Angeline”
+  - Replace with: “Abseiling”
+  - Replace with: “Acceding”
+  - Replace with: “Achieving”
+  - Replace with: “Aching”
+  - Replace with: “Addling”
+  - Replace with: “Ageing”
+  - Replace with: “Ailing”
+  - Replace with: “Aliening”
+  - Replace with: “Alleging”
+  - Replace with: “Altering”
+  - Replace with: “Ambling”
+  - Replace with: “Angering”
+  - Replace with: “Angling”
+  - Replace with: “Annealing”
+  - Replace with: “Annexing”
+  - Replace with: “Anteing”
+  - Replace with: “Aphelia”
+  - Replace with: “Aphelion”
+  - Replace with: “Aphelions”
+  - Replace with: “Appealing”
+  - Replace with: “Ashing”
+  - Replace with: “Atoning”
+  - Replace with: “Attending”
+  - Replace with: “Attesting”
+  - Replace with: “Attiring”
+  - Replace with: “Attuning”
+  - Replace with: “Availing”
+  - Replace with: “Thing”
+  - Replace with: “Catherine”
 
 
 
@@ -1013,6 +1638,44 @@ Suggest:
   - Replace with: “Glory”
   - Replace with: “Gory”
   - Replace with: “Lacy”
+  - Replace with: “Lady”
+  - Replace with: “Lard”
+  - Replace with: “Lark”
+  - Replace with: “Lay”
+  - Replace with: “Lazy”
+  - Replace with: “Levy”
+  - Replace with: “Lily”
+  - Replace with: “Lira”
+  - Replace with: “Lire”
+  - Replace with: “Load”
+  - Replace with: “Loaf”
+  - Replace with: “Loan”
+  - Replace with: “Lobby”
+  - Replace with: “Lobe”
+  - Replace with: “Loci”
+  - Replace with: “Lock”
+  - Replace with: “Loco”
+  - Replace with: “Loft”
+  - Replace with: “Lofty”
+  - Replace with: “Log”
+  - Replace with: “Logo”
+  - Replace with: “Loin”
+  - Replace with: “Lone”
+  - Replace with: “Long”
+  - Replace with: “Loo”
+  - Replace with: “Look”
+  - Replace with: “Loom”
+  - Replace with: “Loon”
+  - Replace with: “Loop”
+  - Replace with: “Loos”
+  - Replace with: “Loot”
+  - Replace with: “Lop”
+  - Replace with: “Lope”
+  - Replace with: “Lose”
+  - Replace with: “Loss”
+  - Replace with: “Lost”
+  - Replace with: “Lot”
+  - Replace with: “Loud”
 
 
 
@@ -1031,6 +1694,44 @@ Suggest:
   - Replace with: “Glory”
   - Replace with: “Gory”
   - Replace with: “Lacy”
+  - Replace with: “Lady”
+  - Replace with: “Lard”
+  - Replace with: “Lark”
+  - Replace with: “Lay”
+  - Replace with: “Lazy”
+  - Replace with: “Levy”
+  - Replace with: “Lily”
+  - Replace with: “Lira”
+  - Replace with: “Lire”
+  - Replace with: “Load”
+  - Replace with: “Loaf”
+  - Replace with: “Loan”
+  - Replace with: “Lobby”
+  - Replace with: “Lobe”
+  - Replace with: “Loci”
+  - Replace with: “Lock”
+  - Replace with: “Loco”
+  - Replace with: “Loft”
+  - Replace with: “Lofty”
+  - Replace with: “Log”
+  - Replace with: “Logo”
+  - Replace with: “Loin”
+  - Replace with: “Lone”
+  - Replace with: “Long”
+  - Replace with: “Loo”
+  - Replace with: “Look”
+  - Replace with: “Loom”
+  - Replace with: “Loon”
+  - Replace with: “Loop”
+  - Replace with: “Loos”
+  - Replace with: “Loot”
+  - Replace with: “Lop”
+  - Replace with: “Lope”
+  - Replace with: “Lose”
+  - Replace with: “Loss”
+  - Replace with: “Lost”
+  - Replace with: “Lot”
+  - Replace with: “Loud”
 
 
 
@@ -1067,34 +1768,33 @@ Message: |
      566 | but they were nowhere to be seen—everything seemed to have changed since her
 Suggest:
   - Replace with: “naturally”
+  - Replace with: “nature's”
+  - Replace with: “natural”
+  - Replace with: “nature”
   - Replace with: “maturely”
-
-
-
-Lint:    Spelling (63 priority)
-Message: |
-     579 | little house, on the door of which was a bright brass plate with the name “W.
-         |                                                                            ^~ Did you mean to spell `W.` this way?
-Suggest:
-  - Replace with: “We”
-  - Replace with: “WA”
-  - Replace with: “WI”
-  - Replace with: “Wu”
-  - Replace with: “WC”
-  - Replace with: “WP”
-  - Replace with: “WV”
-  - Replace with: “WW”
-  - Replace with: “WY”
-  - Replace with: “Wm”
+  - Replace with: “nakedly”
+  - Replace with: “natively”
+  - Replace with: “naturals”
+  - Replace with: “natures”
+  - Replace with: “Saturday”
+  - Replace with: “assuredly”
+  - Replace with: “matured”
+  - Replace with: “sacredly”
+  - Replace with: “tiredly”
 
 
 
 Lint:    Spelling (63 priority)
 Message: |
      585 | I suppose Dinah’ll be sending me on messages next!” And she began fancying the
-         |           ^~~~~~~~ Did you mean `Dinah's`?
+         |           ^~~~~~~~ Did you mean to spell `Dinah’ll` this way?
 Suggest:
   - Replace with: “Dinah's”
+  - Replace with: “Dina's”
+  - Replace with: “Dinar's”
+  - Replace with: “Dinah”
+  - Replace with: “Dunghill”
+  - Replace with: “Winchell”
 
 
 
@@ -1189,6 +1889,20 @@ Suggest:
   - Replace with: “array”
   - Replace with: “arrow”
   - Replace with: “atrium”
+  - Replace with: “antrum”
+  - Replace with: “arums”
+  - Replace with: “barium”
+  - Replace with: “drum”
+  - Replace with: “forum”
+  - Replace with: “rum”
+  - Replace with: “scrum”
+  - Replace with: “serum”
+  - Replace with: “Barnum”
+  - Replace with: “durum”
+  - Replace with: “eardrum”
+  - Replace with: “sacrum”
+  - Replace with: “strum”
+  - Replace with: “thrum”
 
 
 
@@ -1289,18 +2003,24 @@ Lint:    Spelling (63 priority)
 Message: |
      723 | minute or two, they began moving about again, and Alice heard the Rabbit say, “A
      724 | barrowful will do, to begin with.”
-         | ^~~~~~~~~ Did you mean `sorrowful`?
+         | ^~~~~~~~~ Did you mean to spell `barrowful` this way?
 Suggest:
+  - Replace with: “barrow's”
+  - Replace with: “barrow”
   - Replace with: “sorrowful”
+  - Replace with: “barrows”
 
 
 
 Lint:    Spelling (63 priority)
 Message: |
      726 | “A barrowful of what?” thought Alice; but she had not long to doubt, for the
-         |    ^~~~~~~~~ Did you mean `sorrowful`?
+         |    ^~~~~~~~~ Did you mean to spell `barrowful` this way?
 Suggest:
+  - Replace with: “barrow's”
+  - Replace with: “barrow”
   - Replace with: “sorrowful”
+  - Replace with: “barrows”
 
 
 
@@ -1375,6 +2095,44 @@ Suggest:
   - Replace with: “lean's”
   - Replace with: “meant”
   - Replace with: “land”
+  - Replace with: “lane”
+  - Replace with: “last”
+  - Replace with: “lat”
+  - Replace with: “lea”
+  - Replace with: “leach”
+  - Replace with: “lead”
+  - Replace with: “leaf”
+  - Replace with: “leak”
+  - Replace with: “leaky”
+  - Replace with: “leap”
+  - Replace with: “learn”
+  - Replace with: “lease”
+  - Replace with: “leave”
+  - Replace with: “left”
+  - Replace with: “legit”
+  - Replace with: “lend”
+  - Replace with: “let”
+  - Replace with: “loan”
+  - Replace with: “Leann”
+  - Replace with: “Levant”
+  - Replace with: “lank”
+  - Replace with: “leads”
+  - Replace with: “leafs”
+  - Replace with: “leafy”
+  - Replace with: “leaks”
+  - Replace with: “leaned”
+  - Replace with: “leaner”
+  - Replace with: “leanest”
+  - Replace with: “leaps”
+  - Replace with: “learns”
+  - Replace with: “leas”
+  - Replace with: “leash”
+  - Replace with: “lens”
+  - Replace with: “lento”
+  - Replace with: “lest”
+  - Replace with: “lint”
+  - Replace with: “llano”
+  - Replace with: “loans”
 
 
 
@@ -1473,6 +2231,17 @@ Message: |
 Suggest:
   - Replace with: “left-hand”
   - Replace with: “leftward”
+  - Replace with: “lethal”
+  - Replace with: “leftwards”
+  - Replace with: “leotard”
+  - Replace with: “longhand”
+  - Replace with: “methane”
+  - Replace with: “Bethany”
+  - Replace with: “ethane”
+  - Replace with: “wetland”
+  - Replace with: “Bertrand”
+  - Replace with: “deckhand”
+  - Replace with: “offhand”
 
 
 
@@ -1581,6 +2350,14 @@ Message: |
 Suggest:
   - Replace with: “right-hand”
   - Replace with: “rightward”
+  - Replace with: “firsthand”
+  - Replace with: “nighthawk”
+  - Replace with: “righted”
+  - Replace with: “righting”
+  - Replace with: “rightwards”
+  - Replace with: “highland”
+  - Replace with: “nightstand”
+  - Replace with: “tightwad”
 
 
 
@@ -1769,7 +2546,45 @@ Suggest:
   - Replace with: “nurtured”
   - Replace with: “hatred”
   - Replace with: “mature”
+  - Replace with: “naked”
+  - Replace with: “native”
+  - Replace with: “nausea”
+  - Replace with: “netted”
+  - Replace with: “nurture”
   - Replace with: “captured”
+  - Replace with: “catered”
+  - Replace with: “denatured”
+  - Replace with: “featured”
+  - Replace with: “manured”
+  - Replace with: “maturer”
+  - Replace with: “matures”
+  - Replace with: “pastured”
+  - Replace with: “statured”
+  - Replace with: “sutured”
+  - Replace with: “watered”
+  - Replace with: “nabbed”
+  - Replace with: “nacre”
+  - Replace with: “nagged”
+  - Replace with: “nailed”
+  - Replace with: “named”
+  - Replace with: “napped”
+  - Replace with: “natives”
+  - Replace with: “natter”
+  - Replace with: “natters”
+  - Replace with: “nattier”
+  - Replace with: “naturals”
+  - Replace with: “naturism”
+  - Replace with: “naturist”
+  - Replace with: “neared”
+  - Replace with: “neatened”
+  - Replace with: “nettled”
+  - Replace with: “neutered”
+  - Replace with: “nitre”
+  - Replace with: “notated”
+  - Replace with: “notched”
+  - Replace with: “noted”
+  - Replace with: “noticed”
+  - Replace with: “nuked”
 
 
 
@@ -1805,6 +2620,17 @@ Message: |
 Suggest:
   - Replace with: “left-hand”
   - Replace with: “leftward”
+  - Replace with: “lethal”
+  - Replace with: “leftwards”
+  - Replace with: “leotard”
+  - Replace with: “longhand”
+  - Replace with: “methane”
+  - Replace with: “Bethany”
+  - Replace with: “ethane”
+  - Replace with: “wetland”
+  - Replace with: “Bertrand”
+  - Replace with: “deckhand”
+  - Replace with: “offhand”
 
 
 
@@ -1914,6 +2740,44 @@ Suggest:
   - Replace with: “Laid”
   - Replace with: “Lain”
   - Replace with: “Lair”
+  - Replace with: “Lake”
+  - Replace with: “Lame”
+  - Replace with: “Lance”
+  - Replace with: “Lane”
+  - Replace with: “Lapse”
+  - Replace with: “Large”
+  - Replace with: “Late”
+  - Replace with: “Lathe”
+  - Replace with: “Lice”
+  - Replace with: “Lie”
+  - Replace with: “Loci”
+  - Replace with: “Lucid”
+  - Replace with: “Lacey”
+  - Replace with: “Latin”
+  - Replace with: “Laue”
+  - Replace with: “Laurie”
+  - Replace with: “Locke”
+  - Replace with: “Lorie”
+  - Replace with: “Louie”
+  - Replace with: “Luce”
+  - Replace with: “Lucia”
+  - Replace with: “Lucien”
+  - Replace with: “Lucile”
+  - Replace with: “Lucio”
+  - Replace with: “Lucite”
+  - Replace with: “Labia”
+  - Replace with: “Labile”
+  - Replace with: “Laced”
+  - Replace with: “Laces”
+  - Replace with: “Laciest”
+  - Replace with: “Lacing”
+  - Replace with: “Lacked”
+  - Replace with: “Lackey”
+  - Replace with: “Lacks”
+  - Replace with: “Laddie”
+  - Replace with: “Lade”
+  - Replace with: “Ladies”
+  - Replace with: “Ladle”
 
 
 
@@ -1932,6 +2796,44 @@ Suggest:
   - Replace with: “Willie”
   - Replace with: “Gillie”
   - Replace with: “Tiflis”
+  - Replace with: “Tillich”
+  - Replace with: “Tilsit”
+  - Replace with: “Talkie”
+  - Replace with: “Tallied”
+  - Replace with: “Tallier”
+  - Replace with: “Tallies”
+  - Replace with: “Tellies”
+  - Replace with: “Tilde”
+  - Replace with: “Tillage”
+  - Replace with: “Tilled”
+  - Replace with: “Tiller”
+  - Replace with: “Tilling”
+  - Replace with: “Tills”
+  - Replace with: “Tulle”
+  - Replace with: “Thalia”
+  - Replace with: “Thule”
+  - Replace with: “Tell's”
+  - Replace with: “Tull's”
+  - Replace with: “Allie”
+  - Replace with: “Callie”
+  - Replace with: “Dollie”
+  - Replace with: “Ellie”
+  - Replace with: “Hallie”
+  - Replace with: “Hollie”
+  - Replace with: “Kellie”
+  - Replace with: “Lille”
+  - Replace with: “Mollie”
+  - Replace with: “Nellie”
+  - Replace with: “Ollie”
+  - Replace with: “Sallie”
+  - Replace with: “Willis”
+  - Replace with: “Billies”
+  - Replace with: “Collie”
+  - Replace with: “Dillies”
+  - Replace with: “Fillies”
+  - Replace with: “Fillip”
+  - Replace with: “Gillies”
+  - Replace with: “Hillier”
 
 
 
@@ -2296,6 +3198,31 @@ Message: |
 Suggest:
   - Replace with: “chamomile”
   - Replace with: “chamomiles”
+  - Replace with: “chamomile's”
+  - Replace with: “campfire”
+  - Replace with: “campsite”
+  - Replace with: “carmine”
+  - Replace with: “compile”
+  - Replace with: “caboodle”
+  - Replace with: “cagoule”
+  - Replace with: “cajole”
+  - Replace with: “calamine”
+  - Replace with: “calorie”
+  - Replace with: “camisole”
+  - Replace with: “campanile”
+  - Replace with: “canonise”
+  - Replace with: “canonize”
+  - Replace with: “canoodle”
+  - Replace with: “caroming”
+  - Replace with: “clammily”
+  - Replace with: “commie”
+  - Replace with: “immobile”
+  - Replace with: “mobile”
+  - Replace with: “Sammie”
+  - Replace with: “Tammie”
+  - Replace with: “atomise”
+  - Replace with: “atomize”
+  - Replace with: “motile”
 
 
 
@@ -2314,6 +3241,44 @@ Suggest:
   - Replace with: “Ties”
   - Replace with: “Tins”
   - Replace with: “Tips”
+  - Replace with: “Tits”
+  - Replace with: “Ts”
+  - Replace with: “Ti”
+  - Replace with: “Tie”
+  - Replace with: “Til”
+  - Replace with: “Tin”
+  - Replace with: “Tip”
+  - Replace with: “Tit”
+  - Replace with: “Thais”
+  - Replace with: “TiB”
+  - Replace with: “Tia”
+  - Replace with: “Tim”
+  - Replace with: “TB's”
+  - Replace with: “TV's”
+  - Replace with: “Tia's”
+  - Replace with: “Tim's”
+  - Replace with: “Tu's”
+  - Replace with: “Ty's”
+  - Replace with: “His”
+  - Replace with: “Is”
+  - Replace with: “Its”
+  - Replace with: “Sis”
+  - Replace with: “THC”
+  - Replace with: “Th”
+  - Replace with: “Thu”
+  - Replace with: “Otis”
+  - Replace with: “Wis”
+  - Replace with: “Bis”
+  - Replace with: “Dis”
+  - Replace with: “Pis”
+  - Replace with: “Xis”
+  - Replace with: “TCPs”
+  - Replace with: “TOCs”
+  - Replace with: “TSRs”
+  - Replace with: “TUIs”
+  - Replace with: “TVRs”
+  - Replace with: “Tass”
+  - Replace with: “Tess”
 
 
 
@@ -2333,6 +3298,44 @@ Suggest:
   - Replace with: “tips”
   - Replace with: “tits”
   - Replace with: “ts”
+  - Replace with: “ti”
+  - Replace with: “tie”
+  - Replace with: “til”
+  - Replace with: “tin”
+  - Replace with: “tip”
+  - Replace with: “tit”
+  - Replace with: “T's”
+  - Replace with: “his”
+  - Replace with: “is”
+  - Replace with: “its”
+  - Replace with: “sis”
+  - Replace with: “Otis”
+  - Replace with: “Wis”
+  - Replace with: “bis”
+  - Replace with: “dis”
+  - Replace with: “pis”
+  - Replace with: “xis”
+  - Replace with: “TVs”
+  - Replace with: “C's”
+  - Replace with: “D's”
+  - Replace with: “Di's”
+  - Replace with: “E's”
+  - Replace with: “G's”
+  - Replace with: “J's”
+  - Replace with: “L's”
+  - Replace with: “M's”
+  - Replace with: “O's”
+  - Replace with: “R's”
+  - Replace with: “TiB”
+  - Replace with: “Tia”
+  - Replace with: “Tim”
+  - Replace with: “X's”
+  - Replace with: “Z's”
+  - Replace with: “bi's”
+  - Replace with: “0s”
+  - Replace with: “1s”
+  - Replace with: “as”
+  - Replace with: “ass”
 
 
 
@@ -2352,6 +3355,44 @@ Suggest:
   - Replace with: “tips”
   - Replace with: “tits”
   - Replace with: “ts”
+  - Replace with: “ti”
+  - Replace with: “tie”
+  - Replace with: “til”
+  - Replace with: “tin”
+  - Replace with: “tip”
+  - Replace with: “tit”
+  - Replace with: “T's”
+  - Replace with: “his”
+  - Replace with: “is”
+  - Replace with: “its”
+  - Replace with: “sis”
+  - Replace with: “Otis”
+  - Replace with: “Wis”
+  - Replace with: “bis”
+  - Replace with: “dis”
+  - Replace with: “pis”
+  - Replace with: “xis”
+  - Replace with: “TVs”
+  - Replace with: “C's”
+  - Replace with: “D's”
+  - Replace with: “Di's”
+  - Replace with: “E's”
+  - Replace with: “G's”
+  - Replace with: “J's”
+  - Replace with: “L's”
+  - Replace with: “M's”
+  - Replace with: “O's”
+  - Replace with: “R's”
+  - Replace with: “TiB”
+  - Replace with: “Tia”
+  - Replace with: “Tim”
+  - Replace with: “X's”
+  - Replace with: “Z's”
+  - Replace with: “bi's”
+  - Replace with: “0s”
+  - Replace with: “1s”
+  - Replace with: “as”
+  - Replace with: “ass”
 
 
 
@@ -2409,9 +3450,32 @@ Message: |
 Lint:    Spelling (63 priority)
 Message: |
     2091 | They very soon came upon a Gryphon, lying fast asleep in the sun. (If you don’t
-         |                            ^~~~~~~ Did you mean `Krypton`?
+         |                            ^~~~~~~ Did you mean to spell `Gryphon` this way?
 Suggest:
+  - Replace with: “Graph's”
   - Replace with: “Krypton”
+  - Replace with: “Graph”
+  - Replace with: “Graphic”
+  - Replace with: “Graphs”
+  - Replace with: “Grafton”
+  - Replace with: “GraphQL”
+  - Replace with: “Glyph”
+  - Replace with: “Glyphs”
+  - Replace with: “Graphed”
+  - Replace with: “Graphing”
+  - Replace with: “Griffon”
+  - Replace with: “Grunion”
+  - Replace with: “Crypto”
+  - Replace with: “Hyphen”
+  - Replace with: “Orphan”
+  - Replace with: “Python”
+  - Replace with: “Siphon”
+  - Replace with: “Typhoon”
+  - Replace with: “Bryon”
+  - Replace with: “CPython”
+  - Replace with: “Erewhon”
+  - Replace with: “Cryptos”
+  - Replace with: “Payphone”
 
 
 
@@ -2419,9 +3483,32 @@ Lint:    Spelling (63 priority)
 Message: |
     2091 | They very soon came upon a Gryphon, lying fast asleep in the sun. (If you don’t
     2092 | know what a Gryphon is, look at the picture.) “Up, lazy thing!” said the Queen,
-         |             ^~~~~~~ Did you mean `Krypton`?
+         |             ^~~~~~~ Did you mean to spell `Gryphon` this way?
 Suggest:
+  - Replace with: “Graph's”
   - Replace with: “Krypton”
+  - Replace with: “Graph”
+  - Replace with: “Graphic”
+  - Replace with: “Graphs”
+  - Replace with: “Grafton”
+  - Replace with: “GraphQL”
+  - Replace with: “Glyph”
+  - Replace with: “Glyphs”
+  - Replace with: “Graphed”
+  - Replace with: “Graphing”
+  - Replace with: “Griffon”
+  - Replace with: “Grunion”
+  - Replace with: “Crypto”
+  - Replace with: “Hyphen”
+  - Replace with: “Orphan”
+  - Replace with: “Python”
+  - Replace with: “Siphon”
+  - Replace with: “Typhoon”
+  - Replace with: “Bryon”
+  - Replace with: “CPython”
+  - Replace with: “Erewhon”
+  - Replace with: “Cryptos”
+  - Replace with: “Payphone”
 
 
 
@@ -2429,65 +3516,226 @@ Lint:    Spelling (63 priority)
 Message: |
     2094 | must go back and see after some executions I have ordered;” and she walked off,
     2095 | leaving Alice alone with the Gryphon. Alice did not quite like the look of the
-         |                              ^~~~~~~ Did you mean `Krypton`?
+         |                              ^~~~~~~ Did you mean to spell `Gryphon` this way?
 Suggest:
+  - Replace with: “Graph's”
   - Replace with: “Krypton”
+  - Replace with: “Graph”
+  - Replace with: “Graphic”
+  - Replace with: “Graphs”
+  - Replace with: “Grafton”
+  - Replace with: “GraphQL”
+  - Replace with: “Glyph”
+  - Replace with: “Glyphs”
+  - Replace with: “Graphed”
+  - Replace with: “Graphing”
+  - Replace with: “Griffon”
+  - Replace with: “Grunion”
+  - Replace with: “Crypto”
+  - Replace with: “Hyphen”
+  - Replace with: “Orphan”
+  - Replace with: “Python”
+  - Replace with: “Siphon”
+  - Replace with: “Typhoon”
+  - Replace with: “Bryon”
+  - Replace with: “CPython”
+  - Replace with: “Erewhon”
+  - Replace with: “Cryptos”
+  - Replace with: “Payphone”
 
 
 
 Lint:    Spelling (63 priority)
 Message: |
     2099 | The Gryphon sat up and rubbed its eyes: then it watched the Queen till she was
-         |     ^~~~~~~ Did you mean `Krypton`?
+         |     ^~~~~~~ Did you mean to spell `Gryphon` this way?
 Suggest:
+  - Replace with: “Graph's”
   - Replace with: “Krypton”
+  - Replace with: “Graph”
+  - Replace with: “Graphic”
+  - Replace with: “Graphs”
+  - Replace with: “Grafton”
+  - Replace with: “GraphQL”
+  - Replace with: “Glyph”
+  - Replace with: “Glyphs”
+  - Replace with: “Graphed”
+  - Replace with: “Graphing”
+  - Replace with: “Griffon”
+  - Replace with: “Grunion”
+  - Replace with: “Crypto”
+  - Replace with: “Hyphen”
+  - Replace with: “Orphan”
+  - Replace with: “Python”
+  - Replace with: “Siphon”
+  - Replace with: “Typhoon”
+  - Replace with: “Bryon”
+  - Replace with: “CPython”
+  - Replace with: “Erewhon”
+  - Replace with: “Cryptos”
+  - Replace with: “Payphone”
 
 
 
 Lint:    Spelling (63 priority)
 Message: |
     2100 | out of sight: then it chuckled. “What fun!” said the Gryphon, half to itself,
-         |                                                      ^~~~~~~ Did you mean `Krypton`?
+         |                                                      ^~~~~~~ Did you mean to spell `Gryphon` this way?
     2101 | half to Alice.
 Suggest:
+  - Replace with: “Graph's”
   - Replace with: “Krypton”
+  - Replace with: “Graph”
+  - Replace with: “Graphic”
+  - Replace with: “Graphs”
+  - Replace with: “Grafton”
+  - Replace with: “GraphQL”
+  - Replace with: “Glyph”
+  - Replace with: “Glyphs”
+  - Replace with: “Graphed”
+  - Replace with: “Graphing”
+  - Replace with: “Griffon”
+  - Replace with: “Grunion”
+  - Replace with: “Crypto”
+  - Replace with: “Hyphen”
+  - Replace with: “Orphan”
+  - Replace with: “Python”
+  - Replace with: “Siphon”
+  - Replace with: “Typhoon”
+  - Replace with: “Bryon”
+  - Replace with: “CPython”
+  - Replace with: “Erewhon”
+  - Replace with: “Cryptos”
+  - Replace with: “Payphone”
 
 
 
 Lint:    Spelling (63 priority)
 Message: |
     2105 | “Why, she,” said the Gryphon. “It’s all her fancy, that: they never executes
-         |                      ^~~~~~~ Did you mean `Krypton`?
+         |                      ^~~~~~~ Did you mean to spell `Gryphon` this way?
 Suggest:
+  - Replace with: “Graph's”
   - Replace with: “Krypton”
+  - Replace with: “Graph”
+  - Replace with: “Graphic”
+  - Replace with: “Graphs”
+  - Replace with: “Grafton”
+  - Replace with: “GraphQL”
+  - Replace with: “Glyph”
+  - Replace with: “Glyphs”
+  - Replace with: “Graphed”
+  - Replace with: “Graphing”
+  - Replace with: “Griffon”
+  - Replace with: “Grunion”
+  - Replace with: “Crypto”
+  - Replace with: “Hyphen”
+  - Replace with: “Orphan”
+  - Replace with: “Python”
+  - Replace with: “Siphon”
+  - Replace with: “Typhoon”
+  - Replace with: “Bryon”
+  - Replace with: “CPython”
+  - Replace with: “Erewhon”
+  - Replace with: “Cryptos”
+  - Replace with: “Payphone”
 
 
 
 Lint:    Spelling (63 priority)
 Message: |
     2114 | his sorrow?” she asked the Gryphon, and the Gryphon answered, very nearly in the
-         |                            ^~~~~~~ Did you mean `Krypton`?
+         |                            ^~~~~~~ Did you mean to spell `Gryphon` this way?
 Suggest:
+  - Replace with: “Graph's”
   - Replace with: “Krypton”
+  - Replace with: “Graph”
+  - Replace with: “Graphic”
+  - Replace with: “Graphs”
+  - Replace with: “Grafton”
+  - Replace with: “GraphQL”
+  - Replace with: “Glyph”
+  - Replace with: “Glyphs”
+  - Replace with: “Graphed”
+  - Replace with: “Graphing”
+  - Replace with: “Griffon”
+  - Replace with: “Grunion”
+  - Replace with: “Crypto”
+  - Replace with: “Hyphen”
+  - Replace with: “Orphan”
+  - Replace with: “Python”
+  - Replace with: “Siphon”
+  - Replace with: “Typhoon”
+  - Replace with: “Bryon”
+  - Replace with: “CPython”
+  - Replace with: “Erewhon”
+  - Replace with: “Cryptos”
+  - Replace with: “Payphone”
 
 
 
 Lint:    Spelling (63 priority)
 Message: |
     2114 | his sorrow?” she asked the Gryphon, and the Gryphon answered, very nearly in the
-         |                                             ^~~~~~~ Did you mean `Krypton`?
+         |                                             ^~~~~~~ Did you mean to spell `Gryphon` this way?
     2115 | same words as before, “It’s all his fancy, that: he hasn’t got no sorrow, you
 Suggest:
+  - Replace with: “Graph's”
   - Replace with: “Krypton”
+  - Replace with: “Graph”
+  - Replace with: “Graphic”
+  - Replace with: “Graphs”
+  - Replace with: “Grafton”
+  - Replace with: “GraphQL”
+  - Replace with: “Glyph”
+  - Replace with: “Glyphs”
+  - Replace with: “Graphed”
+  - Replace with: “Graphing”
+  - Replace with: “Griffon”
+  - Replace with: “Grunion”
+  - Replace with: “Crypto”
+  - Replace with: “Hyphen”
+  - Replace with: “Orphan”
+  - Replace with: “Python”
+  - Replace with: “Siphon”
+  - Replace with: “Typhoon”
+  - Replace with: “Bryon”
+  - Replace with: “CPython”
+  - Replace with: “Erewhon”
+  - Replace with: “Cryptos”
+  - Replace with: “Payphone”
 
 
 
 Lint:    Spelling (63 priority)
 Message: |
     2121 | “This here young lady,” said the Gryphon, “she wants for to know your history,
-         |                                  ^~~~~~~ Did you mean `Krypton`?
+         |                                  ^~~~~~~ Did you mean to spell `Gryphon` this way?
 Suggest:
+  - Replace with: “Graph's”
   - Replace with: “Krypton”
+  - Replace with: “Graph”
+  - Replace with: “Graphic”
+  - Replace with: “Graphs”
+  - Replace with: “Grafton”
+  - Replace with: “GraphQL”
+  - Replace with: “Glyph”
+  - Replace with: “Glyphs”
+  - Replace with: “Graphed”
+  - Replace with: “Graphing”
+  - Replace with: “Griffon”
+  - Replace with: “Grunion”
+  - Replace with: “Crypto”
+  - Replace with: “Hyphen”
+  - Replace with: “Orphan”
+  - Replace with: “Python”
+  - Replace with: “Siphon”
+  - Replace with: “Typhoon”
+  - Replace with: “Bryon”
+  - Replace with: “CPython”
+  - Replace with: “Erewhon”
+  - Replace with: “Cryptos”
+  - Replace with: “Payphone”
 
 
 
@@ -2518,10 +3766,33 @@ Suggest:
 Lint:    Spelling (63 priority)
 Message: |
     2134 | exclamation of “Hjckrrh!” from the Gryphon, and the constant heavy sobbing of
-         |                                    ^~~~~~~ Did you mean `Krypton`?
+         |                                    ^~~~~~~ Did you mean to spell `Gryphon` this way?
     2135 | the Mock Turtle. Alice was very nearly getting up and saying, “Thank you, sir,
 Suggest:
+  - Replace with: “Graph's”
   - Replace with: “Krypton”
+  - Replace with: “Graph”
+  - Replace with: “Graphic”
+  - Replace with: “Graphs”
+  - Replace with: “Grafton”
+  - Replace with: “GraphQL”
+  - Replace with: “Glyph”
+  - Replace with: “Glyphs”
+  - Replace with: “Graphed”
+  - Replace with: “Graphing”
+  - Replace with: “Griffon”
+  - Replace with: “Grunion”
+  - Replace with: “Crypto”
+  - Replace with: “Hyphen”
+  - Replace with: “Orphan”
+  - Replace with: “Python”
+  - Replace with: “Siphon”
+  - Replace with: “Typhoon”
+  - Replace with: “Bryon”
+  - Replace with: “CPython”
+  - Replace with: “Erewhon”
+  - Replace with: “Cryptos”
+  - Replace with: “Payphone”
 
 
 
@@ -2529,28 +3800,97 @@ Lint:    Spelling (63 priority)
 Message: |
     2148 | “You ought to be ashamed of yourself for asking such a simple question,” added
     2149 | the Gryphon; and then they both sat silent and looked at poor Alice, who felt
-         |     ^~~~~~~ Did you mean `Krypton`?
+         |     ^~~~~~~ Did you mean to spell `Gryphon` this way?
 Suggest:
+  - Replace with: “Graph's”
   - Replace with: “Krypton”
+  - Replace with: “Graph”
+  - Replace with: “Graphic”
+  - Replace with: “Graphs”
+  - Replace with: “Grafton”
+  - Replace with: “GraphQL”
+  - Replace with: “Glyph”
+  - Replace with: “Glyphs”
+  - Replace with: “Graphed”
+  - Replace with: “Graphing”
+  - Replace with: “Griffon”
+  - Replace with: “Grunion”
+  - Replace with: “Crypto”
+  - Replace with: “Hyphen”
+  - Replace with: “Orphan”
+  - Replace with: “Python”
+  - Replace with: “Siphon”
+  - Replace with: “Typhoon”
+  - Replace with: “Bryon”
+  - Replace with: “CPython”
+  - Replace with: “Erewhon”
+  - Replace with: “Cryptos”
+  - Replace with: “Payphone”
 
 
 
 Lint:    Spelling (63 priority)
 Message: |
     2150 | ready to sink into the earth. At last the Gryphon said to the Mock Turtle,
-         |                                           ^~~~~~~ Did you mean `Krypton`?
+         |                                           ^~~~~~~ Did you mean to spell `Gryphon` this way?
     2151 | “Drive on, old fellow! Don’t be all day about it!” and he went on in these
 Suggest:
+  - Replace with: “Graph's”
   - Replace with: “Krypton”
+  - Replace with: “Graph”
+  - Replace with: “Graphic”
+  - Replace with: “Graphs”
+  - Replace with: “Grafton”
+  - Replace with: “GraphQL”
+  - Replace with: “Glyph”
+  - Replace with: “Glyphs”
+  - Replace with: “Graphed”
+  - Replace with: “Graphing”
+  - Replace with: “Griffon”
+  - Replace with: “Grunion”
+  - Replace with: “Crypto”
+  - Replace with: “Hyphen”
+  - Replace with: “Orphan”
+  - Replace with: “Python”
+  - Replace with: “Siphon”
+  - Replace with: “Typhoon”
+  - Replace with: “Bryon”
+  - Replace with: “CPython”
+  - Replace with: “Erewhon”
+  - Replace with: “Cryptos”
+  - Replace with: “Payphone”
 
 
 
 Lint:    Spelling (63 priority)
 Message: |
     2160 | “Hold your tongue!” added the Gryphon, before Alice could speak again. The Mock
-         |                               ^~~~~~~ Did you mean `Krypton`?
+         |                               ^~~~~~~ Did you mean to spell `Gryphon` this way?
 Suggest:
+  - Replace with: “Graph's”
   - Replace with: “Krypton”
+  - Replace with: “Graph”
+  - Replace with: “Graphic”
+  - Replace with: “Graphs”
+  - Replace with: “Grafton”
+  - Replace with: “GraphQL”
+  - Replace with: “Glyph”
+  - Replace with: “Glyphs”
+  - Replace with: “Graphed”
+  - Replace with: “Graphing”
+  - Replace with: “Griffon”
+  - Replace with: “Grunion”
+  - Replace with: “Crypto”
+  - Replace with: “Hyphen”
+  - Replace with: “Orphan”
+  - Replace with: “Python”
+  - Replace with: “Siphon”
+  - Replace with: “Typhoon”
+  - Replace with: “Bryon”
+  - Replace with: “CPython”
+  - Replace with: “Erewhon”
+  - Replace with: “Cryptos”
+  - Replace with: “Payphone”
 
 
 
@@ -2566,9 +3906,32 @@ Suggest:
 Lint:    Spelling (63 priority)
 Message: |
     2194 | The Gryphon lifted up both its paws in surprise. “What! Never heard of
-         |     ^~~~~~~ Did you mean `Krypton`?
+         |     ^~~~~~~ Did you mean to spell `Gryphon` this way?
 Suggest:
+  - Replace with: “Graph's”
   - Replace with: “Krypton”
+  - Replace with: “Graph”
+  - Replace with: “Graphic”
+  - Replace with: “Graphs”
+  - Replace with: “Grafton”
+  - Replace with: “GraphQL”
+  - Replace with: “Glyph”
+  - Replace with: “Glyphs”
+  - Replace with: “Graphed”
+  - Replace with: “Graphing”
+  - Replace with: “Griffon”
+  - Replace with: “Grunion”
+  - Replace with: “Crypto”
+  - Replace with: “Hyphen”
+  - Replace with: “Orphan”
+  - Replace with: “Python”
+  - Replace with: “Siphon”
+  - Replace with: “Typhoon”
+  - Replace with: “Bryon”
+  - Replace with: “CPython”
+  - Replace with: “Erewhon”
+  - Replace with: “Cryptos”
+  - Replace with: “Payphone”
 
 
 
@@ -2583,15 +3946,74 @@ Suggest:
   - Replace with: “nullifying”
   - Replace with: “qualifying”
   - Replace with: “vilifying”
+  - Replace with: “unedifying”
+  - Replace with: “unlinking”
+  - Replace with: “upliftings”
+  - Replace with: “uplinking”
+  - Replace with: “amplifying”
+  - Replace with: “calcifying”
+  - Replace with: “codifying”
+  - Replace with: “deifying”
+  - Replace with: “dignifying”
+  - Replace with: “edifying”
+  - Replace with: “falsifying”
+  - Replace with: “gifting”
+  - Replace with: “gliding”
+  - Replace with: “glinting”
+  - Replace with: “glorifying”
+  - Replace with: “glorying”
+  - Replace with: “grifting”
+  - Replace with: “justifying”
+  - Replace with: “lifting”
+  - Replace with: “magnifying”
+  - Replace with: “minifying”
+  - Replace with: “modifying”
+  - Replace with: “mollifying”
+  - Replace with: “mummifying”
+  - Replace with: “notifying”
+  - Replace with: “ossifying”
+  - Replace with: “pacifying”
+  - Replace with: “purifying”
+  - Replace with: “ramifying”
+  - Replace with: “ratifying”
+  - Replace with: “reifying”
+  - Replace with: “signifying”
+  - Replace with: “typifying”
+  - Replace with: “verifying”
+  - Replace with: “vivifying”
+  - Replace with: “yuppifying”
 
 
 
 Lint:    Spelling (63 priority)
 Message: |
     2199 | “Well, then,” the Gryphon went on, “if you don’t know what to uglify is, you are
-         |                   ^~~~~~~ Did you mean `Krypton`?
+         |                   ^~~~~~~ Did you mean to spell `Gryphon` this way?
 Suggest:
+  - Replace with: “Graph's”
   - Replace with: “Krypton”
+  - Replace with: “Graph”
+  - Replace with: “Graphic”
+  - Replace with: “Graphs”
+  - Replace with: “Grafton”
+  - Replace with: “GraphQL”
+  - Replace with: “Glyph”
+  - Replace with: “Glyphs”
+  - Replace with: “Graphed”
+  - Replace with: “Graphing”
+  - Replace with: “Griffon”
+  - Replace with: “Grunion”
+  - Replace with: “Crypto”
+  - Replace with: “Hyphen”
+  - Replace with: “Orphan”
+  - Replace with: “Python”
+  - Replace with: “Siphon”
+  - Replace with: “Typhoon”
+  - Replace with: “Bryon”
+  - Replace with: “CPython”
+  - Replace with: “Erewhon”
+  - Replace with: “Cryptos”
+  - Replace with: “Payphone”
 
 
 
@@ -2606,8 +4028,49 @@ Suggest:
   - Replace with: “uplift”
   - Replace with: “uglier”
   - Replace with: “qualify”
+  - Replace with: “unity”
+  - Replace with: “unlike”
+  - Replace with: “utility”
   - Replace with: “nullify”
   - Replace with: “vilify”
+  - Replace with: “ugliest”
+  - Replace with: “unlink”
+  - Replace with: “unlit”
+  - Replace with: “untidy”
+  - Replace with: “uplifts”
+  - Replace with: “uplink”
+  - Replace with: “uppity”
+  - Replace with: “agility”
+  - Replace with: “cliff”
+  - Replace with: “duality”
+  - Replace with: “gift”
+  - Replace with: “glide”
+  - Replace with: “glory”
+  - Replace with: “goofy”
+  - Replace with: “guilty”
+  - Replace with: “gulf”
+  - Replace with: “gully”
+  - Replace with: “justify”
+  - Replace with: “life”
+  - Replace with: “lift”
+  - Replace with: “lily”
+  - Replace with: “modify”
+  - Replace with: “notify”
+  - Replace with: “policy”
+  - Replace with: “polity”
+  - Replace with: “purify”
+  - Replace with: “quality”
+  - Replace with: “ratify”
+  - Replace with: “signify”
+  - Replace with: “verify”
+  - Replace with: “Calif”
+  - Replace with: “Netlify”
+  - Replace with: “Ogilvy”
+  - Replace with: “Pliny”
+  - Replace with: “amplify”
+  - Replace with: “bugling”
+  - Replace with: “calcify”
+  - Replace with: “codify”
 
 
 
@@ -2644,6 +4107,19 @@ Suggest:
   - Replace with: “Demography”
   - Replace with: “Geography”
   - Replace with: “Xerography”
+  - Replace with: “Seismography”
+  - Replace with: “Selenography”
+  - Replace with: “Serigraph”
+  - Replace with: “Serigraphs”
+  - Replace with: “Steganography”
+  - Replace with: “Biography”
+  - Replace with: “Oceanography”
+  - Replace with: “Telegraphy”
+  - Replace with: “Tomography”
+  - Replace with: “Topography”
+  - Replace with: “Typography”
+  - Replace with: “Epigraphy”
+  - Replace with: “Holography”
 
 
 
@@ -2662,54 +4138,192 @@ Lint:    Spelling (63 priority)
 Message: |
     2212 | “Well, I can’t show it you myself,” the Mock Turtle said: “I’m too stiff. And
     2213 | the Gryphon never learnt it.”
-         |     ^~~~~~~ Did you mean `Krypton`?
+         |     ^~~~~~~ Did you mean to spell `Gryphon` this way?
 Suggest:
+  - Replace with: “Graph's”
   - Replace with: “Krypton”
+  - Replace with: “Graph”
+  - Replace with: “Graphic”
+  - Replace with: “Graphs”
+  - Replace with: “Grafton”
+  - Replace with: “GraphQL”
+  - Replace with: “Glyph”
+  - Replace with: “Glyphs”
+  - Replace with: “Graphed”
+  - Replace with: “Graphing”
+  - Replace with: “Griffon”
+  - Replace with: “Grunion”
+  - Replace with: “Crypto”
+  - Replace with: “Hyphen”
+  - Replace with: “Orphan”
+  - Replace with: “Python”
+  - Replace with: “Siphon”
+  - Replace with: “Typhoon”
+  - Replace with: “Bryon”
+  - Replace with: “CPython”
+  - Replace with: “Erewhon”
+  - Replace with: “Cryptos”
+  - Replace with: “Payphone”
 
 
 
 Lint:    Spelling (63 priority)
 Message: |
     2215 | “Hadn’t time,” said the Gryphon: “I went to the Classics master, though. He was
-         |                         ^~~~~~~ Did you mean `Krypton`?
+         |                         ^~~~~~~ Did you mean to spell `Gryphon` this way?
 Suggest:
+  - Replace with: “Graph's”
   - Replace with: “Krypton”
+  - Replace with: “Graph”
+  - Replace with: “Graphic”
+  - Replace with: “Graphs”
+  - Replace with: “Grafton”
+  - Replace with: “GraphQL”
+  - Replace with: “Glyph”
+  - Replace with: “Glyphs”
+  - Replace with: “Graphed”
+  - Replace with: “Graphing”
+  - Replace with: “Griffon”
+  - Replace with: “Grunion”
+  - Replace with: “Crypto”
+  - Replace with: “Hyphen”
+  - Replace with: “Orphan”
+  - Replace with: “Python”
+  - Replace with: “Siphon”
+  - Replace with: “Typhoon”
+  - Replace with: “Bryon”
+  - Replace with: “CPython”
+  - Replace with: “Erewhon”
+  - Replace with: “Cryptos”
+  - Replace with: “Payphone”
 
 
 
 Lint:    Spelling (63 priority)
 Message: |
     2221 | “So he did, so he did,” said the Gryphon, sighing in his turn; and both
-         |                                  ^~~~~~~ Did you mean `Krypton`?
+         |                                  ^~~~~~~ Did you mean to spell `Gryphon` this way?
 Suggest:
+  - Replace with: “Graph's”
   - Replace with: “Krypton”
+  - Replace with: “Graph”
+  - Replace with: “Graphic”
+  - Replace with: “Graphs”
+  - Replace with: “Grafton”
+  - Replace with: “GraphQL”
+  - Replace with: “Glyph”
+  - Replace with: “Glyphs”
+  - Replace with: “Graphed”
+  - Replace with: “Graphing”
+  - Replace with: “Griffon”
+  - Replace with: “Grunion”
+  - Replace with: “Crypto”
+  - Replace with: “Hyphen”
+  - Replace with: “Orphan”
+  - Replace with: “Python”
+  - Replace with: “Siphon”
+  - Replace with: “Typhoon”
+  - Replace with: “Bryon”
+  - Replace with: “CPython”
+  - Replace with: “Erewhon”
+  - Replace with: “Cryptos”
+  - Replace with: “Payphone”
 
 
 
 Lint:    Spelling (63 priority)
 Message: |
     2231 | “That’s the reason they’re called lessons,” the Gryphon remarked: “because they
-         |                                                 ^~~~~~~ Did you mean `Krypton`?
+         |                                                 ^~~~~~~ Did you mean to spell `Gryphon` this way?
 Suggest:
+  - Replace with: “Graph's”
   - Replace with: “Krypton”
+  - Replace with: “Graph”
+  - Replace with: “Graphic”
+  - Replace with: “Graphs”
+  - Replace with: “Grafton”
+  - Replace with: “GraphQL”
+  - Replace with: “Glyph”
+  - Replace with: “Glyphs”
+  - Replace with: “Graphed”
+  - Replace with: “Graphing”
+  - Replace with: “Griffon”
+  - Replace with: “Grunion”
+  - Replace with: “Crypto”
+  - Replace with: “Hyphen”
+  - Replace with: “Orphan”
+  - Replace with: “Python”
+  - Replace with: “Siphon”
+  - Replace with: “Typhoon”
+  - Replace with: “Bryon”
+  - Replace with: “CPython”
+  - Replace with: “Erewhon”
+  - Replace with: “Cryptos”
+  - Replace with: “Payphone”
 
 
 
 Lint:    Spelling (63 priority)
 Message: |
     2241 | “That’s enough about lessons,” the Gryphon interrupted in a very decided tone:
-         |                                    ^~~~~~~ Did you mean `Krypton`?
+         |                                    ^~~~~~~ Did you mean to spell `Gryphon` this way?
 Suggest:
+  - Replace with: “Graph's”
   - Replace with: “Krypton”
+  - Replace with: “Graph”
+  - Replace with: “Graphic”
+  - Replace with: “Graphs”
+  - Replace with: “Grafton”
+  - Replace with: “GraphQL”
+  - Replace with: “Glyph”
+  - Replace with: “Glyphs”
+  - Replace with: “Graphed”
+  - Replace with: “Graphing”
+  - Replace with: “Griffon”
+  - Replace with: “Grunion”
+  - Replace with: “Crypto”
+  - Replace with: “Hyphen”
+  - Replace with: “Orphan”
+  - Replace with: “Python”
+  - Replace with: “Siphon”
+  - Replace with: “Typhoon”
+  - Replace with: “Bryon”
+  - Replace with: “CPython”
+  - Replace with: “Erewhon”
+  - Replace with: “Cryptos”
+  - Replace with: “Payphone”
 
 
 
 Lint:    Spelling (63 priority)
 Message: |
     2248 | voice. “Same as if he had a bone in his throat,” said the Gryphon: and it set to
-         |                                                           ^~~~~~~ Did you mean `Krypton`?
+         |                                                           ^~~~~~~ Did you mean to spell `Gryphon` this way?
 Suggest:
+  - Replace with: “Graph's”
   - Replace with: “Krypton”
+  - Replace with: “Graph”
+  - Replace with: “Graphic”
+  - Replace with: “Graphs”
+  - Replace with: “Grafton”
+  - Replace with: “GraphQL”
+  - Replace with: “Glyph”
+  - Replace with: “Glyphs”
+  - Replace with: “Graphed”
+  - Replace with: “Graphing”
+  - Replace with: “Griffon”
+  - Replace with: “Grunion”
+  - Replace with: “Crypto”
+  - Replace with: “Hyphen”
+  - Replace with: “Orphan”
+  - Replace with: “Python”
+  - Replace with: “Siphon”
+  - Replace with: “Typhoon”
+  - Replace with: “Bryon”
+  - Replace with: “CPython”
+  - Replace with: “Erewhon”
+  - Replace with: “Cryptos”
+  - Replace with: “Payphone”
 
 
 
@@ -2729,63 +4343,224 @@ Message: |
 Lint:    Spelling (63 priority)
 Message: |
     2259 | “Why,” said the Gryphon, “you first form into a line along the sea-shore—”
-         |                 ^~~~~~~ Did you mean `Krypton`?
+         |                 ^~~~~~~ Did you mean to spell `Gryphon` this way?
 Suggest:
+  - Replace with: “Graph's”
   - Replace with: “Krypton”
+  - Replace with: “Graph”
+  - Replace with: “Graphic”
+  - Replace with: “Graphs”
+  - Replace with: “Grafton”
+  - Replace with: “GraphQL”
+  - Replace with: “Glyph”
+  - Replace with: “Glyphs”
+  - Replace with: “Graphed”
+  - Replace with: “Graphing”
+  - Replace with: “Griffon”
+  - Replace with: “Grunion”
+  - Replace with: “Crypto”
+  - Replace with: “Hyphen”
+  - Replace with: “Orphan”
+  - Replace with: “Python”
+  - Replace with: “Siphon”
+  - Replace with: “Typhoon”
+  - Replace with: “Bryon”
+  - Replace with: “CPython”
+  - Replace with: “Erewhon”
+  - Replace with: “Cryptos”
+  - Replace with: “Payphone”
 
 
 
 Lint:    Spelling (63 priority)
 Message: |
     2264 | “That generally takes some time,” interrupted the Gryphon.
-         |                                                   ^~~~~~~ Did you mean `Krypton`?
+         |                                                   ^~~~~~~ Did you mean to spell `Gryphon` this way?
 Suggest:
+  - Replace with: “Graph's”
   - Replace with: “Krypton”
+  - Replace with: “Graph”
+  - Replace with: “Graphic”
+  - Replace with: “Graphs”
+  - Replace with: “Grafton”
+  - Replace with: “GraphQL”
+  - Replace with: “Glyph”
+  - Replace with: “Glyphs”
+  - Replace with: “Graphed”
+  - Replace with: “Graphing”
+  - Replace with: “Griffon”
+  - Replace with: “Grunion”
+  - Replace with: “Crypto”
+  - Replace with: “Hyphen”
+  - Replace with: “Orphan”
+  - Replace with: “Python”
+  - Replace with: “Siphon”
+  - Replace with: “Typhoon”
+  - Replace with: “Bryon”
+  - Replace with: “CPython”
+  - Replace with: “Erewhon”
+  - Replace with: “Cryptos”
+  - Replace with: “Payphone”
 
 
 
 Lint:    Spelling (63 priority)
 Message: |
     2268 | “Each with a lobster as a partner!” cried the Gryphon.
-         |                                               ^~~~~~~ Did you mean `Krypton`?
+         |                                               ^~~~~~~ Did you mean to spell `Gryphon` this way?
 Suggest:
+  - Replace with: “Graph's”
   - Replace with: “Krypton”
+  - Replace with: “Graph”
+  - Replace with: “Graphic”
+  - Replace with: “Graphs”
+  - Replace with: “Grafton”
+  - Replace with: “GraphQL”
+  - Replace with: “Glyph”
+  - Replace with: “Glyphs”
+  - Replace with: “Graphed”
+  - Replace with: “Graphing”
+  - Replace with: “Griffon”
+  - Replace with: “Grunion”
+  - Replace with: “Crypto”
+  - Replace with: “Hyphen”
+  - Replace with: “Orphan”
+  - Replace with: “Python”
+  - Replace with: “Siphon”
+  - Replace with: “Typhoon”
+  - Replace with: “Bryon”
+  - Replace with: “CPython”
+  - Replace with: “Erewhon”
+  - Replace with: “Cryptos”
+  - Replace with: “Payphone”
 
 
 
 Lint:    Spelling (63 priority)
 Message: |
     2272 | “—change lobsters, and retire in same order,” continued the Gryphon.
-         |                                                             ^~~~~~~ Did you mean `Krypton`?
+         |                                                             ^~~~~~~ Did you mean to spell `Gryphon` this way?
 Suggest:
+  - Replace with: “Graph's”
   - Replace with: “Krypton”
+  - Replace with: “Graph”
+  - Replace with: “Graphic”
+  - Replace with: “Graphs”
+  - Replace with: “Grafton”
+  - Replace with: “GraphQL”
+  - Replace with: “Glyph”
+  - Replace with: “Glyphs”
+  - Replace with: “Graphed”
+  - Replace with: “Graphing”
+  - Replace with: “Griffon”
+  - Replace with: “Grunion”
+  - Replace with: “Crypto”
+  - Replace with: “Hyphen”
+  - Replace with: “Orphan”
+  - Replace with: “Python”
+  - Replace with: “Siphon”
+  - Replace with: “Typhoon”
+  - Replace with: “Bryon”
+  - Replace with: “CPython”
+  - Replace with: “Erewhon”
+  - Replace with: “Cryptos”
+  - Replace with: “Payphone”
 
 
 
 Lint:    Spelling (63 priority)
 Message: |
     2276 | “The lobsters!” shouted the Gryphon, with a bound into the air.
-         |                             ^~~~~~~ Did you mean `Krypton`?
+         |                             ^~~~~~~ Did you mean to spell `Gryphon` this way?
 Suggest:
+  - Replace with: “Graph's”
   - Replace with: “Krypton”
+  - Replace with: “Graph”
+  - Replace with: “Graphic”
+  - Replace with: “Graphs”
+  - Replace with: “Grafton”
+  - Replace with: “GraphQL”
+  - Replace with: “Glyph”
+  - Replace with: “Glyphs”
+  - Replace with: “Graphed”
+  - Replace with: “Graphing”
+  - Replace with: “Griffon”
+  - Replace with: “Grunion”
+  - Replace with: “Crypto”
+  - Replace with: “Hyphen”
+  - Replace with: “Orphan”
+  - Replace with: “Python”
+  - Replace with: “Siphon”
+  - Replace with: “Typhoon”
+  - Replace with: “Bryon”
+  - Replace with: “CPython”
+  - Replace with: “Erewhon”
+  - Replace with: “Cryptos”
+  - Replace with: “Payphone”
 
 
 
 Lint:    Spelling (63 priority)
 Message: |
     2280 | “Swim after them!” screamed the Gryphon.
-         |                                 ^~~~~~~ Did you mean `Krypton`?
+         |                                 ^~~~~~~ Did you mean to spell `Gryphon` this way?
 Suggest:
+  - Replace with: “Graph's”
   - Replace with: “Krypton”
+  - Replace with: “Graph”
+  - Replace with: “Graphic”
+  - Replace with: “Graphs”
+  - Replace with: “Grafton”
+  - Replace with: “GraphQL”
+  - Replace with: “Glyph”
+  - Replace with: “Glyphs”
+  - Replace with: “Graphed”
+  - Replace with: “Graphing”
+  - Replace with: “Griffon”
+  - Replace with: “Grunion”
+  - Replace with: “Crypto”
+  - Replace with: “Hyphen”
+  - Replace with: “Orphan”
+  - Replace with: “Python”
+  - Replace with: “Siphon”
+  - Replace with: “Typhoon”
+  - Replace with: “Bryon”
+  - Replace with: “CPython”
+  - Replace with: “Erewhon”
+  - Replace with: “Cryptos”
+  - Replace with: “Payphone”
 
 
 
 Lint:    Spelling (63 priority)
 Message: |
     2284 | “Change lobsters again!” yelled the Gryphon at the top of its voice.
-         |                                     ^~~~~~~ Did you mean `Krypton`?
+         |                                     ^~~~~~~ Did you mean to spell `Gryphon` this way?
 Suggest:
+  - Replace with: “Graph's”
   - Replace with: “Krypton”
+  - Replace with: “Graph”
+  - Replace with: “Graphic”
+  - Replace with: “Graphs”
+  - Replace with: “Grafton”
+  - Replace with: “GraphQL”
+  - Replace with: “Glyph”
+  - Replace with: “Glyphs”
+  - Replace with: “Graphed”
+  - Replace with: “Graphing”
+  - Replace with: “Griffon”
+  - Replace with: “Grunion”
+  - Replace with: “Crypto”
+  - Replace with: “Hyphen”
+  - Replace with: “Orphan”
+  - Replace with: “Python”
+  - Replace with: “Siphon”
+  - Replace with: “Typhoon”
+  - Replace with: “Bryon”
+  - Replace with: “CPython”
+  - Replace with: “Erewhon”
+  - Replace with: “Cryptos”
+  - Replace with: “Payphone”
 
 
 
@@ -2805,18 +4580,64 @@ Message: |
 Lint:    Spelling (63 priority)
 Message: |
     2297 | “Come, let’s try the first figure!” said the Mock Turtle to the Gryphon. “We can
-         |                                                                 ^~~~~~~ Did you mean `Krypton`?
+         |                                                                 ^~~~~~~ Did you mean to spell `Gryphon` this way?
 Suggest:
+  - Replace with: “Graph's”
   - Replace with: “Krypton”
+  - Replace with: “Graph”
+  - Replace with: “Graphic”
+  - Replace with: “Graphs”
+  - Replace with: “Grafton”
+  - Replace with: “GraphQL”
+  - Replace with: “Glyph”
+  - Replace with: “Glyphs”
+  - Replace with: “Graphed”
+  - Replace with: “Graphing”
+  - Replace with: “Griffon”
+  - Replace with: “Grunion”
+  - Replace with: “Crypto”
+  - Replace with: “Hyphen”
+  - Replace with: “Orphan”
+  - Replace with: “Python”
+  - Replace with: “Siphon”
+  - Replace with: “Typhoon”
+  - Replace with: “Bryon”
+  - Replace with: “CPython”
+  - Replace with: “Erewhon”
+  - Replace with: “Cryptos”
+  - Replace with: “Payphone”
 
 
 
 Lint:    Spelling (63 priority)
 Message: |
     2300 | “Oh, you sing,” said the Gryphon. “I’ve forgotten the words.”
-         |                          ^~~~~~~ Did you mean `Krypton`?
+         |                          ^~~~~~~ Did you mean to spell `Gryphon` this way?
 Suggest:
+  - Replace with: “Graph's”
   - Replace with: “Krypton”
+  - Replace with: “Graph”
+  - Replace with: “Graphic”
+  - Replace with: “Graphs”
+  - Replace with: “Grafton”
+  - Replace with: “GraphQL”
+  - Replace with: “Glyph”
+  - Replace with: “Glyphs”
+  - Replace with: “Graphed”
+  - Replace with: “Graphing”
+  - Replace with: “Griffon”
+  - Replace with: “Grunion”
+  - Replace with: “Crypto”
+  - Replace with: “Hyphen”
+  - Replace with: “Orphan”
+  - Replace with: “Python”
+  - Replace with: “Siphon”
+  - Replace with: “Typhoon”
+  - Replace with: “Bryon”
+  - Replace with: “CPython”
+  - Replace with: “Erewhon”
+  - Replace with: “Cryptos”
+  - Replace with: “Payphone”
 
 
 
@@ -2853,6 +4674,44 @@ Suggest:
   - Replace with: “inn”
   - Replace with: “damn”
   - Replace with: “dang”
+  - Replace with: “darn”
+  - Replace with: “dawn”
+  - Replace with: “dent”
+  - Replace with: “deny”
+  - Replace with: “dial”
+  - Replace with: “dice”
+  - Replace with: “dick”
+  - Replace with: “dict”
+  - Replace with: “did”
+  - Replace with: “dido”
+  - Replace with: “die”
+  - Replace with: “diet”
+  - Replace with: “diff”
+  - Replace with: “dig”
+  - Replace with: “dike”
+  - Replace with: “dill”
+  - Replace with: “dim”
+  - Replace with: “dime”
+  - Replace with: “dinar”
+  - Replace with: “dinner”
+  - Replace with: “dip”
+  - Replace with: “dire”
+  - Replace with: “dirk”
+  - Replace with: “dirt”
+  - Replace with: “dish”
+  - Replace with: “disk”
+  - Replace with: “dist”
+  - Replace with: “div”
+  - Replace with: “diva”
+  - Replace with: “divan”
+  - Replace with: “dive”
+  - Replace with: “don”
+  - Replace with: “dona”
+  - Replace with: “done”
+  - Replace with: “dong”
+  - Replace with: “down”
+  - Replace with: “drink”
+  - Replace with: “dun”
 
 
 
@@ -2871,6 +4730,44 @@ Suggest:
   - Replace with: “Dunn”
   - Replace with: “Ding”
   - Replace with: “Dink”
+  - Replace with: “Dins”
+  - Replace with: “Dint”
+  - Replace with: “Di's”
+  - Replace with: “Din's”
+  - Replace with: “Inn”
+  - Replace with: “Damn”
+  - Replace with: “Dang”
+  - Replace with: “Darn”
+  - Replace with: “Dawn”
+  - Replace with: “Dent”
+  - Replace with: “Deny”
+  - Replace with: “Dial”
+  - Replace with: “Dice”
+  - Replace with: “Dick”
+  - Replace with: “Dict”
+  - Replace with: “Did”
+  - Replace with: “Dido”
+  - Replace with: “Die”
+  - Replace with: “Diet”
+  - Replace with: “Diff”
+  - Replace with: “Dig”
+  - Replace with: “Dike”
+  - Replace with: “Dill”
+  - Replace with: “Dim”
+  - Replace with: “Dime”
+  - Replace with: “Dinar”
+  - Replace with: “Dinner”
+  - Replace with: “Dip”
+  - Replace with: “Dire”
+  - Replace with: “Dirk”
+  - Replace with: “Dirt”
+  - Replace with: “Dish”
+  - Replace with: “Disk”
+  - Replace with: “Dist”
+  - Replace with: “Div”
+  - Replace with: “Diva”
+  - Replace with: “Divan”
+  - Replace with: “Dive”
 
 
 
@@ -2878,64 +4775,225 @@ Lint:    Spelling (63 priority)
 Message: |
     2343 | here the Mock Turtle yawned and shut his eyes.—“Tell her about the reason and
     2344 | all that,” he said to the Gryphon.
-         |                           ^~~~~~~ Did you mean `Krypton`?
+         |                           ^~~~~~~ Did you mean to spell `Gryphon` this way?
 Suggest:
+  - Replace with: “Graph's”
   - Replace with: “Krypton”
+  - Replace with: “Graph”
+  - Replace with: “Graphic”
+  - Replace with: “Graphs”
+  - Replace with: “Grafton”
+  - Replace with: “GraphQL”
+  - Replace with: “Glyph”
+  - Replace with: “Glyphs”
+  - Replace with: “Graphed”
+  - Replace with: “Graphing”
+  - Replace with: “Griffon”
+  - Replace with: “Grunion”
+  - Replace with: “Crypto”
+  - Replace with: “Hyphen”
+  - Replace with: “Orphan”
+  - Replace with: “Python”
+  - Replace with: “Siphon”
+  - Replace with: “Typhoon”
+  - Replace with: “Bryon”
+  - Replace with: “CPython”
+  - Replace with: “Erewhon”
+  - Replace with: “Cryptos”
+  - Replace with: “Payphone”
 
 
 
 Lint:    Spelling (63 priority)
 Message: |
     2346 | “The reason is,” said the Gryphon, “that they would go with the lobsters to the
-         |                           ^~~~~~~ Did you mean `Krypton`?
+         |                           ^~~~~~~ Did you mean to spell `Gryphon` this way?
 Suggest:
+  - Replace with: “Graph's”
   - Replace with: “Krypton”
+  - Replace with: “Graph”
+  - Replace with: “Graphic”
+  - Replace with: “Graphs”
+  - Replace with: “Grafton”
+  - Replace with: “GraphQL”
+  - Replace with: “Glyph”
+  - Replace with: “Glyphs”
+  - Replace with: “Graphed”
+  - Replace with: “Graphing”
+  - Replace with: “Griffon”
+  - Replace with: “Grunion”
+  - Replace with: “Crypto”
+  - Replace with: “Hyphen”
+  - Replace with: “Orphan”
+  - Replace with: “Python”
+  - Replace with: “Siphon”
+  - Replace with: “Typhoon”
+  - Replace with: “Bryon”
+  - Replace with: “CPython”
+  - Replace with: “Erewhon”
+  - Replace with: “Cryptos”
+  - Replace with: “Payphone”
 
 
 
 Lint:    Spelling (63 priority)
 Message: |
     2354 | “I can tell you more than that, if you like,” said the Gryphon. “Do you know why
-         |                                                        ^~~~~~~ Did you mean `Krypton`?
+         |                                                        ^~~~~~~ Did you mean to spell `Gryphon` this way?
 Suggest:
+  - Replace with: “Graph's”
   - Replace with: “Krypton”
+  - Replace with: “Graph”
+  - Replace with: “Graphic”
+  - Replace with: “Graphs”
+  - Replace with: “Grafton”
+  - Replace with: “GraphQL”
+  - Replace with: “Glyph”
+  - Replace with: “Glyphs”
+  - Replace with: “Graphed”
+  - Replace with: “Graphing”
+  - Replace with: “Griffon”
+  - Replace with: “Grunion”
+  - Replace with: “Crypto”
+  - Replace with: “Hyphen”
+  - Replace with: “Orphan”
+  - Replace with: “Python”
+  - Replace with: “Siphon”
+  - Replace with: “Typhoon”
+  - Replace with: “Bryon”
+  - Replace with: “CPython”
+  - Replace with: “Erewhon”
+  - Replace with: “Cryptos”
+  - Replace with: “Payphone”
 
 
 
 Lint:    Spelling (63 priority)
 Message: |
     2359 | “It does the boots and shoes,” the Gryphon replied very solemnly.
-         |                                    ^~~~~~~ Did you mean `Krypton`?
+         |                                    ^~~~~~~ Did you mean to spell `Gryphon` this way?
 Suggest:
+  - Replace with: “Graph's”
   - Replace with: “Krypton”
+  - Replace with: “Graph”
+  - Replace with: “Graphic”
+  - Replace with: “Graphs”
+  - Replace with: “Grafton”
+  - Replace with: “GraphQL”
+  - Replace with: “Glyph”
+  - Replace with: “Glyphs”
+  - Replace with: “Graphed”
+  - Replace with: “Graphing”
+  - Replace with: “Griffon”
+  - Replace with: “Grunion”
+  - Replace with: “Crypto”
+  - Replace with: “Hyphen”
+  - Replace with: “Orphan”
+  - Replace with: “Python”
+  - Replace with: “Siphon”
+  - Replace with: “Typhoon”
+  - Replace with: “Bryon”
+  - Replace with: “CPython”
+  - Replace with: “Erewhon”
+  - Replace with: “Cryptos”
+  - Replace with: “Payphone”
 
 
 
 Lint:    Spelling (63 priority)
 Message: |
     2364 | “Why, what are your shoes done with?” said the Gryphon. “I mean, what makes them
-         |                                                ^~~~~~~ Did you mean `Krypton`?
+         |                                                ^~~~~~~ Did you mean to spell `Gryphon` this way?
 Suggest:
+  - Replace with: “Graph's”
   - Replace with: “Krypton”
+  - Replace with: “Graph”
+  - Replace with: “Graphic”
+  - Replace with: “Graphs”
+  - Replace with: “Grafton”
+  - Replace with: “GraphQL”
+  - Replace with: “Glyph”
+  - Replace with: “Glyphs”
+  - Replace with: “Graphed”
+  - Replace with: “Graphing”
+  - Replace with: “Griffon”
+  - Replace with: “Grunion”
+  - Replace with: “Crypto”
+  - Replace with: “Hyphen”
+  - Replace with: “Orphan”
+  - Replace with: “Python”
+  - Replace with: “Siphon”
+  - Replace with: “Typhoon”
+  - Replace with: “Bryon”
+  - Replace with: “CPython”
+  - Replace with: “Erewhon”
+  - Replace with: “Cryptos”
+  - Replace with: “Payphone”
 
 
 
 Lint:    Spelling (63 priority)
 Message: |
     2370 | “Boots and shoes under the sea,” the Gryphon went on in a deep voice, “are done
-         |                                      ^~~~~~~ Did you mean `Krypton`?
+         |                                      ^~~~~~~ Did you mean to spell `Gryphon` this way?
     2371 | with a whiting. Now you know.”
 Suggest:
+  - Replace with: “Graph's”
   - Replace with: “Krypton”
+  - Replace with: “Graph”
+  - Replace with: “Graphic”
+  - Replace with: “Graphs”
+  - Replace with: “Grafton”
+  - Replace with: “GraphQL”
+  - Replace with: “Glyph”
+  - Replace with: “Glyphs”
+  - Replace with: “Graphed”
+  - Replace with: “Graphing”
+  - Replace with: “Griffon”
+  - Replace with: “Grunion”
+  - Replace with: “Crypto”
+  - Replace with: “Hyphen”
+  - Replace with: “Orphan”
+  - Replace with: “Python”
+  - Replace with: “Siphon”
+  - Replace with: “Typhoon”
+  - Replace with: “Bryon”
+  - Replace with: “CPython”
+  - Replace with: “Erewhon”
+  - Replace with: “Cryptos”
+  - Replace with: “Payphone”
 
 
 
 Lint:    Spelling (63 priority)
 Message: |
     2375 | “Soles and eels, of course,” the Gryphon replied rather impatiently: “any shrimp
-         |                                  ^~~~~~~ Did you mean `Krypton`?
+         |                                  ^~~~~~~ Did you mean to spell `Gryphon` this way?
 Suggest:
+  - Replace with: “Graph's”
   - Replace with: “Krypton”
+  - Replace with: “Graph”
+  - Replace with: “Graphic”
+  - Replace with: “Graphs”
+  - Replace with: “Grafton”
+  - Replace with: “GraphQL”
+  - Replace with: “Glyph”
+  - Replace with: “Glyphs”
+  - Replace with: “Graphed”
+  - Replace with: “Graphing”
+  - Replace with: “Griffon”
+  - Replace with: “Grunion”
+  - Replace with: “Crypto”
+  - Replace with: “Hyphen”
+  - Replace with: “Orphan”
+  - Replace with: “Python”
+  - Replace with: “Siphon”
+  - Replace with: “Typhoon”
+  - Replace with: “Bryon”
+  - Replace with: “CPython”
+  - Replace with: “Erewhon”
+  - Replace with: “Cryptos”
+  - Replace with: “Payphone”
 
 
 
@@ -2943,18 +5001,64 @@ Lint:    Spelling (63 priority)
 Message: |
     2392 | “I mean what I say,” the Mock Turtle replied in an offended tone. And the
     2393 | Gryphon added “Come, let’s hear some of your adventures.”
-         | ^~~~~~~ Did you mean `Krypton`?
+         | ^~~~~~~ Did you mean to spell `Gryphon` this way?
 Suggest:
+  - Replace with: “Graph's”
   - Replace with: “Krypton”
+  - Replace with: “Graph”
+  - Replace with: “Graphic”
+  - Replace with: “Graphs”
+  - Replace with: “Grafton”
+  - Replace with: “GraphQL”
+  - Replace with: “Glyph”
+  - Replace with: “Glyphs”
+  - Replace with: “Graphed”
+  - Replace with: “Graphing”
+  - Replace with: “Griffon”
+  - Replace with: “Grunion”
+  - Replace with: “Crypto”
+  - Replace with: “Hyphen”
+  - Replace with: “Orphan”
+  - Replace with: “Python”
+  - Replace with: “Siphon”
+  - Replace with: “Typhoon”
+  - Replace with: “Bryon”
+  - Replace with: “CPython”
+  - Replace with: “Erewhon”
+  - Replace with: “Cryptos”
+  - Replace with: “Payphone”
 
 
 
 Lint:    Spelling (63 priority)
 Message: |
     2401 | “No, no! The adventures first,” said the Gryphon in an impatient tone:
-         |                                          ^~~~~~~ Did you mean `Krypton`?
+         |                                          ^~~~~~~ Did you mean to spell `Gryphon` this way?
 Suggest:
+  - Replace with: “Graph's”
   - Replace with: “Krypton”
+  - Replace with: “Graph”
+  - Replace with: “Graphic”
+  - Replace with: “Graphs”
+  - Replace with: “Grafton”
+  - Replace with: “GraphQL”
+  - Replace with: “Glyph”
+  - Replace with: “Glyphs”
+  - Replace with: “Graphed”
+  - Replace with: “Graphing”
+  - Replace with: “Griffon”
+  - Replace with: “Grunion”
+  - Replace with: “Crypto”
+  - Replace with: “Hyphen”
+  - Replace with: “Orphan”
+  - Replace with: “Python”
+  - Replace with: “Siphon”
+  - Replace with: “Typhoon”
+  - Replace with: “Bryon”
+  - Replace with: “CPython”
+  - Replace with: “Erewhon”
+  - Replace with: “Cryptos”
+  - Replace with: “Payphone”
 
 
 
@@ -2974,9 +5078,32 @@ Message: |
 Lint:    Spelling (63 priority)
 Message: |
     2412 | “It’s all about as curious as it can be,” said the Gryphon.
-         |                                                    ^~~~~~~ Did you mean `Krypton`?
+         |                                                    ^~~~~~~ Did you mean to spell `Gryphon` this way?
 Suggest:
+  - Replace with: “Graph's”
   - Replace with: “Krypton”
+  - Replace with: “Graph”
+  - Replace with: “Graphic”
+  - Replace with: “Graphs”
+  - Replace with: “Grafton”
+  - Replace with: “GraphQL”
+  - Replace with: “Glyph”
+  - Replace with: “Glyphs”
+  - Replace with: “Graphed”
+  - Replace with: “Graphing”
+  - Replace with: “Griffon”
+  - Replace with: “Grunion”
+  - Replace with: “Crypto”
+  - Replace with: “Hyphen”
+  - Replace with: “Orphan”
+  - Replace with: “Python”
+  - Replace with: “Siphon”
+  - Replace with: “Typhoon”
+  - Replace with: “Bryon”
+  - Replace with: “CPython”
+  - Replace with: “Erewhon”
+  - Replace with: “Cryptos”
+  - Replace with: “Payphone”
 
 
 
@@ -2984,9 +5111,32 @@ Lint:    Spelling (63 priority)
 Message: |
     2415 | to hear her try and repeat something now. Tell her to begin.” He looked at the
     2416 | Gryphon as if he thought it had some kind of authority over Alice.
-         | ^~~~~~~ Did you mean `Krypton`?
+         | ^~~~~~~ Did you mean to spell `Gryphon` this way?
 Suggest:
+  - Replace with: “Graph's”
   - Replace with: “Krypton”
+  - Replace with: “Graph”
+  - Replace with: “Graphic”
+  - Replace with: “Graphs”
+  - Replace with: “Grafton”
+  - Replace with: “GraphQL”
+  - Replace with: “Glyph”
+  - Replace with: “Glyphs”
+  - Replace with: “Graphed”
+  - Replace with: “Graphing”
+  - Replace with: “Griffon”
+  - Replace with: “Grunion”
+  - Replace with: “Crypto”
+  - Replace with: “Hyphen”
+  - Replace with: “Orphan”
+  - Replace with: “Python”
+  - Replace with: “Siphon”
+  - Replace with: “Typhoon”
+  - Replace with: “Bryon”
+  - Replace with: “CPython”
+  - Replace with: “Erewhon”
+  - Replace with: “Cryptos”
+  - Replace with: “Payphone”
 
 
 
@@ -3005,15 +5155,76 @@ Suggest:
   - Replace with: “Ties”
   - Replace with: “Tins”
   - Replace with: “Tips”
+  - Replace with: “Tits”
+  - Replace with: “Ts”
+  - Replace with: “Ti”
+  - Replace with: “Tie”
+  - Replace with: “Til”
+  - Replace with: “Tin”
+  - Replace with: “Tip”
+  - Replace with: “Tit”
+  - Replace with: “Thais”
+  - Replace with: “TiB”
+  - Replace with: “Tia”
+  - Replace with: “Tim”
+  - Replace with: “TB's”
+  - Replace with: “TV's”
+  - Replace with: “Tia's”
+  - Replace with: “Tim's”
+  - Replace with: “Tu's”
+  - Replace with: “Ty's”
+  - Replace with: “His”
+  - Replace with: “Is”
+  - Replace with: “Its”
+  - Replace with: “Sis”
+  - Replace with: “THC”
+  - Replace with: “Th”
+  - Replace with: “Thu”
+  - Replace with: “Otis”
+  - Replace with: “Wis”
+  - Replace with: “Bis”
+  - Replace with: “Dis”
+  - Replace with: “Pis”
+  - Replace with: “Xis”
+  - Replace with: “TCPs”
+  - Replace with: “TOCs”
+  - Replace with: “TSRs”
+  - Replace with: “TUIs”
+  - Replace with: “TVRs”
+  - Replace with: “Tass”
+  - Replace with: “Tess”
 
 
 
 Lint:    Spelling (63 priority)
 Message: |
     2418 | “Stand up and repeat ‘’Tis the voice of the sluggard,’” said the Gryphon.
-         |                                                                  ^~~~~~~ Did you mean `Krypton`?
+         |                                                                  ^~~~~~~ Did you mean to spell `Gryphon` this way?
 Suggest:
+  - Replace with: “Graph's”
   - Replace with: “Krypton”
+  - Replace with: “Graph”
+  - Replace with: “Graphic”
+  - Replace with: “Graphs”
+  - Replace with: “Grafton”
+  - Replace with: “GraphQL”
+  - Replace with: “Glyph”
+  - Replace with: “Glyphs”
+  - Replace with: “Graphed”
+  - Replace with: “Graphing”
+  - Replace with: “Griffon”
+  - Replace with: “Grunion”
+  - Replace with: “Crypto”
+  - Replace with: “Hyphen”
+  - Replace with: “Orphan”
+  - Replace with: “Python”
+  - Replace with: “Siphon”
+  - Replace with: “Typhoon”
+  - Replace with: “Bryon”
+  - Replace with: “CPython”
+  - Replace with: “Erewhon”
+  - Replace with: “Cryptos”
+  - Replace with: “Payphone”
 
 
 
@@ -3039,6 +5250,44 @@ Suggest:
   - Replace with: “Ties”
   - Replace with: “Tins”
   - Replace with: “Tips”
+  - Replace with: “Tits”
+  - Replace with: “Ts”
+  - Replace with: “Ti”
+  - Replace with: “Tie”
+  - Replace with: “Til”
+  - Replace with: “Tin”
+  - Replace with: “Tip”
+  - Replace with: “Tit”
+  - Replace with: “Thais”
+  - Replace with: “TiB”
+  - Replace with: “Tia”
+  - Replace with: “Tim”
+  - Replace with: “TB's”
+  - Replace with: “TV's”
+  - Replace with: “Tia's”
+  - Replace with: “Tim's”
+  - Replace with: “Tu's”
+  - Replace with: “Ty's”
+  - Replace with: “His”
+  - Replace with: “Is”
+  - Replace with: “Its”
+  - Replace with: “Sis”
+  - Replace with: “THC”
+  - Replace with: “Th”
+  - Replace with: “Thu”
+  - Replace with: “Otis”
+  - Replace with: “Wis”
+  - Replace with: “Bis”
+  - Replace with: “Dis”
+  - Replace with: “Pis”
+  - Replace with: “Xis”
+  - Replace with: “TCPs”
+  - Replace with: “TOCs”
+  - Replace with: “TSRs”
+  - Replace with: “TUIs”
+  - Replace with: “TVRs”
+  - Replace with: “Tass”
+  - Replace with: “Tess”
 
 
 
@@ -3065,45 +5314,160 @@ Message: |
 Lint:    Spelling (63 priority)
 Message: |
     2433 | “That’s different from what I used to say when I was a child,” said the Gryphon.
-         |                                                                         ^~~~~~~ Did you mean `Krypton`?
+         |                                                                         ^~~~~~~ Did you mean to spell `Gryphon` this way?
 Suggest:
+  - Replace with: “Graph's”
   - Replace with: “Krypton”
+  - Replace with: “Graph”
+  - Replace with: “Graphic”
+  - Replace with: “Graphs”
+  - Replace with: “Grafton”
+  - Replace with: “GraphQL”
+  - Replace with: “Glyph”
+  - Replace with: “Glyphs”
+  - Replace with: “Graphed”
+  - Replace with: “Graphing”
+  - Replace with: “Griffon”
+  - Replace with: “Grunion”
+  - Replace with: “Crypto”
+  - Replace with: “Hyphen”
+  - Replace with: “Orphan”
+  - Replace with: “Python”
+  - Replace with: “Siphon”
+  - Replace with: “Typhoon”
+  - Replace with: “Bryon”
+  - Replace with: “CPython”
+  - Replace with: “Erewhon”
+  - Replace with: “Cryptos”
+  - Replace with: “Payphone”
 
 
 
 Lint:    Spelling (63 priority)
 Message: |
     2443 | “She can’t explain it,” said the Gryphon hastily. “Go on with the next verse.”
-         |                                  ^~~~~~~ Did you mean `Krypton`?
+         |                                  ^~~~~~~ Did you mean to spell `Gryphon` this way?
 Suggest:
+  - Replace with: “Graph's”
   - Replace with: “Krypton”
+  - Replace with: “Graph”
+  - Replace with: “Graphic”
+  - Replace with: “Graphs”
+  - Replace with: “Grafton”
+  - Replace with: “GraphQL”
+  - Replace with: “Glyph”
+  - Replace with: “Glyphs”
+  - Replace with: “Graphed”
+  - Replace with: “Graphing”
+  - Replace with: “Griffon”
+  - Replace with: “Grunion”
+  - Replace with: “Crypto”
+  - Replace with: “Hyphen”
+  - Replace with: “Orphan”
+  - Replace with: “Python”
+  - Replace with: “Siphon”
+  - Replace with: “Typhoon”
+  - Replace with: “Bryon”
+  - Replace with: “CPython”
+  - Replace with: “Erewhon”
+  - Replace with: “Cryptos”
+  - Replace with: “Payphone”
 
 
 
 Lint:    Spelling (63 priority)
 Message: |
     2451 | “Go on with the next verse,” the Gryphon repeated impatiently: “it begins ‘I
-         |                                  ^~~~~~~ Did you mean `Krypton`?
+         |                                  ^~~~~~~ Did you mean to spell `Gryphon` this way?
 Suggest:
+  - Replace with: “Graph's”
   - Replace with: “Krypton”
+  - Replace with: “Graph”
+  - Replace with: “Graphic”
+  - Replace with: “Graphs”
+  - Replace with: “Grafton”
+  - Replace with: “GraphQL”
+  - Replace with: “Glyph”
+  - Replace with: “Glyphs”
+  - Replace with: “Graphed”
+  - Replace with: “Graphing”
+  - Replace with: “Griffon”
+  - Replace with: “Grunion”
+  - Replace with: “Crypto”
+  - Replace with: “Hyphen”
+  - Replace with: “Orphan”
+  - Replace with: “Python”
+  - Replace with: “Siphon”
+  - Replace with: “Typhoon”
+  - Replace with: “Bryon”
+  - Replace with: “CPython”
+  - Replace with: “Erewhon”
+  - Replace with: “Cryptos”
+  - Replace with: “Payphone”
 
 
 
 Lint:    Spelling (63 priority)
 Message: |
     2470 | “Yes, I think you’d better leave off,” said the Gryphon: and Alice was only too
-         |                                                 ^~~~~~~ Did you mean `Krypton`?
+         |                                                 ^~~~~~~ Did you mean to spell `Gryphon` this way?
 Suggest:
+  - Replace with: “Graph's”
   - Replace with: “Krypton”
+  - Replace with: “Graph”
+  - Replace with: “Graphic”
+  - Replace with: “Graphs”
+  - Replace with: “Grafton”
+  - Replace with: “GraphQL”
+  - Replace with: “Glyph”
+  - Replace with: “Glyphs”
+  - Replace with: “Graphed”
+  - Replace with: “Graphing”
+  - Replace with: “Griffon”
+  - Replace with: “Grunion”
+  - Replace with: “Crypto”
+  - Replace with: “Hyphen”
+  - Replace with: “Orphan”
+  - Replace with: “Python”
+  - Replace with: “Siphon”
+  - Replace with: “Typhoon”
+  - Replace with: “Bryon”
+  - Replace with: “CPython”
+  - Replace with: “Erewhon”
+  - Replace with: “Cryptos”
+  - Replace with: “Payphone”
 
 
 
 Lint:    Spelling (63 priority)
 Message: |
     2473 | “Shall we try another figure of the Lobster Quadrille?” the Gryphon went on. “Or
-         |                                                             ^~~~~~~ Did you mean `Krypton`?
+         |                                                             ^~~~~~~ Did you mean to spell `Gryphon` this way?
 Suggest:
+  - Replace with: “Graph's”
   - Replace with: “Krypton”
+  - Replace with: “Graph”
+  - Replace with: “Graphic”
+  - Replace with: “Graphs”
+  - Replace with: “Grafton”
+  - Replace with: “GraphQL”
+  - Replace with: “Glyph”
+  - Replace with: “Glyphs”
+  - Replace with: “Graphed”
+  - Replace with: “Graphing”
+  - Replace with: “Griffon”
+  - Replace with: “Grunion”
+  - Replace with: “Crypto”
+  - Replace with: “Hyphen”
+  - Replace with: “Orphan”
+  - Replace with: “Python”
+  - Replace with: “Siphon”
+  - Replace with: “Typhoon”
+  - Replace with: “Bryon”
+  - Replace with: “CPython”
+  - Replace with: “Erewhon”
+  - Replace with: “Cryptos”
+  - Replace with: “Payphone”
 
 
 
@@ -3111,9 +5475,32 @@ Lint:    Spelling (63 priority)
 Message: |
     2476 | “Oh, a song, please, if the Mock Turtle would be so kind,” Alice replied, so
     2477 | eagerly that the Gryphon said, in a rather offended tone, “Hm! No accounting for
-         |                  ^~~~~~~ Did you mean `Krypton`?
+         |                  ^~~~~~~ Did you mean to spell `Gryphon` this way?
 Suggest:
+  - Replace with: “Graph's”
   - Replace with: “Krypton”
+  - Replace with: “Graph”
+  - Replace with: “Graphic”
+  - Replace with: “Graphs”
+  - Replace with: “Grafton”
+  - Replace with: “GraphQL”
+  - Replace with: “Glyph”
+  - Replace with: “Glyphs”
+  - Replace with: “Graphed”
+  - Replace with: “Graphing”
+  - Replace with: “Griffon”
+  - Replace with: “Grunion”
+  - Replace with: “Crypto”
+  - Replace with: “Hyphen”
+  - Replace with: “Orphan”
+  - Replace with: “Python”
+  - Replace with: “Siphon”
+  - Replace with: “Typhoon”
+  - Replace with: “Bryon”
+  - Replace with: “CPython”
+  - Replace with: “Erewhon”
+  - Replace with: “Cryptos”
+  - Replace with: “Payphone”
 
 
 
@@ -3141,6 +5528,44 @@ Suggest:
   - Replace with: “Hum”
   - Replace with: “H'm”
   - Replace with: “Am”
+  - Replace with: “Em”
+  - Replace with: “Hf”
+  - Replace with: “Hmm”
+  - Replace with: “Hp”
+  - Replace with: “Ht”
+  - Replace with: “Om”
+  - Replace with: “Um”
+  - Replace with: “HM”
+  - Replace with: “HQ”
+  - Replace with: “HR”
+  - Replace with: “HS”
+  - Replace with: “Hg”
+  - Replace with: “Hz”
+  - Replace with: “H”
+  - Replace with: “Ohm”
+  - Replace with: “HBO”
+  - Replace with: “HIV”
+  - Replace with: “HMO”
+  - Replace with: “HOV”
+  - Replace with: “HUD”
+  - Replace with: “Hal”
+  - Replace with: “Han”
+  - Replace with: “Heb”
+  - Replace with: “Hui”
+  - Replace with: “Hume”
+  - Replace with: “Hun”
+  - Replace with: “Hus”
+  - Replace with: “I'm”
+  - Replace with: “Chm”
+  - Replace with: “Cm”
+  - Replace with: “Gm”
+  - Replace with: “Km”
+  - Replace with: “Mm”
+  - Replace with: “Pm”
+  - Replace with: “Rm”
+  - Replace with: “Fm”
+  - Replace with: “Sm”
+  - Replace with: “Tm”
 
 
 
@@ -3156,9 +5581,33 @@ Message: |
     2485 | > evening, beautiful Soup! Beau—ootiful Soo—oop! Beau—ootiful Soo—oop! Soo—oop
          |                                 ^~~~~~~ Did you mean to spell `ootiful` this way?
 Suggest:
+  - Replace with: “optical”
+  - Replace with: “optimal”
+  - Replace with: “optimum”
   - Replace with: “dutiful”
   - Replace with: “pitiful”
   - Replace with: “potful”
+  - Replace with: “youthful”
+  - Replace with: “mouthful”
+  - Replace with: “slothful”
+  - Replace with: “motif's”
+  - Replace with: “artful”
+  - Replace with: “fateful”
+  - Replace with: “hopeful”
+  - Replace with: “joyful”
+  - Replace with: “motif”
+  - Replace with: “notify”
+  - Replace with: “bountiful”
+  - Replace with: “bowlful”
+  - Replace with: “doleful”
+  - Replace with: “fitful”
+  - Replace with: “forkful”
+  - Replace with: “hateful”
+  - Replace with: “motifs”
+  - Replace with: “potfuls”
+  - Replace with: “roomful”
+  - Replace with: “soulful”
+  - Replace with: “woeful”
 
 
 
@@ -3177,6 +5626,44 @@ Suggest:
   - Replace with: “Soot”
   - Replace with: “Sop”
   - Replace with: “Sou”
+  - Replace with: “Sow”
+  - Replace with: “Soy”
+  - Replace with: “Soho”
+  - Replace with: “Soto”
+  - Replace with: “Shoo”
+  - Replace with: “Sob”
+  - Replace with: “Sot”
+  - Replace with: “Boo”
+  - Replace with: “Coo”
+  - Replace with: “Goo”
+  - Replace with: “Loo”
+  - Replace with: “Moo”
+  - Replace with: “Too”
+  - Replace with: “Woo”
+  - Replace with: “Zoo”
+  - Replace with: “Foo”
+  - Replace with: “Poo”
+  - Replace with: “SA”
+  - Replace with: “SAR”
+  - Replace with: “SBA”
+  - Replace with: “SCM”
+  - Replace with: “SD”
+  - Replace with: “SDI”
+  - Replace with: “SDK”
+  - Replace with: “SDL”
+  - Replace with: “SEO”
+  - Replace with: “SGD”
+  - Replace with: “SGI”
+  - Replace with: “SHA”
+  - Replace with: “SJ”
+  - Replace with: “SJW”
+  - Replace with: “SK”
+  - Replace with: “SLA”
+  - Replace with: “SLR”
+  - Replace with: “SMS”
+  - Replace with: “SNL”
+  - Replace with: “SOS”
+  - Replace with: “SPF”
 
 
 
@@ -3204,6 +5691,44 @@ Suggest:
   - Replace with: “hoop”
   - Replace with: “hop”
   - Replace with: “loop”
+  - Replace with: “lop”
+  - Replace with: “mop”
+  - Replace with: “pop”
+  - Replace with: “sop”
+  - Replace with: “top”
+  - Replace with: “wop”
+  - Replace with: “fop”
+  - Replace with: “goop”
+  - Replace with: “poop”
+  - Replace with: “alp”
+  - Replace with: “amp”
+  - Replace with: “app”
+  - Replace with: “asp”
+  - Replace with: “atop”
+  - Replace with: “boa”
+  - Replace with: “bob”
+  - Replace with: “bod”
+  - Replace with: “bog”
+  - Replace with: “boo”
+  - Replace with: “book”
+  - Replace with: “boom”
+  - Replace with: “boon”
+  - Replace with: “boot”
+  - Replace with: “bot”
+  - Replace with: “bow”
+  - Replace with: “box”
+  - Replace with: “boy”
+  - Replace with: “cap”
+  - Replace with: “chop”
+  - Replace with: “co”
+  - Replace with: “cod”
+  - Replace with: “cog”
+  - Replace with: “col”
+  - Replace with: “com”
+  - Replace with: “comp”
+  - Replace with: “con”
+  - Replace with: “coo”
+  - Replace with: “cook”
 
 
 
@@ -3212,9 +5737,33 @@ Message: |
     2485 | > evening, beautiful Soup! Beau—ootiful Soo—oop! Beau—ootiful Soo—oop! Soo—oop
          |                                                       ^~~~~~~ Did you mean to spell `ootiful` this way?
 Suggest:
+  - Replace with: “optical”
+  - Replace with: “optimal”
+  - Replace with: “optimum”
   - Replace with: “dutiful”
   - Replace with: “pitiful”
   - Replace with: “potful”
+  - Replace with: “youthful”
+  - Replace with: “mouthful”
+  - Replace with: “slothful”
+  - Replace with: “motif's”
+  - Replace with: “artful”
+  - Replace with: “fateful”
+  - Replace with: “hopeful”
+  - Replace with: “joyful”
+  - Replace with: “motif”
+  - Replace with: “notify”
+  - Replace with: “bountiful”
+  - Replace with: “bowlful”
+  - Replace with: “doleful”
+  - Replace with: “fitful”
+  - Replace with: “forkful”
+  - Replace with: “hateful”
+  - Replace with: “motifs”
+  - Replace with: “potfuls”
+  - Replace with: “roomful”
+  - Replace with: “soulful”
+  - Replace with: “woeful”
 
 
 
@@ -3233,6 +5782,44 @@ Suggest:
   - Replace with: “Soot”
   - Replace with: “Sop”
   - Replace with: “Sou”
+  - Replace with: “Sow”
+  - Replace with: “Soy”
+  - Replace with: “Soho”
+  - Replace with: “Soto”
+  - Replace with: “Shoo”
+  - Replace with: “Sob”
+  - Replace with: “Sot”
+  - Replace with: “Boo”
+  - Replace with: “Coo”
+  - Replace with: “Goo”
+  - Replace with: “Loo”
+  - Replace with: “Moo”
+  - Replace with: “Too”
+  - Replace with: “Woo”
+  - Replace with: “Zoo”
+  - Replace with: “Foo”
+  - Replace with: “Poo”
+  - Replace with: “SA”
+  - Replace with: “SAR”
+  - Replace with: “SBA”
+  - Replace with: “SCM”
+  - Replace with: “SD”
+  - Replace with: “SDI”
+  - Replace with: “SDK”
+  - Replace with: “SDL”
+  - Replace with: “SEO”
+  - Replace with: “SGD”
+  - Replace with: “SGI”
+  - Replace with: “SHA”
+  - Replace with: “SJ”
+  - Replace with: “SJW”
+  - Replace with: “SK”
+  - Replace with: “SLA”
+  - Replace with: “SLR”
+  - Replace with: “SMS”
+  - Replace with: “SNL”
+  - Replace with: “SOS”
+  - Replace with: “SPF”
 
 
 
@@ -3260,6 +5847,44 @@ Suggest:
   - Replace with: “hoop”
   - Replace with: “hop”
   - Replace with: “loop”
+  - Replace with: “lop”
+  - Replace with: “mop”
+  - Replace with: “pop”
+  - Replace with: “sop”
+  - Replace with: “top”
+  - Replace with: “wop”
+  - Replace with: “fop”
+  - Replace with: “goop”
+  - Replace with: “poop”
+  - Replace with: “alp”
+  - Replace with: “amp”
+  - Replace with: “app”
+  - Replace with: “asp”
+  - Replace with: “atop”
+  - Replace with: “boa”
+  - Replace with: “bob”
+  - Replace with: “bod”
+  - Replace with: “bog”
+  - Replace with: “boo”
+  - Replace with: “book”
+  - Replace with: “boom”
+  - Replace with: “boon”
+  - Replace with: “boot”
+  - Replace with: “bot”
+  - Replace with: “bow”
+  - Replace with: “box”
+  - Replace with: “boy”
+  - Replace with: “cap”
+  - Replace with: “chop”
+  - Replace with: “co”
+  - Replace with: “cod”
+  - Replace with: “cog”
+  - Replace with: “col”
+  - Replace with: “com”
+  - Replace with: “comp”
+  - Replace with: “con”
+  - Replace with: “coo”
+  - Replace with: “cook”
 
 
 
@@ -3279,6 +5904,44 @@ Suggest:
   - Replace with: “Soot”
   - Replace with: “Sop”
   - Replace with: “Sou”
+  - Replace with: “Sow”
+  - Replace with: “Soy”
+  - Replace with: “Soho”
+  - Replace with: “Soto”
+  - Replace with: “Shoo”
+  - Replace with: “Sob”
+  - Replace with: “Sot”
+  - Replace with: “Boo”
+  - Replace with: “Coo”
+  - Replace with: “Goo”
+  - Replace with: “Loo”
+  - Replace with: “Moo”
+  - Replace with: “Too”
+  - Replace with: “Woo”
+  - Replace with: “Zoo”
+  - Replace with: “Foo”
+  - Replace with: “Poo”
+  - Replace with: “SA”
+  - Replace with: “SAR”
+  - Replace with: “SBA”
+  - Replace with: “SCM”
+  - Replace with: “SD”
+  - Replace with: “SDI”
+  - Replace with: “SDK”
+  - Replace with: “SDL”
+  - Replace with: “SEO”
+  - Replace with: “SGD”
+  - Replace with: “SGI”
+  - Replace with: “SHA”
+  - Replace with: “SJ”
+  - Replace with: “SJW”
+  - Replace with: “SK”
+  - Replace with: “SLA”
+  - Replace with: “SLR”
+  - Replace with: “SMS”
+  - Replace with: “SNL”
+  - Replace with: “SOS”
+  - Replace with: “SPF”
 
 
 
@@ -3308,6 +5971,44 @@ Suggest:
   - Replace with: “hoop”
   - Replace with: “hop”
   - Replace with: “loop”
+  - Replace with: “lop”
+  - Replace with: “mop”
+  - Replace with: “pop”
+  - Replace with: “sop”
+  - Replace with: “top”
+  - Replace with: “wop”
+  - Replace with: “fop”
+  - Replace with: “goop”
+  - Replace with: “poop”
+  - Replace with: “alp”
+  - Replace with: “amp”
+  - Replace with: “app”
+  - Replace with: “asp”
+  - Replace with: “atop”
+  - Replace with: “boa”
+  - Replace with: “bob”
+  - Replace with: “bod”
+  - Replace with: “bog”
+  - Replace with: “boo”
+  - Replace with: “book”
+  - Replace with: “boom”
+  - Replace with: “boon”
+  - Replace with: “boot”
+  - Replace with: “bot”
+  - Replace with: “bow”
+  - Replace with: “box”
+  - Replace with: “boy”
+  - Replace with: “cap”
+  - Replace with: “chop”
+  - Replace with: “co”
+  - Replace with: “cod”
+  - Replace with: “cog”
+  - Replace with: “col”
+  - Replace with: “com”
+  - Replace with: “comp”
+  - Replace with: “con”
+  - Replace with: “coo”
+  - Replace with: “cook”
 
 
 
@@ -3325,9 +6026,11 @@ Lint:    Spelling (63 priority)
 Message: |
     2488 | > “Beautiful Soup! Who cares for fish, Game, or any other dish? Who would not
     2489 | > give all else for two p ennyworth only of beautiful Soup? Pennyworth only of
-         |                           ^~~~~~~~~ Did you mean `pennyworth`?
+         |                           ^~~~~~~~~ Did you mean to spell `ennyworth` this way?
 Suggest:
   - Replace with: “pennyworth”
+  - Replace with: “Hayworth”
+  - Replace with: “Kenworth”
 
 
 
@@ -3336,9 +6039,33 @@ Message: |
     2490 | > beautiful Soup? Beau—ootiful Soo—oop! Beau—ootiful Soo—oop! Soo—oop of the
          |                        ^~~~~~~ Did you mean to spell `ootiful` this way?
 Suggest:
+  - Replace with: “optical”
+  - Replace with: “optimal”
+  - Replace with: “optimum”
   - Replace with: “dutiful”
   - Replace with: “pitiful”
   - Replace with: “potful”
+  - Replace with: “youthful”
+  - Replace with: “mouthful”
+  - Replace with: “slothful”
+  - Replace with: “motif's”
+  - Replace with: “artful”
+  - Replace with: “fateful”
+  - Replace with: “hopeful”
+  - Replace with: “joyful”
+  - Replace with: “motif”
+  - Replace with: “notify”
+  - Replace with: “bountiful”
+  - Replace with: “bowlful”
+  - Replace with: “doleful”
+  - Replace with: “fitful”
+  - Replace with: “forkful”
+  - Replace with: “hateful”
+  - Replace with: “motifs”
+  - Replace with: “potfuls”
+  - Replace with: “roomful”
+  - Replace with: “soulful”
+  - Replace with: “woeful”
 
 
 
@@ -3357,6 +6084,44 @@ Suggest:
   - Replace with: “Soot”
   - Replace with: “Sop”
   - Replace with: “Sou”
+  - Replace with: “Sow”
+  - Replace with: “Soy”
+  - Replace with: “Soho”
+  - Replace with: “Soto”
+  - Replace with: “Shoo”
+  - Replace with: “Sob”
+  - Replace with: “Sot”
+  - Replace with: “Boo”
+  - Replace with: “Coo”
+  - Replace with: “Goo”
+  - Replace with: “Loo”
+  - Replace with: “Moo”
+  - Replace with: “Too”
+  - Replace with: “Woo”
+  - Replace with: “Zoo”
+  - Replace with: “Foo”
+  - Replace with: “Poo”
+  - Replace with: “SA”
+  - Replace with: “SAR”
+  - Replace with: “SBA”
+  - Replace with: “SCM”
+  - Replace with: “SD”
+  - Replace with: “SDI”
+  - Replace with: “SDK”
+  - Replace with: “SDL”
+  - Replace with: “SEO”
+  - Replace with: “SGD”
+  - Replace with: “SGI”
+  - Replace with: “SHA”
+  - Replace with: “SJ”
+  - Replace with: “SJW”
+  - Replace with: “SK”
+  - Replace with: “SLA”
+  - Replace with: “SLR”
+  - Replace with: “SMS”
+  - Replace with: “SNL”
+  - Replace with: “SOS”
+  - Replace with: “SPF”
 
 
 
@@ -3384,6 +6149,44 @@ Suggest:
   - Replace with: “hoop”
   - Replace with: “hop”
   - Replace with: “loop”
+  - Replace with: “lop”
+  - Replace with: “mop”
+  - Replace with: “pop”
+  - Replace with: “sop”
+  - Replace with: “top”
+  - Replace with: “wop”
+  - Replace with: “fop”
+  - Replace with: “goop”
+  - Replace with: “poop”
+  - Replace with: “alp”
+  - Replace with: “amp”
+  - Replace with: “app”
+  - Replace with: “asp”
+  - Replace with: “atop”
+  - Replace with: “boa”
+  - Replace with: “bob”
+  - Replace with: “bod”
+  - Replace with: “bog”
+  - Replace with: “boo”
+  - Replace with: “book”
+  - Replace with: “boom”
+  - Replace with: “boon”
+  - Replace with: “boot”
+  - Replace with: “bot”
+  - Replace with: “bow”
+  - Replace with: “box”
+  - Replace with: “boy”
+  - Replace with: “cap”
+  - Replace with: “chop”
+  - Replace with: “co”
+  - Replace with: “cod”
+  - Replace with: “cog”
+  - Replace with: “col”
+  - Replace with: “com”
+  - Replace with: “comp”
+  - Replace with: “con”
+  - Replace with: “coo”
+  - Replace with: “cook”
 
 
 
@@ -3392,9 +6195,33 @@ Message: |
     2490 | > beautiful Soup? Beau—ootiful Soo—oop! Beau—ootiful Soo—oop! Soo—oop of the
          |                                              ^~~~~~~ Did you mean to spell `ootiful` this way?
 Suggest:
+  - Replace with: “optical”
+  - Replace with: “optimal”
+  - Replace with: “optimum”
   - Replace with: “dutiful”
   - Replace with: “pitiful”
   - Replace with: “potful”
+  - Replace with: “youthful”
+  - Replace with: “mouthful”
+  - Replace with: “slothful”
+  - Replace with: “motif's”
+  - Replace with: “artful”
+  - Replace with: “fateful”
+  - Replace with: “hopeful”
+  - Replace with: “joyful”
+  - Replace with: “motif”
+  - Replace with: “notify”
+  - Replace with: “bountiful”
+  - Replace with: “bowlful”
+  - Replace with: “doleful”
+  - Replace with: “fitful”
+  - Replace with: “forkful”
+  - Replace with: “hateful”
+  - Replace with: “motifs”
+  - Replace with: “potfuls”
+  - Replace with: “roomful”
+  - Replace with: “soulful”
+  - Replace with: “woeful”
 
 
 
@@ -3413,6 +6240,44 @@ Suggest:
   - Replace with: “Soot”
   - Replace with: “Sop”
   - Replace with: “Sou”
+  - Replace with: “Sow”
+  - Replace with: “Soy”
+  - Replace with: “Soho”
+  - Replace with: “Soto”
+  - Replace with: “Shoo”
+  - Replace with: “Sob”
+  - Replace with: “Sot”
+  - Replace with: “Boo”
+  - Replace with: “Coo”
+  - Replace with: “Goo”
+  - Replace with: “Loo”
+  - Replace with: “Moo”
+  - Replace with: “Too”
+  - Replace with: “Woo”
+  - Replace with: “Zoo”
+  - Replace with: “Foo”
+  - Replace with: “Poo”
+  - Replace with: “SA”
+  - Replace with: “SAR”
+  - Replace with: “SBA”
+  - Replace with: “SCM”
+  - Replace with: “SD”
+  - Replace with: “SDI”
+  - Replace with: “SDK”
+  - Replace with: “SDL”
+  - Replace with: “SEO”
+  - Replace with: “SGD”
+  - Replace with: “SGI”
+  - Replace with: “SHA”
+  - Replace with: “SJ”
+  - Replace with: “SJW”
+  - Replace with: “SK”
+  - Replace with: “SLA”
+  - Replace with: “SLR”
+  - Replace with: “SMS”
+  - Replace with: “SNL”
+  - Replace with: “SOS”
+  - Replace with: “SPF”
 
 
 
@@ -3440,6 +6305,44 @@ Suggest:
   - Replace with: “hoop”
   - Replace with: “hop”
   - Replace with: “loop”
+  - Replace with: “lop”
+  - Replace with: “mop”
+  - Replace with: “pop”
+  - Replace with: “sop”
+  - Replace with: “top”
+  - Replace with: “wop”
+  - Replace with: “fop”
+  - Replace with: “goop”
+  - Replace with: “poop”
+  - Replace with: “alp”
+  - Replace with: “amp”
+  - Replace with: “app”
+  - Replace with: “asp”
+  - Replace with: “atop”
+  - Replace with: “boa”
+  - Replace with: “bob”
+  - Replace with: “bod”
+  - Replace with: “bog”
+  - Replace with: “boo”
+  - Replace with: “book”
+  - Replace with: “boom”
+  - Replace with: “boon”
+  - Replace with: “boot”
+  - Replace with: “bot”
+  - Replace with: “bow”
+  - Replace with: “box”
+  - Replace with: “boy”
+  - Replace with: “cap”
+  - Replace with: “chop”
+  - Replace with: “co”
+  - Replace with: “cod”
+  - Replace with: “cog”
+  - Replace with: “col”
+  - Replace with: “com”
+  - Replace with: “comp”
+  - Replace with: “con”
+  - Replace with: “coo”
+  - Replace with: “cook”
 
 
 
@@ -3459,6 +6362,44 @@ Suggest:
   - Replace with: “Soot”
   - Replace with: “Sop”
   - Replace with: “Sou”
+  - Replace with: “Sow”
+  - Replace with: “Soy”
+  - Replace with: “Soho”
+  - Replace with: “Soto”
+  - Replace with: “Shoo”
+  - Replace with: “Sob”
+  - Replace with: “Sot”
+  - Replace with: “Boo”
+  - Replace with: “Coo”
+  - Replace with: “Goo”
+  - Replace with: “Loo”
+  - Replace with: “Moo”
+  - Replace with: “Too”
+  - Replace with: “Woo”
+  - Replace with: “Zoo”
+  - Replace with: “Foo”
+  - Replace with: “Poo”
+  - Replace with: “SA”
+  - Replace with: “SAR”
+  - Replace with: “SBA”
+  - Replace with: “SCM”
+  - Replace with: “SD”
+  - Replace with: “SDI”
+  - Replace with: “SDK”
+  - Replace with: “SDL”
+  - Replace with: “SEO”
+  - Replace with: “SGD”
+  - Replace with: “SGI”
+  - Replace with: “SHA”
+  - Replace with: “SJ”
+  - Replace with: “SJW”
+  - Replace with: “SK”
+  - Replace with: “SLA”
+  - Replace with: “SLR”
+  - Replace with: “SMS”
+  - Replace with: “SNL”
+  - Replace with: “SOS”
+  - Replace with: “SPF”
 
 
 
@@ -3488,6 +6429,44 @@ Suggest:
   - Replace with: “hoop”
   - Replace with: “hop”
   - Replace with: “loop”
+  - Replace with: “lop”
+  - Replace with: “mop”
+  - Replace with: “pop”
+  - Replace with: “sop”
+  - Replace with: “top”
+  - Replace with: “wop”
+  - Replace with: “fop”
+  - Replace with: “goop”
+  - Replace with: “poop”
+  - Replace with: “alp”
+  - Replace with: “amp”
+  - Replace with: “app”
+  - Replace with: “asp”
+  - Replace with: “atop”
+  - Replace with: “boa”
+  - Replace with: “bob”
+  - Replace with: “bod”
+  - Replace with: “bog”
+  - Replace with: “boo”
+  - Replace with: “book”
+  - Replace with: “boom”
+  - Replace with: “boon”
+  - Replace with: “boot”
+  - Replace with: “bot”
+  - Replace with: “bow”
+  - Replace with: “box”
+  - Replace with: “boy”
+  - Replace with: “cap”
+  - Replace with: “chop”
+  - Replace with: “co”
+  - Replace with: “cod”
+  - Replace with: “cog”
+  - Replace with: “col”
+  - Replace with: “com”
+  - Replace with: “comp”
+  - Replace with: “con”
+  - Replace with: “coo”
+  - Replace with: “cook”
 
 
 
@@ -3507,6 +6486,44 @@ Suggest:
   - Replace with: “beau”
   - Replace with: “beastie”
   - Replace with: “beasts”
+  - Replace with: “beats”
+  - Replace with: “beaus”
+  - Replace with: “beauties”
+  - Replace with: “beautify”
+  - Replace with: “bath”
+  - Replace with: “berth”
+  - Replace with: “breath”
+  - Replace with: “breadth”
+  - Replace with: “bead's”
+  - Replace with: “beak's”
+  - Replace with: “beam's”
+  - Replace with: “bean's”
+  - Replace with: “bear's”
+  - Replace with: “beast's”
+  - Replace with: “beat's”
+  - Replace with: “beauty's”
+  - Replace with: “baht”
+  - Replace with: “bait”
+  - Replace with: “bani”
+  - Replace with: “bat”
+  - Replace with: “beach”
+  - Replace with: “beacon”
+  - Replace with: “bead”
+  - Replace with: “beagle”
+  - Replace with: “beak”
+  - Replace with: “beam”
+  - Replace with: “bean”
+  - Replace with: “bear”
+  - Replace with: “beard”
+  - Replace with: “beautiful”
+  - Replace with: “beaver”
+  - Replace with: “because”
+  - Replace with: “beet”
+  - Replace with: “begum”
+  - Replace with: “begun”
+  - Replace with: “belt”
+  - Replace with: “bent”
+  - Replace with: “beret”
 
 
 
@@ -3526,34 +6543,141 @@ Suggest:
   - Replace with: “Fut”
   - Replace with: “FUD”
   - Replace with: “Fl”
+  - Replace with: “Fug”
+  - Replace with: “Fum”
+  - Replace with: “Furl”
+  - Replace with: “Fa”
+  - Replace with: “Fab”
+  - Replace with: “Fad”
+  - Replace with: “Fail”
+  - Replace with: “Fall”
+  - Replace with: “Fan”
+  - Replace with: “Far”
+  - Replace with: “Fat”
+  - Replace with: “Fault”
+  - Replace with: “Faux”
+  - Replace with: “Fax”
+  - Replace with: “Fay”
+  - Replace with: “Fed”
+  - Replace with: “Fee”
+  - Replace with: “Jul”
+  - Replace with: “UL”
+  - Replace with: “F”
+  - Replace with: “F1”
+  - Replace with: “FAA”
+  - Replace with: “FAQ”
+  - Replace with: “FBI”
+  - Replace with: “FCC”
+  - Replace with: “FD”
+  - Replace with: “FDA”
+  - Replace with: “FDR”
+  - Replace with: “FFI”
+  - Replace with: “FFT”
+  - Replace with: “FHA”
+  - Replace with: “FMs”
+  - Replace with: “FOFL”
+  - Replace with: “FOV”
+  - Replace with: “FPM”
+  - Replace with: “FPO”
+  - Replace with: “FSB”
+  - Replace with: “FSD”
 
 
 
 Lint:    Spelling (63 priority)
 Message: |
     2493 | “Chorus again!” cried the Gryphon, and the Mock Turtle had just begun to repeat
-         |                           ^~~~~~~ Did you mean `Krypton`?
+         |                           ^~~~~~~ Did you mean to spell `Gryphon` this way?
 Suggest:
+  - Replace with: “Graph's”
   - Replace with: “Krypton”
+  - Replace with: “Graph”
+  - Replace with: “Graphic”
+  - Replace with: “Graphs”
+  - Replace with: “Grafton”
+  - Replace with: “GraphQL”
+  - Replace with: “Glyph”
+  - Replace with: “Glyphs”
+  - Replace with: “Graphed”
+  - Replace with: “Graphing”
+  - Replace with: “Griffon”
+  - Replace with: “Grunion”
+  - Replace with: “Crypto”
+  - Replace with: “Hyphen”
+  - Replace with: “Orphan”
+  - Replace with: “Python”
+  - Replace with: “Siphon”
+  - Replace with: “Typhoon”
+  - Replace with: “Bryon”
+  - Replace with: “CPython”
+  - Replace with: “Erewhon”
+  - Replace with: “Cryptos”
+  - Replace with: “Payphone”
 
 
 
 Lint:    Spelling (63 priority)
 Message: |
     2496 | “Come on!” cried the Gryphon, and, taking Alice by the hand, it hurried off,
-         |                      ^~~~~~~ Did you mean `Krypton`?
+         |                      ^~~~~~~ Did you mean to spell `Gryphon` this way?
 Suggest:
+  - Replace with: “Graph's”
   - Replace with: “Krypton”
+  - Replace with: “Graph”
+  - Replace with: “Graphic”
+  - Replace with: “Graphs”
+  - Replace with: “Grafton”
+  - Replace with: “GraphQL”
+  - Replace with: “Glyph”
+  - Replace with: “Glyphs”
+  - Replace with: “Graphed”
+  - Replace with: “Graphing”
+  - Replace with: “Griffon”
+  - Replace with: “Grunion”
+  - Replace with: “Crypto”
+  - Replace with: “Hyphen”
+  - Replace with: “Orphan”
+  - Replace with: “Python”
+  - Replace with: “Siphon”
+  - Replace with: “Typhoon”
+  - Replace with: “Bryon”
+  - Replace with: “CPython”
+  - Replace with: “Erewhon”
+  - Replace with: “Cryptos”
+  - Replace with: “Payphone”
 
 
 
 Lint:    Spelling (63 priority)
 Message: |
     2499 | “What trial is it?” Alice panted as she ran; but the Gryphon only answered “Come
-         |                                                      ^~~~~~~ Did you mean `Krypton`?
+         |                                                      ^~~~~~~ Did you mean to spell `Gryphon` this way?
     2500 | on!” and ran the faster, while more and more faintly came, carried on the breeze
 Suggest:
+  - Replace with: “Graph's”
   - Replace with: “Krypton”
+  - Replace with: “Graph”
+  - Replace with: “Graphic”
+  - Replace with: “Graphs”
+  - Replace with: “Grafton”
+  - Replace with: “GraphQL”
+  - Replace with: “Glyph”
+  - Replace with: “Glyphs”
+  - Replace with: “Graphed”
+  - Replace with: “Graphing”
+  - Replace with: “Griffon”
+  - Replace with: “Grunion”
+  - Replace with: “Crypto”
+  - Replace with: “Hyphen”
+  - Replace with: “Orphan”
+  - Replace with: “Python”
+  - Replace with: “Siphon”
+  - Replace with: “Typhoon”
+  - Replace with: “Bryon”
+  - Replace with: “CPython”
+  - Replace with: “Erewhon”
+  - Replace with: “Cryptos”
+  - Replace with: “Payphone”
 
 
 
@@ -3572,6 +6696,44 @@ Suggest:
   - Replace with: “Soot”
   - Replace with: “Sop”
   - Replace with: “Sou”
+  - Replace with: “Sow”
+  - Replace with: “Soy”
+  - Replace with: “Soho”
+  - Replace with: “Soto”
+  - Replace with: “Shoo”
+  - Replace with: “Sob”
+  - Replace with: “Sot”
+  - Replace with: “Boo”
+  - Replace with: “Coo”
+  - Replace with: “Goo”
+  - Replace with: “Loo”
+  - Replace with: “Moo”
+  - Replace with: “Too”
+  - Replace with: “Woo”
+  - Replace with: “Zoo”
+  - Replace with: “Foo”
+  - Replace with: “Poo”
+  - Replace with: “SA”
+  - Replace with: “SAR”
+  - Replace with: “SBA”
+  - Replace with: “SCM”
+  - Replace with: “SD”
+  - Replace with: “SDI”
+  - Replace with: “SDK”
+  - Replace with: “SDL”
+  - Replace with: “SEO”
+  - Replace with: “SGD”
+  - Replace with: “SGI”
+  - Replace with: “SHA”
+  - Replace with: “SJ”
+  - Replace with: “SJW”
+  - Replace with: “SK”
+  - Replace with: “SLA”
+  - Replace with: “SLR”
+  - Replace with: “SMS”
+  - Replace with: “SNL”
+  - Replace with: “SOS”
+  - Replace with: “SPF”
 
 
 
@@ -3599,6 +6761,44 @@ Suggest:
   - Replace with: “hoop”
   - Replace with: “hop”
   - Replace with: “loop”
+  - Replace with: “lop”
+  - Replace with: “mop”
+  - Replace with: “pop”
+  - Replace with: “sop”
+  - Replace with: “top”
+  - Replace with: “wop”
+  - Replace with: “fop”
+  - Replace with: “goop”
+  - Replace with: “poop”
+  - Replace with: “alp”
+  - Replace with: “amp”
+  - Replace with: “app”
+  - Replace with: “asp”
+  - Replace with: “atop”
+  - Replace with: “boa”
+  - Replace with: “bob”
+  - Replace with: “bod”
+  - Replace with: “bog”
+  - Replace with: “boo”
+  - Replace with: “book”
+  - Replace with: “boom”
+  - Replace with: “boon”
+  - Replace with: “boot”
+  - Replace with: “bot”
+  - Replace with: “bow”
+  - Replace with: “box”
+  - Replace with: “boy”
+  - Replace with: “cap”
+  - Replace with: “chop”
+  - Replace with: “co”
+  - Replace with: “cod”
+  - Replace with: “cog”
+  - Replace with: “col”
+  - Replace with: “com”
+  - Replace with: “comp”
+  - Replace with: “con”
+  - Replace with: “coo”
+  - Replace with: “cook”
 
 
 
@@ -3645,19 +6845,65 @@ Lint:    Spelling (63 priority)
 Message: |
     2534 | The twelve jurors were all writing very busily on slates. “What are they doing?”
     2535 | Alice whispered to the Gryphon. “They can’t have anything to put down yet,
-         |                        ^~~~~~~ Did you mean `Krypton`?
+         |                        ^~~~~~~ Did you mean to spell `Gryphon` this way?
 Suggest:
+  - Replace with: “Graph's”
   - Replace with: “Krypton”
+  - Replace with: “Graph”
+  - Replace with: “Graphic”
+  - Replace with: “Graphs”
+  - Replace with: “Grafton”
+  - Replace with: “GraphQL”
+  - Replace with: “Glyph”
+  - Replace with: “Glyphs”
+  - Replace with: “Graphed”
+  - Replace with: “Graphing”
+  - Replace with: “Griffon”
+  - Replace with: “Grunion”
+  - Replace with: “Crypto”
+  - Replace with: “Hyphen”
+  - Replace with: “Orphan”
+  - Replace with: “Python”
+  - Replace with: “Siphon”
+  - Replace with: “Typhoon”
+  - Replace with: “Bryon”
+  - Replace with: “CPython”
+  - Replace with: “Erewhon”
+  - Replace with: “Cryptos”
+  - Replace with: “Payphone”
 
 
 
 Lint:    Spelling (63 priority)
 Message: |
     2538 | “They’re putting down their names,” the Gryphon whispered in reply, “for fear
-         |                                         ^~~~~~~ Did you mean `Krypton`?
+         |                                         ^~~~~~~ Did you mean to spell `Gryphon` this way?
     2539 | they should forget them before the end of the trial.”
 Suggest:
+  - Replace with: “Graph's”
   - Replace with: “Krypton”
+  - Replace with: “Graph”
+  - Replace with: “Graphic”
+  - Replace with: “Graphs”
+  - Replace with: “Grafton”
+  - Replace with: “GraphQL”
+  - Replace with: “Glyph”
+  - Replace with: “Glyphs”
+  - Replace with: “Graphed”
+  - Replace with: “Graphing”
+  - Replace with: “Griffon”
+  - Replace with: “Grunion”
+  - Replace with: “Crypto”
+  - Replace with: “Hyphen”
+  - Replace with: “Orphan”
+  - Replace with: “Python”
+  - Replace with: “Siphon”
+  - Replace with: “Typhoon”
+  - Replace with: “Bryon”
+  - Replace with: “CPython”
+  - Replace with: “Erewhon”
+  - Replace with: “Cryptos”
+  - Replace with: “Payphone”
 
 
 
@@ -3947,10 +7193,33 @@ Message: |
 Lint:    Spelling (63 priority)
 Message: |
     2977 | plates and dishes crashed around it—once more the shriek of the Gryphon, the
-         |                                                                 ^~~~~~~ Did you mean `Krypton`?
+         |                                                                 ^~~~~~~ Did you mean to spell `Gryphon` this way?
     2978 | squeaking of the Lizard’s slate-pencil, and the choking of the suppressed
 Suggest:
+  - Replace with: “Graph's”
   - Replace with: “Krypton”
+  - Replace with: “Graph”
+  - Replace with: “Graphic”
+  - Replace with: “Graphs”
+  - Replace with: “Grafton”
+  - Replace with: “GraphQL”
+  - Replace with: “Glyph”
+  - Replace with: “Glyphs”
+  - Replace with: “Graphed”
+  - Replace with: “Graphing”
+  - Replace with: “Griffon”
+  - Replace with: “Grunion”
+  - Replace with: “Crypto”
+  - Replace with: “Hyphen”
+  - Replace with: “Orphan”
+  - Replace with: “Python”
+  - Replace with: “Siphon”
+  - Replace with: “Typhoon”
+  - Replace with: “Bryon”
+  - Replace with: “CPython”
+  - Replace with: “Erewhon”
+  - Replace with: “Cryptos”
+  - Replace with: “Payphone”
 
 
 
@@ -3980,10 +7249,33 @@ Message: |
 Lint:    Spelling (63 priority)
 Message: |
     2987 | the sneeze of the baby, the shriek of the Gryphon, and all the other queer
-         |                                           ^~~~~~~ Did you mean `Krypton`?
+         |                                           ^~~~~~~ Did you mean to spell `Gryphon` this way?
     2988 | noises, would change (she knew) to the confused clamour of the busy
 Suggest:
+  - Replace with: “Graph's”
   - Replace with: “Krypton”
+  - Replace with: “Graph”
+  - Replace with: “Graphic”
+  - Replace with: “Graphs”
+  - Replace with: “Grafton”
+  - Replace with: “GraphQL”
+  - Replace with: “Glyph”
+  - Replace with: “Glyphs”
+  - Replace with: “Graphed”
+  - Replace with: “Graphing”
+  - Replace with: “Griffon”
+  - Replace with: “Grunion”
+  - Replace with: “Crypto”
+  - Replace with: “Hyphen”
+  - Replace with: “Orphan”
+  - Replace with: “Python”
+  - Replace with: “Siphon”
+  - Replace with: “Typhoon”
+  - Replace with: “Bryon”
+  - Replace with: “CPython”
+  - Replace with: “Erewhon”
+  - Replace with: “Cryptos”
+  - Replace with: “Payphone”
 
 
 

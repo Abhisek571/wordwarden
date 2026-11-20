@@ -10,7 +10,7 @@ import {
   parseExtraWords,
   type WordwardenCore,
 } from '#/engines/wordwarden-core';
-import { createSpellingRankerFromData } from '#/engines/spelling-ranker';
+import { createSpellingRankerFromData, type SpellingRanker } from '#/engines/spelling-ranker';
 import { parseWordPairs, type WordPairs } from '#/engines/word-pairs';
 
 const decoder = new TextDecoder();
@@ -25,17 +25,23 @@ export async function readBundledWordPairs(): Promise<WordPairs> {
   return parseWordPairs(new Uint8Array(await readFile(new URL('../../public/spelling/pairs.bin', import.meta.url))));
 }
 
-/** The shipped engine (the core, local rules, spelling ranker) with bundled data, outside the browser. */
-export async function createProductionEngine(dialect: EnglishDialect = 'american'): Promise<WordwardenCore> {
+/**
+ * The shipped engine (the core, local rules, spelling ranker) with bundled data, outside the browser.
+ * `wrapRanker` lets a test watch the ranker, for example to read every candidate it chose from.
+ */
+export async function createProductionEngine(
+  dialect: EnglishDialect = 'american',
+  wrapRanker: (ranker: SpellingRanker) => SpellingRanker = (ranker) => ranker,
+): Promise<WordwardenCore> {
   const dictionary = dialect === 'british' ? british : american;
   const engine = createWordwardenCore(Object.freeze({
     wasmUrl: wordwardenCoreWasmUrl,
-    createSpellingRanker: async (_dialect, personalWords) => createSpellingRankerFromData(
+    createSpellingRanker: async (_dialect, personalWords) => wrapRanker(createSpellingRankerFromData(
       Object.freeze({ aff: decoder.decode(dictionary.aff), dic: decoder.decode(dictionary.dic) }),
       frequencies,
       personalWords,
       await readBundledWordPairs(),
-    ),
+    )),
     loadExtraWords: readBundledExtraWords,
   }));
   await engine.setup(dialect, Object.freeze([]));

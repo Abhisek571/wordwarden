@@ -76,11 +76,21 @@ workflow runs it on GitHub's Linux machine with the newest Harper and LanguageTo
 ## Metrics
 
 - **Spelling lists:** detected (flagged at all), top-1 and top-3 (the right word is the first / in the
-  first three suggestions). Pairs are split by a stable hash into `tune` and `holdout`; tune rules on
-  failures from `tune`, report `holdout`.
+  first three suggestions). Pairs are split into `tune` and `holdout` by a stable hash of the right word, so
+  no word is tuned on in one half and scored in the other; tune rules on failures from `tune`, report `holdout`.
 - **Tweets and typing slips:** the same three numbers, but each mistake is checked inside its whole
   sentence. Tweets: `train` and `dev` are tune, `test` is holdout. Typing slips: sentences are split by
-  a stable hash; a typed word is a mistake when it differs from the word the person was asked to type.
+  a stable hash of the sentence people were asked to type (many typed the same one); a typed word is a mistake
+  when it differs from the word the person was asked to type.
+- **Where misses come from** (`diagnosis` under each spelling set, per half): the same numbers by how many letters
+  the misspelling is from the right word (1, 2, 3, 4+), how often the right word was among the ranker's candidates
+  at all (`inPool`), and where it ranked (`targetRank`: 1, 2, 3, 4–10, 11–32, 33+, not a candidate, flagged by
+  another rule, not flagged). `holdoutMisses` is a fixed pseudo-random sample, not the first misses in the file.
+- **Quicker runs and fitting:** `WORDWARDEN_BENCHMARK_COMPARE=0` skips plain Harper and LanguageTool (Wordwarden
+  alone takes about three minutes). `WORDWARDEN_BENCHMARK_RANK_CASES=<file>` writes every tune-half misspelling
+  with each candidate and its ranking signals, one JSON line each; the holdout halves are never written.
+  `node scripts/rank-weights.mjs <file>` fits the ranker's weights on it (`RANK_WEIGHTS` in
+  `src/engines/spelling-ranker.ts`, about a minute and a half).
 - **Holbrook:** recall on tagged errors in context; spelling precision = spelling flags that land on a
   tagged error. Children's writing has many untagged grammar slips, so only spelling flags count.
 - **JFLEG clean text:** the human corrections should get almost no underlines. `flaggedSentencesPct` is
@@ -110,6 +120,50 @@ workflow runs it on GitHub's Linux machine with the newest Harper and LanguageTo
 - [ ] Badge shows checking → count / tick; clicking it opens the first suggestion.
 - [ ] Suggestion card near the bottom of the window opens above the word.
 - [ ] Turn the site off in the popup: underlines disappear without a reload.
+
+## Changes — 2026-11-20
+
+The benchmark itself changed first, so the published numbers move: word lists are now split by the right word, not
+the misspelling (the same word was in both halves), and typing slips by the sentence people were asked to type. With
+the code unchanged, holdout correct-word-first went Birkbeck 45.3% → 44.6%, Wikipedia 91.5% → 91.8%, typing slips
+53.1% → 55.2%; tweets, Holbrook and JFLEG are unchanged. That re-split is the "before" below. Each change was kept
+only if it helped on the tune halves and did not hurt the holdout halves; Wordwarden-only runs, plain Harper 3.3.0
+and LanguageTool 6.6 rerun at the end.
+
+- **Sentence-start capitals.** A lowercase misspelling that starts a sentence gets fixes with a capital ("becuse" →
+  "Because"); JFLEG compares words with their case. JFLEG fixes that help: tune 59.2% → 59.5%, holdout 69.0% → 69.8%.
+- **Initials.** "S." and "J.S.", which the core joins into one word, are no longer spelling mistakes. Holbrook
+  spelling precision 89.4% → 89.9%.
+- **Wider candidate pool and one blended score.** The core hands the ranker up to 48 candidates (was 10), case
+  variants once, and words of six or more letters also get words three edits away. The ranker sorts by one score
+  instead of distance first and then everything else, with weights fitted on the tune halves only
+  (`scripts/rank-weights.mjs`). The right word among the candidates at all, Birkbeck holdout, three letters off:
+  40.6% → 72.8%. A word from the user's dictionary one slip away still beats a common word two off (weight set by
+  hand).
+- **RegularIrregulars** ("buyed" → "bought") now wins over a spelling guess on the same word, as the core intends.
+- **Informal spellings.** Words seen at least four times in the tune half of the tweets ("dat" → "that", "pls" →
+  "please") come first, and a dropped "g" ("goin" → "going") counts in the score. Tweets holdout 70.3% → 74.1%.
+- **Muted:** `UpdatePlaceNames` ("Turkey" → "Türkiye") and `LitotesDirectPositive` ("not unusual" → "common"),
+  decided on the dev set and by reading them: opinions, not mistakes. JFLEG clean sentences flagged 5.8% → 5.5%.
+- **Edit costs** (`scripts/edit-costs.mjs`) are now learned from the new tune halves too; the old table had seen
+  some of today's holdout words (holdout moved by at most 0.2 points).
+- **Tried and dropped** (worse on tune and holdout): no fix for a capitalised word two edits from any word (typing
+  slips −0.4 / −0.2); WrongNegative over spelling guesses (fired on typos: "untill" → "distill"); lowercase
+  acronyms ("ot" → "OT", "cors" → "CORS"). SplitWords over spelling guesses changed nothing.
+
+Holdout, correct word first (top three in brackets); before is the re-split above:
+
+| Benchmark | Before | After | Plain Harper 3.3.0 | LanguageTool 6.6 |
+|---|---|---|---|---|
+| Birkbeck | 44.6% (53.2%) | 44.8% (54.8%) | 36.1% | 36.7% |
+| Wikipedia | 91.8% (95.3%) | 91.9% (96.0%) | 81.8% | 84.3% |
+| Typing slips | 55.2% (60.2%) | 56.0% (60.8%) | 53.0% | 48.7% |
+| Tweets | 66.8% (74.3%) | 74.0% (80.1%) | 61.1% | 59.4% |
+| Holbrook | 30.8% (38.0%) | 32.8% (40.0%) | 18.4% | 25.3% |
+
+JFLEG holdout: fixes that help 69.0% → 70.3% (Harper 64.0%, LanguageTool 60.2%), clean sentences flagged 5.7% →
+5.5% (11.8%, 12.8%), sentences needing edits that get a flag 64.4% → 64.2% (66.4%, 72.7%). Speed on clean text
+27 → 31 ms per 500 words; on JFLEG learner text, full of misspellings, about 78 → 100–110 ms (busy machine, noisy).
 
 ## Changes — 2026-10-15
 

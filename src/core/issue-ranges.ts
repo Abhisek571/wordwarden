@@ -23,11 +23,13 @@ export function issueMatchesText(issue: WritingIssue, text: string): boolean {
 }
 
 // Rules whose fix is surer than a spelling guess on the same words: "1960's" → "1960s" (the guess was for the "s"),
-// "new york" → "New York", "Their's" → "There's", "atall" → "at all". A spelling guess inside one of them is dropped
-// instead of the rule. Not the capitalisation rules or SplitWords: on the typing benchmarks they mostly fire on typos
-// that only look like a name or an acronym ("brian", "un"), where the spelling guess is the better fix.
+// "new york" → "New York", "Their's" → "There's", "atall" → "at all", "buyed" → "bought" (the core ranks that one above
+// its spelling check too). A spelling guess inside one of them is dropped instead of the rule. Not WrongNegative,
+// which the core also ranks above it: on the benchmarks it mostly fired on typos ("untill" → "distill"). Not the
+// capitalisation rules or SplitWords: on the typing benchmarks they mostly fire on typos that only look like a name or
+// an acronym ("brian", "un"), where the spelling guess is the better fix.
 const SPECIFIC_RULES: ReadonlySet<string> = new Set([
-  'MassNouns', 'NotablePlaces', 'OpenCompounds', 'PluralDecades', 'Theres',
+  'MassNouns', 'NotablePlaces', 'OpenCompounds', 'PluralDecades', 'RegularIrregulars', 'Theres',
 ]);
 
 function contains(outer: WritingIssue, inner: WritingIssue): boolean {

@@ -64,13 +64,21 @@ export function buildTextModel(root: HTMLElement, stopAt: Node | null = null): T
   return Object.freeze({ text: parts.join(''), segments: Object.freeze(segments) });
 }
 
+// Segments are in text order, so the first one that can hold the offset is found by halving: a long text with many
+// issues would otherwise walk all its segments for each issue.
 function pointAt(model: TextModel, offset: number): DomPoint | null {
-  for (const segment of model.segments) {
-    if (offset >= segment.start && offset <= segment.start + segment.node.data.length) {
-      return Object.freeze({ node: segment.node, offset: offset - segment.start });
-    }
+  const { segments } = model;
+  let low = 0;
+  let high = segments.length;
+  while (low < high) {
+    const middle = (low + high) >>> 1;
+    const segment = segments[middle];
+    if (segment !== undefined && segment.start + segment.node.data.length < offset) low = middle + 1;
+    else high = middle;
   }
-  return null;
+  const segment = segments[low];
+  if (segment === undefined || offset < segment.start) return null;
+  return Object.freeze({ node: segment.node, offset: offset - segment.start });
 }
 
 /** Text offset of the selection start inside `root`, or null when the selection is elsewhere. */
@@ -85,13 +93,21 @@ export function selectionOffset(root: HTMLElement): number | null {
   return segment === undefined ? null : segment.start + range.startOffset;
 }
 
-/** `model` can be passed in when several ranges are looked up in the same text. */
-export function rangeForOffsets(root: HTMLElement, range: TextRange, model = buildTextModel(root)): Range | null {
+/**
+ * `model` can be passed in when several ranges are looked up in the same text, and `reuse` to set one DOM range again
+ * rather than make one per lookup: the browser updates every live range on each change to the page.
+ */
+export function rangeForOffsets(
+  root: HTMLElement,
+  range: TextRange,
+  model = buildTextModel(root),
+  reuse: Range | null = null,
+): Range | null {
   if (range.end < range.start) return null;
   const start = pointAt(model, range.start);
   const end = pointAt(model, range.end);
   if (start === null || end === null) return null;
-  const domRange = root.ownerDocument.createRange();
+  const domRange = reuse ?? root.ownerDocument.createRange();
   domRange.setStart(start.node, start.offset);
   domRange.setEnd(end.node, end.offset);
   // A range across a synthetic break would edit text other than the reported issue.

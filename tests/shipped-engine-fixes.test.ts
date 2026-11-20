@@ -99,7 +99,7 @@ describe('the shipped engine', () => {
   it('offers the right word for common slips', async () => {
     for (const [text, word, fix] of [
       ['im going home now.', 'im', "I'm"],
-      ['thats a good idea.', 'thats', "that's"],
+      ['I think thats a good idea.', 'thats', "that's"],
       ['What a beautifull sunset.', 'beautifull', 'beautiful'],
       ['You gave me bad advices.', 'advices', 'advice'],
     ] as const) {
@@ -110,5 +110,31 @@ describe('the shipped engine', () => {
   it("does not flag a spelling the dialect's own dictionary has", async () => {
     const text = 'She dreamed of home.';
     expect((await british.lint(text)).some((issue) => issue.originalText === 'dreamed')).toBe(false);
+  });
+});
+
+describe('text with decomposed accents', () => {
+  it('checks "naïve" and "résumé" written as letters and combining accents as whole words', async () => {
+    const text = 'A nai\u0308ve re\u0301sume\u0301 with a speling mistake.';
+    const issues = await american.lint(text);
+    expect(issues.filter((issue) => /na|r/u.test(issue.originalText) && issue.ruleId === 'SpellCheck')).toEqual([]);
+    const typo = at(issues, text, 'speling');
+    expect(typo?.originalText).toBe('speling');
+    expect(applyFirst(text, typo)).toBe('A nai\u0308ve re\u0301sume\u0301 with a spelling mistake.');
+  });
+
+  it('maps a finding on an accented word back over its accents', async () => {
+    const text = 'I like the cafe\u0301s caffe\u0301.';
+    for (const issue of await american.lint(text)) {
+      expect(text.slice(issue.range.start, issue.range.end)).toBe(issue.originalText);
+      expect(/^\p{M}/u.test(text.slice(issue.range.end))).toBe(false);
+    }
+  });
+
+  it('keeps ranges right after a stray accent with no letter before it', async () => {
+    const text = '́ This has a speling mistake.';
+    const typo = at(await american.lint(text), text, 'speling');
+    expect(typo?.originalText).toBe('speling');
+    expect(applyFirst(text, typo)).toBe('́ This has a spelling mistake.');
   });
 });

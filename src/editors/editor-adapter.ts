@@ -203,6 +203,16 @@ function comparable(text: string): string {
   return text.replace(/ /gu, ' ');
 }
 
+async function settledText(element: HTMLElement, expected: string): Promise<string> {
+  await nextTask();
+  let text = buildTextModel(element).text;
+  for (let waited = 0; comparable(text) !== comparable(expected) && waited < REDRAW_WAIT_MS; waited += REDRAW_POLL_MS) {
+    await new Promise((resolve) => window.setTimeout(resolve, REDRAW_POLL_MS));
+    text = buildTextModel(element).text;
+  }
+  return text;
+}
+
 async function applyContentEditable(
   element: HTMLElement,
   range: TextRange,
@@ -215,36 +225,54 @@ async function applyContentEditable(
   if (selection === null) return declined;
   element.focus();
   if (!hasFocus(element)) return declined;
-  // Editors such as Twitch's put their old cursor back a moment after getting focus, over the word just selected.
-  // Select the word again until it stays selected.
-  let selected = false;
-  for (let attempt = 0; attempt < SELECT_ATTEMPTS && !selected; attempt += 1) {
-    const domRange = rangeForOffsets(element, range);
-    if (domRange === null) return declined;
-    selection.removeAllRanges();
-    selection.addRange(domRange);
-    await selectionSettled(element.ownerDocument);
-    if (buildTextModel(element).text !== before) return declined;
-    selected = selectionMatches(selection, element, range);
-  }
-  if (!selected) return declined;
+  if (!await selectWord(element, selection, range, before)) return declined;
   const applied = element.ownerDocument.execCommand('insertText', false, replacement);
   if (!applied) return declined;
   // Some editors redraw the field after the input event, Twitch's a moment later; check what they ended up with.
   const expected = before.slice(0, range.start) + replacement + before.slice(range.end);
-  await nextTask();
-  let after = buildTextModel(element).text;
-  for (let waited = 0; comparable(after) !== comparable(expected) && waited < REDRAW_WAIT_MS; waited += REDRAW_POLL_MS) {
-    await new Promise((resolve) => window.setTimeout(resolve, REDRAW_POLL_MS));
-    after = buildTextModel(element).text;
+  let after = await settledText(element, expected);
+  if (comparable(after) === comparable(before)) {
+    // CKEditor 5 draws its text again from its own model, undoing the browser's insertion. It takes text from a
+    // beforeinput event instead, which the browser does not send for execCommand. An editor that ignores the event
+    // is left as it was, since a page-made beforeinput changes nothing by itself.
+    if (!await selectWord(element, selection, range, after)) return declined;
+    dispatchInsertText(element, replacement);
+    after = await settledText(element, expected);
   }
   if (comparable(after) !== comparable(expected)) {
     // The editor put the text somewhere else. Undo it rather than leave a mangled sentence, but only when
     // something changed: an undo with nothing inserted would remove the writer's own last edit.
-    if (after !== before) element.ownerDocument.execCommand('undo');
+    if (comparable(after) !== comparable(before)) element.ownerDocument.execCommand('undo');
     return declined;
   }
   return Object.freeze({ applied: true, revision: revision + 1 });
+}
+
+/**
+ * Selects the range, again until it stays selected: editors such as Twitch's put their old cursor back a moment
+ * after getting focus, over the word just selected. False when it will not stay or the text changed meanwhile.
+ */
+async function selectWord(element: HTMLElement, selection: Selection, range: TextRange, text: string): Promise<boolean> {
+  for (let attempt = 0; attempt < SELECT_ATTEMPTS; attempt += 1) {
+    const domRange = rangeForOffsets(element, range);
+    if (domRange === null) return false;
+    selection.removeAllRanges();
+    selection.addRange(domRange);
+    await selectionSettled(element.ownerDocument);
+    if (buildTextModel(element).text !== text) return false;
+    if (selectionMatches(selection, element, range)) return true;
+  }
+  return false;
+}
+
+function dispatchInsertText(element: HTMLElement, replacement: string): void {
+  element.dispatchEvent(new InputEvent('beforeinput', {
+    inputType: 'insertText',
+    data: replacement,
+    bubbles: true,
+    cancelable: true,
+    composed: true,
+  }));
 }
 
 /** Where the writer's cursor is, as a text offset, or null when it cannot be told. */
@@ -269,8 +297,9 @@ export function createEditorAdapter(element: SupportedEditor): EditorAdapter {
         return textControlRects(element, ranges);
       }
       const model = buildTextModel(element);
+      const measured = element.ownerDocument.createRange();
       return Object.freeze(ranges.map((range) => {
-        const domRange = rangeForOffsets(element, range, model);
+        const domRange = rangeForOffsets(element, range, model, measured);
         return domRange === null
           ? Object.freeze([])
           : Object.freeze(Array.from(domRange.getClientRects()));

@@ -44,10 +44,14 @@ function letterDistance(left, right) {
   return previous[right.length];
 }
 
-/** Mitton's lists: "$target" lines, each followed by its misspellings; tune half only. */
+/**
+ * Mitton's lists: "$target" lines, each followed by its misspellings; tune half only. As in the benchmark, a
+ * misspelling goes to the half of its right word (the first alphabetically when it has several).
+ */
 function readMisspellingList(path) {
   const pairs = [];
   const seen = new Set();
+  const firstTarget = new Map();
   let target = null;
   for (const rawLine of readFileSync(path, 'utf8').split(/\r?\n/u)) {
     const line = rawLine.trim();
@@ -60,11 +64,14 @@ function readMisspellingList(path) {
     if (!/^[\p{L}'-]+$/u.test(line) || !/^[\p{L}'-]+$/u.test(target)) continue;
     if (line.toLocaleLowerCase('en') === target.toLocaleLowerCase('en')) continue;
     const key = `${line}\u0000${target}`;
-    if (seen.has(key) || !isTune(line)) continue;
+    if (seen.has(key)) continue;
     seen.add(key);
     pairs.push([line, target]);
+    const lowered = target.toLocaleLowerCase('en');
+    const first = firstTarget.get(line);
+    if (first === undefined || lowered < first) firstTarget.set(line, lowered);
   }
-  return pairs;
+  return pairs.filter(([line]) => isTune(firstTarget.get(line)));
 }
 
 /** LexNorm tweets: "raw<TAB>normalised" per token; only one-word fixes within two letters, as scored. */

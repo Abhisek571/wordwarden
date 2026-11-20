@@ -38,6 +38,44 @@ Suggest:
   - Replace with: “defended”
   - Replace with: “defender”
   - Replace with: “defends”
+  - Replace with: “defensed”
+  - Replace with: “defenses”
+  - Replace with: “defiance”
+  - Replace with: “define”
+  - Replace with: “detente”
+  - Replace with: “defense's”
+  - Replace with: “fence”
+  - Replace with: “dance”
+  - Replace with: “decadence”
+  - Replace with: “deceive”
+  - Replace with: “decent”
+  - Replace with: “deduce”
+  - Replace with: “defeat”
+  - Replace with: “deferred”
+  - Replace with: “definite”
+  - Replace with: “deflect”
+  - Replace with: “delete”
+  - Replace with: “denounce”
+  - Replace with: “dense”
+  - Replace with: “detect”
+  - Replace with: “deuce”
+  - Replace with: “Terence”
+  - Replace with: “geofence”
+  - Replace with: “deafen”
+  - Replace with: “deafened”
+  - Replace with: “deafens”
+  - Replace with: “debounce”
+  - Replace with: “decease”
+  - Replace with: “decencies”
+  - Replace with: “defaced”
+  - Replace with: “defacer”
+  - Replace with: “defaces”
+  - Replace with: “defame”
+  - Replace with: “defang”
+  - Replace with: “defanged”
+  - Replace with: “defangs”
+  - Replace with: “defeated”
+  - Replace with: “defeater”
 
 
 
@@ -49,24 +87,6 @@ Message: |
          | ~~~~~~ When referring to national or international organizations, make sure to treat them as a proper noun.
 Suggest:
   - Replace with: “United States”
-
-
-
-Lint:    Spelling (63 priority)
-Message: |
-      11 | ## Article. I.
-         |             ^~ Did you mean to spell `I.` this way?
-Suggest:
-  - Replace with: “I”
-  - Replace with: “Id”
-  - Replace with: “If”
-  - Replace with: “Ii”
-  - Replace with: “In”
-  - Replace with: “Is”
-  - Replace with: “It”
-  - Replace with: “Iv”
-  - Replace with: “Ix”
-  - Replace with: “IA”
 
 
 
@@ -199,6 +219,44 @@ Suggest:
   - Replace with: “chases”
   - Replace with: “cheese”
   - Replace with: “chess”
+  - Replace with: “chest”
+  - Replace with: “chime”
+  - Replace with: “chisel”
+  - Replace with: “choke”
+  - Replace with: “choose”
+  - Replace with: “chosen”
+  - Replace with: “chub”
+  - Replace with: “chuck”
+  - Replace with: “chum”
+  - Replace with: “chunk”
+  - Replace with: “clause”
+  - Replace with: “close”
+  - Replace with: “clue”
+  - Replace with: “coupe”
+  - Replace with: “course”
+  - Replace with: “crude”
+  - Replace with: “cruise”
+  - Replace with: “crush”
+  - Replace with: “crust”
+  - Replace with: “cube”
+  - Replace with: “cue”
+  - Replace with: “cure”
+  - Replace with: “curse”
+  - Replace with: “cusp”
+  - Replace with: “cute”
+  - Replace with: “caused”
+  - Replace with: “causer”
+  - Replace with: “causes”
+  - Replace with: “cayuse”
+  - Replace with: “chafe”
+  - Replace with: “chaise”
+  - Replace with: “chased”
+  - Replace with: “chaser”
+  - Replace with: “chasm”
+  - Replace with: “chaste”
+  - Replace with: “chge”
+  - Replace with: “chide”
+  - Replace with: “chine”
 
 
 
@@ -217,6 +275,44 @@ Suggest:
   - Replace with: “chases”
   - Replace with: “cheese”
   - Replace with: “chess”
+  - Replace with: “chest”
+  - Replace with: “chime”
+  - Replace with: “chisel”
+  - Replace with: “choke”
+  - Replace with: “choose”
+  - Replace with: “chosen”
+  - Replace with: “chub”
+  - Replace with: “chuck”
+  - Replace with: “chum”
+  - Replace with: “chunk”
+  - Replace with: “clause”
+  - Replace with: “close”
+  - Replace with: “clue”
+  - Replace with: “coupe”
+  - Replace with: “course”
+  - Replace with: “crude”
+  - Replace with: “cruise”
+  - Replace with: “crush”
+  - Replace with: “crust”
+  - Replace with: “cube”
+  - Replace with: “cue”
+  - Replace with: “cure”
+  - Replace with: “curse”
+  - Replace with: “cusp”
+  - Replace with: “cute”
+  - Replace with: “caused”
+  - Replace with: “causer”
+  - Replace with: “causes”
+  - Replace with: “cayuse”
+  - Replace with: “chafe”
+  - Replace with: “chaise”
+  - Replace with: “chased”
+  - Replace with: “chaser”
+  - Replace with: “chasm”
+  - Replace with: “chaste”
+  - Replace with: “chge”
+  - Replace with: “chide”
+  - Replace with: “chine”
 
 
 
@@ -269,6 +365,44 @@ Suggest:
   - Replace with: “chases”
   - Replace with: “cheese”
   - Replace with: “chess”
+  - Replace with: “chest”
+  - Replace with: “chime”
+  - Replace with: “chisel”
+  - Replace with: “choke”
+  - Replace with: “choose”
+  - Replace with: “chosen”
+  - Replace with: “chub”
+  - Replace with: “chuck”
+  - Replace with: “chum”
+  - Replace with: “chunk”
+  - Replace with: “clause”
+  - Replace with: “close”
+  - Replace with: “clue”
+  - Replace with: “coupe”
+  - Replace with: “course”
+  - Replace with: “crude”
+  - Replace with: “cruise”
+  - Replace with: “crush”
+  - Replace with: “crust”
+  - Replace with: “cube”
+  - Replace with: “cue”
+  - Replace with: “cure”
+  - Replace with: “curse”
+  - Replace with: “cusp”
+  - Replace with: “cute”
+  - Replace with: “caused”
+  - Replace with: “causer”
+  - Replace with: “causes”
+  - Replace with: “cayuse”
+  - Replace with: “chafe”
+  - Replace with: “chaise”
+  - Replace with: “chased”
+  - Replace with: “chaser”
+  - Replace with: “chasm”
+  - Replace with: “chaste”
+  - Replace with: “chge”
+  - Replace with: “chide”
+  - Replace with: “chine”
 
 
 
@@ -298,6 +432,44 @@ Suggest:
   - Replace with: “tempers”
   - Replace with: “temporize”
   - Replace with: “tempos”
+  - Replace with: “tempter”
+  - Replace with: “tempura”
+  - Replace with: “temp's”
+  - Replace with: “temper's”
+  - Replace with: “empire”
+  - Replace with: “teamwork”
+  - Replace with: “teleport”
+  - Replace with: “temp”
+  - Replace with: “temperate”
+  - Replace with: “template”
+  - Replace with: “temporary”
+  - Replace with: “tenor”
+  - Replace with: “tensor”
+  - Replace with: “tenure”
+  - Replace with: “terror”
+  - Replace with: “texture”
+  - Replace with: “timbre”
+  - Replace with: “tore”
+  - Replace with: “tremor”
+  - Replace with: “tumor”
+  - Replace with: “extempore”
+  - Replace with: “Tempe”
+  - Replace with: “tadpole”
+  - Replace with: “tamper”
+  - Replace with: “tampered”
+  - Replace with: “tamperer”
+  - Replace with: “tampers”
+  - Replace with: “tampon”
+  - Replace with: “tampons”
+  - Replace with: “teapot”
+  - Replace with: “teapots”
+  - Replace with: “temblor”
+  - Replace with: “temblors”
+  - Replace with: “temped”
+  - Replace with: “temperas”
+  - Replace with: “tempest”
+  - Replace with: “temping”
+  - Replace with: “temples”
 
 
 
@@ -384,6 +556,44 @@ Suggest:
   - Replace with: “chewing”
   - Replace with: “chiding”
   - Replace with: “chiming”
+  - Replace with: “choking”
+  - Replace with: “choosing”
+  - Replace with: “chorusing”
+  - Replace with: “chowing”
+  - Replace with: “chucking”
+  - Replace with: “chugging”
+  - Replace with: “chumming”
+  - Replace with: “chunking”
+  - Replace with: “churning”
+  - Replace with: “closing”
+  - Replace with: “cluing”
+  - Replace with: “consing”
+  - Replace with: “coursing”
+  - Replace with: “cousins”
+  - Replace with: “cruising”
+  - Replace with: “crushing”
+  - Replace with: “crusting”
+  - Replace with: “cubing”
+  - Replace with: “cuing”
+  - Replace with: “curing”
+  - Replace with: “cursing”
+  - Replace with: “cussing”
+  - Replace with: “canning”
+  - Replace with: “casino”
+  - Replace with: “ceiling”
+  - Replace with: “chain”
+  - Replace with: “chin”
+  - Replace with: “china”
+  - Replace with: “chino”
+  - Replace with: “chipping”
+  - Replace with: “chosen”
+  - Replace with: “chunk”
+  - Replace with: “cling”
+  - Replace with: “abusing”
+  - Replace with: “accusing”
+  - Replace with: “amusing”
+  - Replace with: “busing”
+  - Replace with: “dousing”
 
 
 
@@ -420,6 +630,9 @@ Message: |
 Suggest:
   - Replace with: “Behavior”
   - Replace with: “Behaviors”
+  - Replace with: “Behavior's”
+  - Replace with: “Behavioral”
+  - Replace with: “Behaving”
 
 
 
@@ -489,6 +702,47 @@ Suggest:
   - Replace with: “decreased”
   - Replace with: “increase”
   - Replace with: “increases”
+  - Replace with: “encase”
+  - Replace with: “encases”
+  - Replace with: “enclosed”
+  - Replace with: “encroached”
+  - Replace with: “encrusted”
+  - Replace with: “encrypted”
+  - Replace with: “endeared”
+  - Replace with: “enervated”
+  - Replace with: “engraved”
+  - Replace with: “engrossed”
+  - Replace with: “enraged”
+  - Replace with: “erased”
+  - Replace with: “excreted”
+  - Replace with: “expressed”
+  - Replace with: “increase's”
+  - Replace with: “crease”
+  - Replace with: “ceased”
+  - Replace with: “cocreated”
+  - Replace with: “creaked”
+  - Replace with: “creamed”
+  - Replace with: “creases”
+  - Replace with: “created”
+  - Replace with: “deceased”
+  - Replace with: “decrease”
+  - Replace with: “decreases”
+  - Replace with: “degreased”
+  - Replace with: “greased”
+  - Replace with: “incensed”
+  - Replace with: “pancreases”
+  - Replace with: “recreated”
+  - Replace with: “screamed”
+  - Replace with: “surceased”
+  - Replace with: “uncased”
+  - Replace with: “uncleaned”
+  - Replace with: “uncleared”
+  - Replace with: “uncrewed”
+  - Replace with: “uncrossed”
+  - Replace with: “undreamed”
+  - Replace with: “undressed”
+  - Replace with: “unerased”
+  - Replace with: “unpressed”
 
 
 
@@ -601,6 +855,44 @@ Suggest:
   - Replace with: “reposed”
   - Replace with: “reposted”
   - Replace with: “repressed”
+  - Replace with: “repulsed”
+  - Replace with: “rewashed”
+  - Replace with: “repast's”
+  - Replace with: “repelled”
+  - Replace with: “bypassed”
+  - Replace with: “degassed”
+  - Replace with: “passed”
+  - Replace with: “trespassed”
+  - Replace with: “raised”
+  - Replace with: “rapeseed”
+  - Replace with: “rasped”
+  - Replace with: “reached”
+  - Replace with: “reacted”
+  - Replace with: “readied”
+  - Replace with: “reamed”
+  - Replace with: “reaped”
+  - Replace with: “reared”
+  - Replace with: “rearmed”
+  - Replace with: “reascend”
+  - Replace with: “reasoned”
+  - Replace with: “reassert”
+  - Replace with: “reassess”
+  - Replace with: “reassured”
+  - Replace with: “rebadged”
+  - Replace with: “rebarred”
+  - Replace with: “rebase”
+  - Replace with: “rebases”
+  - Replace with: “rebated”
+  - Replace with: “rebushed”
+  - Replace with: “recalled”
+  - Replace with: “recanted”
+  - Replace with: “recapped”
+  - Replace with: “recesses”
+  - Replace with: “recrossed”
+  - Replace with: “recursed”
+  - Replace with: “recused”
+  - Replace with: “redacted”
+  - Replace with: “redressed”
 
 
 
@@ -643,6 +935,44 @@ Suggest:
   - Replace with: “Defended”
   - Replace with: “Defender”
   - Replace with: “Defends”
+  - Replace with: “Defensed”
+  - Replace with: “Defenses”
+  - Replace with: “Defiance”
+  - Replace with: “Define”
+  - Replace with: “Detente”
+  - Replace with: “Defense's”
+  - Replace with: “Fence”
+  - Replace with: “Dance”
+  - Replace with: “Decadence”
+  - Replace with: “Deceive”
+  - Replace with: “Decent”
+  - Replace with: “Deduce”
+  - Replace with: “Defeat”
+  - Replace with: “Deferred”
+  - Replace with: “Definite”
+  - Replace with: “Deflect”
+  - Replace with: “Delete”
+  - Replace with: “Denounce”
+  - Replace with: “Dense”
+  - Replace with: “Detect”
+  - Replace with: “Deuce”
+  - Replace with: “Terence”
+  - Replace with: “Geofence”
+  - Replace with: “Deanne”
+  - Replace with: “Deena”
+  - Replace with: “Deere”
+  - Replace with: “Defoe”
+  - Replace with: “Deafen”
+  - Replace with: “Deafened”
+  - Replace with: “Deafens”
+  - Replace with: “Debounce”
+  - Replace with: “Decease”
+  - Replace with: “Decencies”
+  - Replace with: “Defaced”
+  - Replace with: “Defacer”
+  - Replace with: “Defaces”
+  - Replace with: “Defame”
+  - Replace with: “Defang”
 
 
 
@@ -673,9 +1003,51 @@ Suggest:
   - Replace with: “Piracy's”
   - Replace with: “Papacies”
   - Replace with: “Pirates”
+  - Replace with: “Pirate's”
+  - Replace with: “Pirogi's”
   - Replace with: “Curacies”
   - Replace with: “Miracles”
   - Replace with: “Spiracles”
+  - Replace with: “Pericles”
+  - Replace with: “Pikachus”
+  - Replace with: “Pilates”
+  - Replace with: “Piraeus”
+  - Replace with: “Pisces”
+  - Replace with: “Porsches”
+  - Replace with: “Paces”
+  - Replace with: “Palaces”
+  - Replace with: “Parables”
+  - Replace with: “Parades”
+  - Replace with: “Paradises”
+  - Replace with: “Parasites”
+  - Replace with: “Parches”
+  - Replace with: “Parities”
+  - Replace with: “Parodies”
+  - Replace with: “Parries”
+  - Replace with: “Parties”
+  - Replace with: “Peaces”
+  - Replace with: “Peaches”
+  - Replace with: “Percales”
+  - Replace with: “Perches”
+  - Replace with: “Pharmacies”
+  - Replace with: “Phrases”
+  - Replace with: “Pieces”
+  - Replace with: “Pierces”
+  - Replace with: “Piggies”
+  - Replace with: “Pigsties”
+  - Replace with: “Pinches”
+  - Replace with: “Pinkies”
+  - Replace with: “Pinnacles”
+  - Replace with: “Pinnies”
+  - Replace with: “Piranhas”
+  - Replace with: “Pitches”
+  - Replace with: “Pities”
+  - Replace with: “Pixies”
+  - Replace with: “Places”
+  - Replace with: “Poaches”
+  - Replace with: “Policies”
+  - Replace with: “Porches”
+  - Replace with: “Porgies”
 
 
 
@@ -693,7 +1065,46 @@ Suggest:
   - Replace with: “Offense”
   - Replace with: “Offended”
   - Replace with: “Offender”
+  - Replace with: “Offender's”
+  - Replace with: “Offer's”
+  - Replace with: “Office's”
+  - Replace with: “Offing's”
+  - Replace with: “Offensives”
   - Replace with: “Fences”
+  - Replace with: “Offerors”
+  - Replace with: “Offers”
+  - Replace with: “Officers”
+  - Replace with: “Offings”
+  - Replace with: “Ounces”
+  - Replace with: “Offend”
+  - Replace with: “Office”
+  - Replace with: “Fence's”
+  - Replace with: “Offered”
+  - Replace with: “Officer”
+  - Replace with: “Oftener”
+  - Replace with: “Oftenest”
+  - Replace with: “Feces”
+  - Replace with: “Absences”
+  - Replace with: “Affects”
+  - Replace with: “Affiances”
+  - Replace with: “Cadences”
+  - Replace with: “Coffees”
+  - Replace with: “Commences”
+  - Replace with: “Defenses”
+  - Replace with: “Effaces”
+  - Replace with: “Effects”
+  - Replace with: “Effendis”
+  - Replace with: “Essences”
+  - Replace with: “Fencers”
+  - Replace with: “Fiances”
+  - Replace with: “Fleeces”
+  - Replace with: “Frenches”
+  - Replace with: “Geofences”
+  - Replace with: “Sciences”
+  - Replace with: “Silences”
+  - Replace with: “Toffees”
+  - Replace with: “Valences”
+  - Replace with: “Fence”
 
 
 
@@ -792,6 +1203,44 @@ Suggest:
   - Replace with: “Haze's”
   - Replace with: “Haas”
   - Replace with: “Hades”
+  - Replace with: “Haidas”
+  - Replace with: “Hamas”
+  - Replace with: “Hayes”
+  - Replace with: “Habits”
+  - Replace with: “Hakes”
+  - Replace with: “Hales”
+  - Replace with: “Harems”
+  - Replace with: “Hares”
+  - Replace with: “Haters”
+  - Replace with: “Hates”
+  - Replace with: “Havens”
+  - Replace with: “Haves”
+  - Replace with: “Hazels”
+  - Replace with: “Hazers”
+  - Replace with: “Hazes”
+  - Replace with: “Haber”
+  - Replace with: “Babe's”
+  - Replace with: “HBase's”
+  - Replace with: “Ha's”
+  - Replace with: “Haas's”
+  - Replace with: “Hades's”
+  - Replace with: “Hague's”
+  - Replace with: “Hahn's”
+  - Replace with: “Haida's”
+  - Replace with: “Haifa's”
+  - Replace with: “Hakka's”
+  - Replace with: “Hal's”
+  - Replace with: “Haley's”
+  - Replace with: “Hals's”
+  - Replace with: “Han's”
+  - Replace with: “Haney's”
+  - Replace with: “Hanna's”
+  - Replace with: “Hans's”
+  - Replace with: “Harte's”
+  - Replace with: “Hausa's”
+  - Replace with: “Havel's”
+  - Replace with: “Hayek's”
+  - Replace with: “Hayes's”
 
 
 
@@ -810,6 +1259,44 @@ Suggest:
   - Replace with: “faction”
   - Replace with: “factory”
   - Replace with: “fast”
+  - Replace with: “fat”
+  - Replace with: “fate”
+  - Replace with: “fatty”
+  - Replace with: “faced”
+  - Replace with: “faces”
+  - Replace with: “facets”
+  - Replace with: “factoid”
+  - Replace with: “factors”
+  - Replace with: “fagot”
+  - Replace with: “faro”
+  - Replace with: “fart”
+  - Replace with: “farts”
+  - Replace with: “fasts”
+  - Replace with: “fats”
+  - Replace with: “fatso”
+  - Replace with: “act”
+  - Replace with: “actor”
+  - Replace with: “alto”
+  - Replace with: “auto”
+  - Replace with: “cacti”
+  - Replace with: “canto”
+  - Replace with: “macho”
+  - Replace with: “macro”
+  - Replace with: “pact”
+  - Replace with: “taco”
+  - Replace with: “tact”
+  - Replace with: “Cato”
+  - Replace with: “Lato”
+  - Replace with: “Macao”
+  - Replace with: “Sacco”
+  - Replace with: “Sarto”
+  - Replace with: “Waco”
+  - Replace with: “acts”
+  - Replace with: “cacao”
+  - Replace with: “jato”
+  - Replace with: “nacho”
+  - Replace with: “pacts”
+  - Replace with: “panto”
 
 
 
@@ -883,6 +1370,44 @@ Suggest:
   - Replace with: “faction”
   - Replace with: “factory”
   - Replace with: “fast”
+  - Replace with: “fat”
+  - Replace with: “fate”
+  - Replace with: “fatty”
+  - Replace with: “faced”
+  - Replace with: “faces”
+  - Replace with: “facets”
+  - Replace with: “factoid”
+  - Replace with: “factors”
+  - Replace with: “fagot”
+  - Replace with: “faro”
+  - Replace with: “fart”
+  - Replace with: “farts”
+  - Replace with: “fasts”
+  - Replace with: “fats”
+  - Replace with: “fatso”
+  - Replace with: “act”
+  - Replace with: “actor”
+  - Replace with: “alto”
+  - Replace with: “auto”
+  - Replace with: “cacti”
+  - Replace with: “canto”
+  - Replace with: “macho”
+  - Replace with: “macro”
+  - Replace with: “pact”
+  - Replace with: “taco”
+  - Replace with: “tact”
+  - Replace with: “Cato”
+  - Replace with: “Lato”
+  - Replace with: “Macao”
+  - Replace with: “Sacco”
+  - Replace with: “Sarto”
+  - Replace with: “Waco”
+  - Replace with: “acts”
+  - Replace with: “cacao”
+  - Replace with: “jato”
+  - Replace with: “nacho”
+  - Replace with: “pacts”
+  - Replace with: “panto”
 
 
 
@@ -923,6 +1448,42 @@ Suggest:
   - Replace with: “Contour”
   - Replace with: “Contrail”
   - Replace with: “Controls”
+  - Replace with: “Control's”
+  - Replace with: “Central”
+  - Replace with: “Colorful”
+  - Replace with: “Consul”
+  - Replace with: “Continual”
+  - Replace with: “Continue”
+  - Replace with: “Contra”
+  - Replace with: “Contrary”
+  - Replace with: “Contrast”
+  - Replace with: “Controlled”
+  - Replace with: “Controller”
+  - Replace with: “Cantrell”
+  - Replace with: “Conrail”
+  - Replace with: “Conroe”
+  - Replace with: “Cantrail”
+  - Replace with: “Centroid”
+  - Replace with: “Coatroom”
+  - Replace with: “Confront”
+  - Replace with: “Congruous”
+  - Replace with: “Conrod”
+  - Replace with: “Conrods”
+  - Replace with: “Construe”
+  - Replace with: “Continua”
+  - Replace with: “Contort”
+  - Replace with: “Contorts”
+  - Replace with: “Contours”
+  - Replace with: “Contract”
+  - Replace with: “Contrails”
+  - Replace with: “Contrite”
+  - Replace with: “Contrive”
+  - Replace with: “Monstrous”
+  - Replace with: “Montreal”
+  - Replace with: “Decontrol”
+  - Replace with: “Onerous”
+  - Replace with: “Sonorous”
+  - Replace with: “Wondrous”
 
 
 
@@ -1097,6 +1658,44 @@ Suggest:
   - Replace with: “chewing”
   - Replace with: “chiding”
   - Replace with: “chiming”
+  - Replace with: “choking”
+  - Replace with: “choosing”
+  - Replace with: “chorusing”
+  - Replace with: “chowing”
+  - Replace with: “chucking”
+  - Replace with: “chugging”
+  - Replace with: “chumming”
+  - Replace with: “chunking”
+  - Replace with: “churning”
+  - Replace with: “closing”
+  - Replace with: “cluing”
+  - Replace with: “consing”
+  - Replace with: “coursing”
+  - Replace with: “cousins”
+  - Replace with: “cruising”
+  - Replace with: “crushing”
+  - Replace with: “crusting”
+  - Replace with: “cubing”
+  - Replace with: “cuing”
+  - Replace with: “curing”
+  - Replace with: “cursing”
+  - Replace with: “cussing”
+  - Replace with: “canning”
+  - Replace with: “casino”
+  - Replace with: “ceiling”
+  - Replace with: “chain”
+  - Replace with: “chin”
+  - Replace with: “china”
+  - Replace with: “chino”
+  - Replace with: “chipping”
+  - Replace with: “chosen”
+  - Replace with: “chunk”
+  - Replace with: “cling”
+  - Replace with: “abusing”
+  - Replace with: “accusing”
+  - Replace with: “amusing”
+  - Replace with: “busing”
+  - Replace with: “dousing”
 
 
 
@@ -1194,6 +1793,44 @@ Suggest:
   - Replace with: “tempers”
   - Replace with: “temporize”
   - Replace with: “tempos”
+  - Replace with: “tempter”
+  - Replace with: “tempura”
+  - Replace with: “temp's”
+  - Replace with: “temper's”
+  - Replace with: “empire”
+  - Replace with: “teamwork”
+  - Replace with: “teleport”
+  - Replace with: “temp”
+  - Replace with: “temperate”
+  - Replace with: “template”
+  - Replace with: “temporary”
+  - Replace with: “tenor”
+  - Replace with: “tensor”
+  - Replace with: “tenure”
+  - Replace with: “terror”
+  - Replace with: “texture”
+  - Replace with: “timbre”
+  - Replace with: “tore”
+  - Replace with: “tremor”
+  - Replace with: “tumor”
+  - Replace with: “extempore”
+  - Replace with: “Tempe”
+  - Replace with: “tadpole”
+  - Replace with: “tamper”
+  - Replace with: “tampered”
+  - Replace with: “tamperer”
+  - Replace with: “tampers”
+  - Replace with: “tampon”
+  - Replace with: “tampons”
+  - Replace with: “teapot”
+  - Replace with: “teapots”
+  - Replace with: “temblor”
+  - Replace with: “temblors”
+  - Replace with: “temped”
+  - Replace with: “temperas”
+  - Replace with: “tempest”
+  - Replace with: “temping”
+  - Replace with: “temples”
 
 
 
@@ -1240,6 +1877,44 @@ Suggest:
   - Replace with: “tempers”
   - Replace with: “temporize”
   - Replace with: “tempos”
+  - Replace with: “tempter”
+  - Replace with: “tempura”
+  - Replace with: “temp's”
+  - Replace with: “temper's”
+  - Replace with: “empire”
+  - Replace with: “teamwork”
+  - Replace with: “teleport”
+  - Replace with: “temp”
+  - Replace with: “temperate”
+  - Replace with: “template”
+  - Replace with: “temporary”
+  - Replace with: “tenor”
+  - Replace with: “tensor”
+  - Replace with: “tenure”
+  - Replace with: “terror”
+  - Replace with: “texture”
+  - Replace with: “timbre”
+  - Replace with: “tore”
+  - Replace with: “tremor”
+  - Replace with: “tumor”
+  - Replace with: “extempore”
+  - Replace with: “Tempe”
+  - Replace with: “tadpole”
+  - Replace with: “tamper”
+  - Replace with: “tampered”
+  - Replace with: “tamperer”
+  - Replace with: “tampers”
+  - Replace with: “tampon”
+  - Replace with: “tampons”
+  - Replace with: “teapot”
+  - Replace with: “teapots”
+  - Replace with: “temblor”
+  - Replace with: “temblors”
+  - Replace with: “temped”
+  - Replace with: “temperas”
+  - Replace with: “tempest”
+  - Replace with: “temping”
+  - Replace with: “temples”
 
 
 
@@ -1290,6 +1965,44 @@ Suggest:
   - Replace with: “tempers”
   - Replace with: “temporize”
   - Replace with: “tempos”
+  - Replace with: “tempter”
+  - Replace with: “tempura”
+  - Replace with: “temp's”
+  - Replace with: “temper's”
+  - Replace with: “empire”
+  - Replace with: “teamwork”
+  - Replace with: “teleport”
+  - Replace with: “temp”
+  - Replace with: “temperate”
+  - Replace with: “template”
+  - Replace with: “temporary”
+  - Replace with: “tenor”
+  - Replace with: “tensor”
+  - Replace with: “tenure”
+  - Replace with: “terror”
+  - Replace with: “texture”
+  - Replace with: “timbre”
+  - Replace with: “tore”
+  - Replace with: “tremor”
+  - Replace with: “tumor”
+  - Replace with: “extempore”
+  - Replace with: “Tempe”
+  - Replace with: “tadpole”
+  - Replace with: “tamper”
+  - Replace with: “tampered”
+  - Replace with: “tamperer”
+  - Replace with: “tampers”
+  - Replace with: “tampon”
+  - Replace with: “tampons”
+  - Replace with: “teapot”
+  - Replace with: “teapots”
+  - Replace with: “temblor”
+  - Replace with: “temblors”
+  - Replace with: “temped”
+  - Replace with: “temperas”
+  - Replace with: “tempest”
+  - Replace with: “temping”
+  - Replace with: “temples”
 
 
 
@@ -1319,6 +2032,44 @@ Suggest:
   - Replace with: “tempers”
   - Replace with: “temporize”
   - Replace with: “tempos”
+  - Replace with: “tempter”
+  - Replace with: “tempura”
+  - Replace with: “temp's”
+  - Replace with: “temper's”
+  - Replace with: “empire”
+  - Replace with: “teamwork”
+  - Replace with: “teleport”
+  - Replace with: “temp”
+  - Replace with: “temperate”
+  - Replace with: “template”
+  - Replace with: “temporary”
+  - Replace with: “tenor”
+  - Replace with: “tensor”
+  - Replace with: “tenure”
+  - Replace with: “terror”
+  - Replace with: “texture”
+  - Replace with: “timbre”
+  - Replace with: “tore”
+  - Replace with: “tremor”
+  - Replace with: “tumor”
+  - Replace with: “extempore”
+  - Replace with: “Tempe”
+  - Replace with: “tadpole”
+  - Replace with: “tamper”
+  - Replace with: “tampered”
+  - Replace with: “tamperer”
+  - Replace with: “tampers”
+  - Replace with: “tampon”
+  - Replace with: “tampons”
+  - Replace with: “teapot”
+  - Replace with: “teapots”
+  - Replace with: “temblor”
+  - Replace with: “temblors”
+  - Replace with: “temped”
+  - Replace with: “temperas”
+  - Replace with: “tempest”
+  - Replace with: “temping”
+  - Replace with: “temples”
 
 
 
@@ -1388,6 +2139,47 @@ Suggest:
   - Replace with: “decreased”
   - Replace with: “increase”
   - Replace with: “increases”
+  - Replace with: “encase”
+  - Replace with: “encases”
+  - Replace with: “enclosed”
+  - Replace with: “encroached”
+  - Replace with: “encrusted”
+  - Replace with: “encrypted”
+  - Replace with: “endeared”
+  - Replace with: “enervated”
+  - Replace with: “engraved”
+  - Replace with: “engrossed”
+  - Replace with: “enraged”
+  - Replace with: “erased”
+  - Replace with: “excreted”
+  - Replace with: “expressed”
+  - Replace with: “increase's”
+  - Replace with: “crease”
+  - Replace with: “ceased”
+  - Replace with: “cocreated”
+  - Replace with: “creaked”
+  - Replace with: “creamed”
+  - Replace with: “creases”
+  - Replace with: “created”
+  - Replace with: “deceased”
+  - Replace with: “decrease”
+  - Replace with: “decreases”
+  - Replace with: “degreased”
+  - Replace with: “greased”
+  - Replace with: “incensed”
+  - Replace with: “pancreases”
+  - Replace with: “recreated”
+  - Replace with: “screamed”
+  - Replace with: “surceased”
+  - Replace with: “uncased”
+  - Replace with: “uncleaned”
+  - Replace with: “uncleared”
+  - Replace with: “uncrewed”
+  - Replace with: “uncrossed”
+  - Replace with: “undreamed”
+  - Replace with: “undressed”
+  - Replace with: “unerased”
+  - Replace with: “unpressed”
 
 
 
@@ -1498,7 +2290,46 @@ Suggest:
   - Replace with: “Offense”
   - Replace with: “Offended”
   - Replace with: “Offender”
+  - Replace with: “Offender's”
+  - Replace with: “Offer's”
+  - Replace with: “Office's”
+  - Replace with: “Offing's”
+  - Replace with: “Offensives”
   - Replace with: “Fences”
+  - Replace with: “Offerors”
+  - Replace with: “Offers”
+  - Replace with: “Officers”
+  - Replace with: “Offings”
+  - Replace with: “Ounces”
+  - Replace with: “Offend”
+  - Replace with: “Office”
+  - Replace with: “Fence's”
+  - Replace with: “Offered”
+  - Replace with: “Officer”
+  - Replace with: “Oftener”
+  - Replace with: “Oftenest”
+  - Replace with: “Feces”
+  - Replace with: “Absences”
+  - Replace with: “Affects”
+  - Replace with: “Affiances”
+  - Replace with: “Cadences”
+  - Replace with: “Coffees”
+  - Replace with: “Commences”
+  - Replace with: “Defenses”
+  - Replace with: “Effaces”
+  - Replace with: “Effects”
+  - Replace with: “Effendis”
+  - Replace with: “Essences”
+  - Replace with: “Fencers”
+  - Replace with: “Fiances”
+  - Replace with: “Fleeces”
+  - Replace with: “Frenches”
+  - Replace with: “Geofences”
+  - Replace with: “Sciences”
+  - Replace with: “Silences”
+  - Replace with: “Toffees”
+  - Replace with: “Valences”
+  - Replace with: “Fence”
 
 
 
@@ -1566,6 +2397,9 @@ Message: |
 Suggest:
   - Replace with: “Behavior”
   - Replace with: “Behaviors”
+  - Replace with: “Behavior's”
+  - Replace with: “Behavioral”
+  - Replace with: “Behaving”
 
 
 
@@ -1769,10 +2603,48 @@ Suggest:
   - Replace with: “Laborer”
   - Replace with: “Labors”
   - Replace with: “Lour”
+  - Replace with: “L'Amour”
+  - Replace with: “Lambo's”
+  - Replace with: “Lao's”
+  - Replace with: “Lato's”
+  - Replace with: “Lab's”
+  - Replace with: “Labor's”
   - Replace with: “About”
   - Replace with: “Amour”
   - Replace with: “Glamour”
   - Replace with: “Tabor”
+  - Replace with: “Lab”
+  - Replace with: “Label”
+  - Replace with: “Labial”
+  - Replace with: “Lacquer”
+  - Replace with: “Ladder”
+  - Replace with: “Lagoon”
+  - Replace with: “Lair”
+  - Replace with: “Latter”
+  - Replace with: “Lawful”
+  - Replace with: “Lawyer”
+  - Replace with: “Layer”
+  - Replace with: “Lemur”
+  - Replace with: “Liquor”
+  - Replace with: “Loud”
+  - Replace with: “Barbour”
+  - Replace with: “Cavour”
+  - Replace with: “Laban”
+  - Replace with: “Ladoga”
+  - Replace with: “Lagos”
+  - Replace with: “Lahore”
+  - Replace with: “Laius”
+  - Replace with: “Lajos”
+  - Replace with: “Lakota”
+  - Replace with: “Lamar”
+  - Replace with: “Lambo”
+  - Replace with: “Lambos”
+  - Replace with: “Lamont”
+  - Replace with: “Lao”
+  - Replace with: “Laos”
+  - Replace with: “Lato”
+  - Replace with: “Latoya”
+  - Replace with: “Lauder”
 
 
 
@@ -1788,10 +2660,48 @@ Suggest:
   - Replace with: “Laborer”
   - Replace with: “Labors”
   - Replace with: “Lour”
+  - Replace with: “L'Amour”
+  - Replace with: “Lambo's”
+  - Replace with: “Lao's”
+  - Replace with: “Lato's”
+  - Replace with: “Lab's”
+  - Replace with: “Labor's”
   - Replace with: “About”
   - Replace with: “Amour”
   - Replace with: “Glamour”
   - Replace with: “Tabor”
+  - Replace with: “Lab”
+  - Replace with: “Label”
+  - Replace with: “Labial”
+  - Replace with: “Lacquer”
+  - Replace with: “Ladder”
+  - Replace with: “Lagoon”
+  - Replace with: “Lair”
+  - Replace with: “Latter”
+  - Replace with: “Lawful”
+  - Replace with: “Lawyer”
+  - Replace with: “Layer”
+  - Replace with: “Lemur”
+  - Replace with: “Liquor”
+  - Replace with: “Loud”
+  - Replace with: “Barbour”
+  - Replace with: “Cavour”
+  - Replace with: “Laban”
+  - Replace with: “Ladoga”
+  - Replace with: “Lagos”
+  - Replace with: “Lahore”
+  - Replace with: “Laius”
+  - Replace with: “Lajos”
+  - Replace with: “Lakota”
+  - Replace with: “Lamar”
+  - Replace with: “Lambo”
+  - Replace with: “Lambos”
+  - Replace with: “Lamont”
+  - Replace with: “Lao”
+  - Replace with: “Laos”
+  - Replace with: “Lato”
+  - Replace with: “Latoya”
+  - Replace with: “Lauder”
 
 
 
@@ -1807,10 +2717,48 @@ Suggest:
   - Replace with: “Laborer”
   - Replace with: “Labors”
   - Replace with: “Lour”
+  - Replace with: “L'Amour”
+  - Replace with: “Lambo's”
+  - Replace with: “Lao's”
+  - Replace with: “Lato's”
+  - Replace with: “Lab's”
+  - Replace with: “Labor's”
   - Replace with: “About”
   - Replace with: “Amour”
   - Replace with: “Glamour”
   - Replace with: “Tabor”
+  - Replace with: “Lab”
+  - Replace with: “Label”
+  - Replace with: “Labial”
+  - Replace with: “Lacquer”
+  - Replace with: “Ladder”
+  - Replace with: “Lagoon”
+  - Replace with: “Lair”
+  - Replace with: “Latter”
+  - Replace with: “Lawful”
+  - Replace with: “Lawyer”
+  - Replace with: “Layer”
+  - Replace with: “Lemur”
+  - Replace with: “Liquor”
+  - Replace with: “Loud”
+  - Replace with: “Barbour”
+  - Replace with: “Cavour”
+  - Replace with: “Laban”
+  - Replace with: “Ladoga”
+  - Replace with: “Lagos”
+  - Replace with: “Lahore”
+  - Replace with: “Laius”
+  - Replace with: “Lajos”
+  - Replace with: “Lakota”
+  - Replace with: “Lamar”
+  - Replace with: “Lambo”
+  - Replace with: “Lambos”
+  - Replace with: “Lamont”
+  - Replace with: “Lao”
+  - Replace with: “Laos”
+  - Replace with: “Lato”
+  - Replace with: “Latoya”
+  - Replace with: “Lauder”
 
 
 
@@ -1886,24 +2834,6 @@ Message: |
          |             ^~~~~~~~~~~ An Oxford comma is necessary here.
 Suggest:
   - Insert “,”
-
-
-
-Lint:    Spelling (63 priority)
-Message: |
-     663 | ## Article. V.
-         |             ^~ Did you mean to spell `V.` this way?
-Suggest:
-  - Replace with: “Vi”
-  - Replace with: “VA”
-  - Replace with: “Vb”
-  - Replace with: “Vs.”
-  - Replace with: “V6”
-  - Replace with: “V8”
-  - Replace with: “VD”
-  - Replace with: “VF”
-  - Replace with: “VG”
-  - Replace with: “VJ”
 
 
 
@@ -1994,7 +2924,52 @@ Message: |
 Suggest:
   - Replace with: “Erasure”
   - Replace with: “Erasures”
+  - Replace with: “Erasure's”
   - Replace with: “Azure”
+  - Replace with: “Endure”
+  - Replace with: “Ensure”
+  - Replace with: “Erase”
+  - Replace with: “Embrasure”
+  - Replace with: “Enrapture”
+  - Replace with: “Epicure”
+  - Replace with: “Eraser”
+  - Replace with: “Erasers”
+  - Replace with: “Evacuee”
+  - Replace with: “Brazier”
+  - Replace with: “Craze”
+  - Replace with: “Creature”
+  - Replace with: “Feature”
+  - Replace with: “Fracture”
+  - Replace with: “Manure”
+  - Replace with: “Mature”
+  - Replace with: “Measure”
+  - Replace with: “Nature”
+  - Replace with: “Rapture”
+  - Replace with: “Rare”
+  - Replace with: “Razor”
+  - Replace with: “Seizure”
+  - Replace with: “Stature”
+  - Replace with: “Treasure”
+  - Replace with: “Braque”
+  - Replace with: “Frazier”
+  - Replace with: “Prague”
+  - Replace with: “Armature”
+  - Replace with: “Azures”
+  - Replace with: “Bravura”
+  - Replace with: “Braze”
+  - Replace with: “Brazer”
+  - Replace with: “Brazers”
+  - Replace with: “Crazier”
+  - Replace with: “Denature”
+  - Replace with: “Frazzle”
+  - Replace with: “Granule”
+  - Replace with: “Graze”
+  - Replace with: “Grazer”
+  - Replace with: “Grazers”
+  - Replace with: “Ordure”
+  - Replace with: “Perjure”
+  - Replace with: “Procure”
+  - Replace with: “Raze”
 
 
 
