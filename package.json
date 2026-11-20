@@ -30,23 +30,23 @@
     "dictionary-en-ca": "3.0.0",
     "dictionary-en-gb": "3.0.0",
     "nspell": "2.1.5",
-    "react": "19.3.0",
-    "react-dom": "19.3.0",
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
     "subtlex-word-frequencies": "2.0.0"
   },
   "devDependencies": {
-    "@playwright/test": "1.64.0",
-    "@types/chrome": "0.3.5",
-    "@types/node": "26.6.5",
+    "@playwright/test": "1.64.1",
+    "@types/chrome": "0.3.7",
+    "@types/node": "26.6.6",
     "@types/nspell": "2.1.6",
     "@types/react": "19.3.0",
     "@types/react-dom": "19.3.0",
-    "happy-dom": "21.0.1",
+    "happy-dom": "21.0.4",
     "harper.js": "2.10.0",
     "typescript": "7.0.2",
-    "vite": "8.3.4",
-    "vitest": "5.0.3",
-    "web-ext": "10.7.0",
-    "wxt": "0.21.4"
+    "vite": "8.3.5",
+    "vitest": "5.0.5",
+    "web-ext": "10.8.0",
+    "wxt": "0.21.5"
   }
 }
